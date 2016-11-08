@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Epsity | Profile</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load staticfiles %}
+
+  {% include 'dependencies-1.html' %}
+
+  <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+  <script src="/static/js/grand.js"></script>
+  <script src="/static/js/profile.js"></script>
+</head>
+
+  <body ng-app="epsityApp" ng-controller="epsityCtrl" class="transition">
+
+    {% include 'topbar-1.html' %}
+
+    <!--  -->
+
+    <div id="main-container">
+      <div id="mc-inner" class="sdw-1">
+        <div class="container-fluid">
+
+          <div style="min-height: 75vh;" class="row fill transition" data-parallax="scroll" data-image-src="/static/img/grafitti-1.jpg">
+            <div class="dim-2"></div>
+            <div class="col-sm-3">
+              <div class="dim-3"></div>
+              <div class="padd-1 mk-rel">
+                <img id="prof-img" class="middlr img-polaroid img-shadow" title="Profile Image" alt="Profile Image" src="/static/img/anon2.png"/>
+                <h3 class="text-center text-lightgrey"><strong>username</strong></h3>
+                <!-- <p class="text-center text-lightgrey"><strong>Rank:</strong> Average</p> -->
+                <hr>
+                <div class="">
+                  <ul id="prof-stats" class="ul-raw">
+                    <li id="prof-stats-ctrl" class="switch-div-ctrl"><strong>Stats</strong></li>
+                    <li id="prof-bio-ctrl" class="switch-div-ctrl"><strong>Bio</strong></li>
+                    <li id="prof-info-ctrl" class="switch-div-ctrl"><strong>Info</strong></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-6"></div>
+
+            <div class="col-sm-3 switch-div" id="prof-stats-div" style="display: block;">
+              <div class="dim-3"></div>
+              <div class="padd-1 mk-rel">
+                <i class="switch-div-x fa fa-times-circle-o" aria-hidden="true"></i>
+                <h3 class="text-center text-lightgrey"><strong>Stats</strong></h3>
+                <hr>
+                <div class="">
+                  <ul class="ul-raw text-lightgrey" id="">
+                    <li><strong>Following:</strong> 0</li>
+                    <li><strong>Followers:</strong> 0</li>
+                    <li><strong>Groups:</strong> 0</li>
+                    <li><strong>Posts:</strong> 0</li>
+                    <li><strong>Likes:</strong> 0</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-3 switch-div" id="prof-bio-div">
+              <div class="dim-3"></div>
+              <div class="padd-1 mk-rel">
+                <i class="switch-div-x fa fa-times-circle-o" aria-hidden="true"></i>
+                <h3 class="text-center text-lightgrey"><strong>Bio</strong></h3>
+                <hr>
+                <div class="">
+                  <p class="text-lightgrey">Write Bio...</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-3 switch-div" id="prof-info-div">
+              <div class="dim-3"></div>
+              <div class="padd-1 mk-rel">
+                <i class="switch-div-x fa fa-times-circle-o" aria-hidden="true"></i>
+                <h3 class="text-center text-lightgrey"><strong>Info</strong></h3>
+                <hr>
+                <div class="">
+                  <p class="text-lightgrey">Write Info Here...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contents -->
+
+          <div style="min-height: 100vh;" class="row padd-2 bg-white">
+            <div class="col-md-3" id="prof-sidebar">
+              <div class="padd-1 mk-rel sdw-1 sbm-1">
+                <p class="text-center"><strong>Who To Follow</strong></p>
+                <ul>
+
+                </ul>
+                <p><a title="" href="">See more</a></p>
+              </div>
+
+              <div class="padd-1 mk-rel sdw-1 sbm-1">
+                <p class="text-center"><strong>Suggested Groups</strong></p>
+                <ul>
+
+                </ul>
+                <p><a title="" href="">See more</a></p>
+              </div>
+
+              <div class="padd-1 mk-rel sdw-1 sbm-1">
+                <p class="text-center"><strong>Related Activity</strong></p>
+                <ul>
+
+                </ul>
+                <p><a title="" href="">See more</a></p>
+              </div>
+
+              <div class="padd-1 mk-rel sdw-1 sbm-1">
+                <p class="text-center"><strong>Trending Topics</strong></p>
+                <ul>
+
+                </ul>
+                <p><a title="" href="">See more</a></p>
+              </div>
+            </div>
+            <div class="col-md-9" id="prof-mainbar">
+              <div style="min-height: 50vh;" class="padd-1 mk-rel sdw-1">
+                <p class="text-center">Post Feed</p>
+                <hr>
+
+                <hr>
+              </div>
+            </div>
+          </div>
+
+          <br>
+
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+  <!--
+
+    wp = Welcome Page
+
+  -->
+
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Epsity | Welcome!</title>
+    <meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="https://ryanwaite28.github.io/my-cdn/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="https://ryanwaite28.github.io/my-cdn/css/emerald.css"/>
+    <link rel="stylesheet" type="text/css" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/welcome.css">
+    <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+    <script src="https://ryanwaite28.github.io/my-cdn/js/jquery.js"></script>
+    <script src="https://ryanwaite28.github.io/my-cdn/js/parallax/parallax.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="https://ryanwaite28.github.io/my-cdn/js/bootstrap.js"></script>
+    <script src="https://ryanwaite28.github.io/my-cdn/js/angular.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+		<script src="https://cdn.firebase.com/libs/angularfire/1.1.4/angularfire.min.js"></script>
+    <script src="/static/js/grand.js"></script>
+    <script src="/static/js/welcome.js"></script>
+  </head>
+
+  <body ng-app="epsityApp" ng-controller="epsityCtrl" class="transition">
+
+    <div id="top-bar" class="transition">
+
+      <div id="wp-logo-1-c">
+        <img id="wp-logo-1" class="sdw-1 transition" src="/static/img/logo-1.png"/>
+      </div>
+
+      <p id="drop-chev-p" class="text-center"><i aria-hidden="true" data-toggle="collapse" data-target="#links-collapse" title="Drop Down Menu" id="drop-chev-1" class="sdw-1 transition fa fa-chevron-circle-down"></i></p>
+
+      <i title="Scroll Back To Top" id="arrow-1" class="sdw-1 hide-1 transition fa fa-arrow-circle-up"></i>
+
+
+
+      <div id="links-collapse" class="transition collapse">
+        <ul id="wp-links" class="ul-raw">
+          <li><a href="">Trending</a></li>
+          <li><a href="">Discover</a></li>
+          <li><a href="">Newest</a></li>
+          <li><a href="">Featured</a></li>
+          <li><a href="">Search</a></li>
+        </ul>
+
+        <ul id="user-links" class="ul-raw">
+          <li><a title="Log In!" href="/login">Log In</a>
+            <div class="li-dropdown-s1 transition">
+              <p class="text-center">Login With Facebook/Google</p>
+              <img ng-click="login('google')" class="fadein-1 transition" id="g-sign-in" src="http://commondatastorage.googleapis.com/io-2013/presentations/808/images/sign-in-button.png">
+              <br>
+              <img style="cursor: pointer; width: 200px;" class="fadein-1 ico transition" ng-click="login('facebook')" src="http://i.stack.imgur.com/ZW4QC.png">
+            </div>
+          </li>
+          <li><a title="Sign Up!" href="/signup">Sign Up</a>
+
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!--  -->
+
+    <div id="main-container" class="container-fluid">
+
+      <div class="row fill parallax-window" id="welcome-header" data-parallax="scroll" data-image-src="/static/img/inspire-1.jpg">
+        <div class="dim">
+
+        </div>
+        <div class="col-md-12">
+          <h1 id="wp-header">Epsity</h1>
+          <p class="p-emp-1 text-s1">The Central Hub For Talent Networking</p>
+        </div>
+      </div>
+
+      <div class="row sp-1" id="bar-1">
+        <div class="col-md-12">
+          <div class="spacer-1 middlr">
+            <h3 class="bh-text">Talent Network!</h3>
+
+            <p class="p-emp-1">Epsity Is All About Connecting The Right People Together
+            To Make Dreams Come True. Whether You're A Music Artist Looking For An
+            Audio Engineer, A Dancer Looking For A Dance Company Or Musician Looking For A
+            Band, This Is The Place To Be. It's Time To Put Yourself Out There!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" id="bar-2">
+        <div class="col-md-6 fill sp-2" id="bar-2-1">
+          <div class="dim">
+
+          </div>
+          <div class="col-md-12">
+            <p class="p-emp-1 text-s1">Find The People You're Looking For<br>
+            And The People Looking For You!</p>
+          </div>
+        </div>
+        <div class="col-md-6 fill sp-2" id="bar-2-2">
+          <div class="dim">
+
+          </div>
+          <div class="col-md-12">
+            <p class="p-emp-1 text-s1">Let The Whole World<br>Know What You Can Do!</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="" class="row sp-1" id="bar-3">
+        <div class="col-sm-12">
+          <div class="spacer-1 middlr">
+            <h3 class="bh-text">Get Discovered!</h3>
+            <img class="middlr" src="/static/img/logo-2.png" style="margin-bottom: 35px; margin-top: -20px; position: relative;">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <p class="p-emp-1">
+            <i style="font-size: 50px;" class="fa fa-plus-circle" aria-hidden="true"></i><br>
+            Create An Account!
+          </p>
+        </div>
+        <div class="col-sm-4">
+          <p class="p-emp-1">
+            <i style="font-size: 50px;" class="fa fa-cog" aria-hidden="true"></i><br>
+            Set up Your Profile!
+          </p>
+        </div>
+        <div class="col-sm-4">
+          <p class="p-emp-1">
+            <i style="font-size: 50px;" class="fa fa-globe" aria-hidden="true"></i><br>
+            Broadcast Your Talent!
+          </p>
+        </div>
+      </div>
+
+      <div class="row" id="bar-4">
+        <div class="parallax-window parallax-bar-1" data-parallax="scroll" data-image-src="/static/img/stage-2.jpg">
+          <div class="col-md-4">
+            <p class="p-emp-1 text-s1">
+              It's All About Who You Know, And This Is The Place Where People
+              Will Get To Know You And What You Do!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row sp-1" id="bar-5">
+        <div class="col-md-12">
+          <div class="spacer-1 middlr">
+            <h3 class="bh-text">Connect!</h3>
+            <br>
+            <p class="p-emp-1">Share this On Your Other Social Media!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row sp-1" id="bar-6">
+        <div class="middlr text-center" style="width: 95%; background-color: black;">
+          <div class="col-md-4">
+            <p class="text-bold">
+              Epsity Incorporated.<br>
+              Epsity LLC.
+            </p>
+          </div>
+          <div class="col-md-4">
+            <p class="text-bold">
+              Copyright © October 2016
+            </p>
+          </div>
+          <div class="col-md-2">
+            <ul class="ul-raw" id="">
+              <li><a title="" href="">People</a></li>
+              <li><a title="" href="">Groups</a></li>
+              <li><a title="" href="">Mobile</a></li>
+              <li><a title="" href="">Developers</a></li>
+              <li><a title="" href="">Ads</a></li>
+            </ul>
+          </div>
+          <div class="col-md-2">
+            <ul class="ul-raw" id="">
+              <li><a title="" href="">About</a></li>
+              <li><a title="" href="">Careers</a></li>
+              <li><a title="" href="">Terms</a></li>
+              <li><a title="" href="">Privacy</a></li>
+              <li><a title="" href="">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </body>
+
+  <!--
+
+    wp = Welcome Page
+
+  -->
+
+</html>

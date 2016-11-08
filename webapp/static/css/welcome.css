@@ -1,0 +1,290 @@
+/* --- Welcome Page --- */
+
+.padd-25 {
+  padding: 25px;
+}
+.top-bar-style-1 {
+  border-bottom: 2px solid white;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+#top-bar {
+  position: fixed;
+  width: 100%;
+  min-height: 50px;
+  z-index: 100;
+  padding: 15px;
+  opacity: 1.0;
+}
+#top-bar:hover {
+
+}
+
+#wp-logo-1-c {
+  float: left;
+}
+#arrow-1 {
+  line-height: 40px;
+  vertical-align: middle;
+  height: 40px;
+  width: 40px;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  font-size: 35px;
+  text-align: center;
+  z-index: 1000;
+  cursor: pointer;
+  color: grey;
+  background: transparent;
+  border-radius: 3px;
+}
+#arrow-1:hover {
+  color: green;
+  background: white;
+}
+
+#drop-chev-1 {
+  line-height: 40px;
+  vertical-align: middle;
+  font-size: 35px;
+  text-align: center;
+  z-index: 1000;
+  cursor: pointer;
+  color: grey;
+}
+#drop-chev-1:hover {
+  color: green;
+}
+#drop-chev-p {
+  display: none;
+}
+
+#wp-logo-1 {
+  height: 45px;
+  width: 45px;
+  background: white;
+  border-radius: 2px;
+  padding: 3px;
+  margin: 2px;
+}
+
+#wp-links {
+  float: left;
+  /*min-width: 525px;*/
+  width: 65%;
+}
+
+#user-links {
+  float: right;
+  /*min-width: 215px;*/
+  width: 25%;
+}
+
+#wp-links, #user-links {
+  text-align: center;
+}
+
+#wp-links li, #user-links li {
+  display: inline-block;
+  position: relative;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: middle;
+  list-style: none;
+  padding: 0px 15px;
+}
+#wp-links li:hover, #user-links li:hover {
+  background-color: white;
+
+}
+#wp-links li:hover a, #user-links li:hover a {
+  color: black;
+}
+#wp-links li a, #user-links li a {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+}
+#wp-links li a:hover, #user-links li a:hover {
+  color: green;
+}
+
+.li-dropdown-s1 {
+  border: transparent;
+  position: absolute;
+  right: 0px;
+  width: 275px;
+  min-height: 100px;
+  background: white;
+  z-index: 1000;
+  opacity: 0.0;
+  visibility: hidden;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  max-width: 100vw;
+}
+li:hover .li-dropdown-s1 {
+  opacity: 1.0;
+  visibility: visible;
+}
+
+#main-container {
+  /*padding-top: 50px;*/
+  min-height: 105vh;
+}
+
+#wp-header {
+  font-size: 48px;
+  margin: 0px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  text-shadow: 2px 4px 7px black;
+}
+
+.text-s1 {
+  color: white;
+  text-align: center;
+  text-shadow: 2px 4px 7px black;
+}
+
+/* --- */
+
+.sp-1 {
+  padding: 15vh 10px;
+  min-height: 275px;
+}
+.sp-2 {
+  padding: 25vh 10px;
+  min-height: 275px;
+}
+.spacer-1 {
+  width: 675px;
+  max-width: 95%;
+}
+
+#welcome-header {
+  padding: 45vh 20px;
+  min-height: 350px;
+}
+
+.bh-text {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 75px;
+  font-size: 36px;
+}
+
+#bar-1 {
+
+}
+#bar-2-1 {
+  background-image: url('../img/fistbump-1.jpg');
+}
+#bar-2-2 {
+  background-image: url('../img/grafitti-1.jpg');
+}
+#bar-2-1, #bar-2-2 {
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  box-sizing: border-box;
+  background-size: 200%;
+}
+#bar-2-1:hover, #bar-2-2:hover {
+  background-size: 145%;
+}
+#bar-3 {
+  background-color: lightgrey;
+}
+#bar-4 {
+
+}
+#bar-5 {
+
+}
+#bar-6 {
+  background-color: black;
+  color: white;
+}
+
+#bar-6 a {
+  color: white;
+}
+#bar-6 a:hover {
+  color: green;
+}
+
+form input {
+  padding: 5px;
+  line-height: normal;
+  width: 90%;
+  border-radius: 2px;
+  color: grey;
+
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  letter-spacing: 2px;
+  font-size: 12px;
+  height: 33px;
+  border: 1px solid grey; /*#EAEAEA;*/
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  font-weight: 400;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+}
+form input[type="submit"] {
+  padding: 4px;
+  width: 100px;
+}
+form input[type="submit"]:hover {
+  font-weight: bold;
+}
+#g-sign-in {
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,.25);
+  cursor: pointer;
+  width: 200px;
+}
+
+/* --- */
+/* --- */
+/* --- */
+
+@media (max-width: 809px) {
+
+  #wp-logo-1-c {
+    width: 100%;
+  }
+  #wp-logo-1 {
+    display: block;
+    margin: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+  #drop-chev-p {
+    display: block;
+  }
+
+  #wp-links, #user-links {
+    float: none;
+    display: block;
+    margin: auto;
+    margin-bottom: 20px;
+    min-width: 0px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #wp-links li, #user-links li {
+    position: static;
+    display: inline-block;
+  }
+
+  .li-dropdown-s1 {
+    display: none;
+  }
+
+}
