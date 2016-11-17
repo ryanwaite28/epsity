@@ -33,6 +33,15 @@ class Accounts(models.Model):
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
 
+    @property
+    def serialize_basic(self):
+         # Returns Data Object In Proper Format
+        return {
+            'userid': self.id,
+            'uname': self.uname,
+            'avi': self.avi
+        }
+
     class Meta:
         db_table = "accounts"
 
@@ -195,5 +204,35 @@ class ConvoMessages(models.Model):
 
     class Meta:
         db_table = "convo_messages"
+
+# ---
+
+class Notifications(models.Model):
+
+    owner = models.ForeignKey(Accounts, related_name = "notif_owner", on_delete = models.CASCADE)
+
+    type = models.CharField(max_length = 1725, default = '')
+    n_type = models.CharField(max_length = 1725, default = '')
+
+
+    sender_id = models.IntegerField(blank = False)
+    sender_rel = models.ForeignKey(Accounts, related_name = "notif_sender_owner", on_delete = models.CASCADE)
+
+    recipient_id = models.IntegerField(blank = False)
+    recipient_rel = models.ForeignKey(Accounts, related_name = "notif_recipient_owner", on_delete = models.CASCADE)
+
+    text = models.CharField(max_length = 1725, default = '')
+    date_created = models.DateField(auto_now=True)
+    link = models.CharField(max_length = 1725, default = '')
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'notif_id': self.id
+        }
+
+    class Meta:
+        db_table = "notifications"
 
 # ---
