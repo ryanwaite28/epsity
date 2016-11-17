@@ -46,7 +46,19 @@ class AccountInfo(models.Model):
     seeking = models.CharField(max_length = 1725, default = '')
 
     class Meta:
-        db_table = "stats"
+        db_table = "accountinfo"
+
+# ---
+
+class Bio(models.Model):
+
+    owner = models.ForeignKey(Accounts, related_name = "bio_owner", on_delete = models.CASCADE)
+
+    bio_desc = models.CharField(max_length = 150, default = '')
+    bio_link = models.CharField(max_length = 150, default = '')
+
+    class Meta:
+        db_table = "bio"
 
 # ---
 

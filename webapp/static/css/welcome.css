@@ -61,12 +61,18 @@
 }
 
 #wp-logo-1 {
-  height: 45px;
-  width: 45px;
+  height: 50px;
+  width: 50px;
   background: white;
-  border-radius: 2px;
   padding: 3px;
-  margin: 2px;
+}
+#wp-logo-1:hover {
+  -webkit-transform: rotate(360deg);
+  -moz-transform: rotate(360deg);
+  -o-transform: rotate(360deg);
+  -ms-transform: rotate(360deg);
+  transform: rotate(360deg);
+  background-color: forestgreen;
 }
 
 #wp-links {

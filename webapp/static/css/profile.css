@@ -27,6 +27,14 @@ body {
   width: 50px;
   height: 50px;
 }
+#p-logo-1:hover {
+  -webkit-transform: rotate(360deg);
+  -moz-transform: rotate(360deg);
+  -o-transform: rotate(360deg);
+  -ms-transform: rotate(360deg);
+  transform: rotate(360deg);
+  background-color: forestgreen;
+}
 
 /* profile - search div */
 #p-sd {
