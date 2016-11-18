@@ -164,9 +164,17 @@ def signup(request):
 @csrf_protect
 def profileMain(request):
     if request.method == 'GET':
-        return render(request,
-                        pages['profileMain'],
-                        context_instance=RequestContext(request))
+        try:
+            you = Accounts.objects.get(uname = request.session['username'])
+            # print you.serialize_basic
+            return render(request,
+                            pages['profileMain'],
+                            {'you': you},
+                            context_instance=RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            errorPage(request, msg)
 
 # ---
 
@@ -175,7 +183,7 @@ def profileHome(request):
     if request.method == 'GET':
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            print you.serialize_basic
+            # print you.serialize_basic
             return render(request,
                             pages['profileHome'],
                             {'you': you},

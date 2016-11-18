@@ -30,7 +30,7 @@ $(document).ready(function(){
 
 });
 
-var App = angular.module("epsityApp", ["firebase"])
+var App = angular.module("epsityApp", ["firebase"]);
 
 App.factory("travelr", ["$firebaseArray",
 	function($firebaseArray) {
