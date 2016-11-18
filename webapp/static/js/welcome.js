@@ -86,6 +86,7 @@ App.controller('epsityCtrl', ['$scope', function($scope) {
           $scope.gLogin(authData);
         }
         else if( str == 'signup' ) {
+          $('#fg-div').hide();
           $scope.gSignUp(authData);
         }
         else {
@@ -111,6 +112,7 @@ App.controller('epsityCtrl', ['$scope', function($scope) {
             $scope.fbLogin(authData);
           }
           else if( str == 'signup' ) {
+            $('#fg-div').hide();
             $scope.fbSignUp(authData);
           }
           else {
@@ -168,6 +170,12 @@ App.controller('epsityCtrl', ['$scope', function($scope) {
     }
     $scope.data = obj;
 
+    $('#login-form > input[name="providerid"]').val( $scope.data.id );
+    $('#login-form > input[name="email"]').val( $scope.data.email );
+    $('#login-form > input[name="uid"]').val( $scope.data.uid );
+
+    $('#login-form').submit();
+
   }
   $scope.fbSignUp = function( data ) {
 
@@ -198,6 +206,12 @@ App.controller('epsityCtrl', ['$scope', function($scope) {
     }
     $scope.data = obj;
 
+    $('#login-form > input[name="providerid"]').val( $scope.data.id );
+    $('#login-form > input[name="email"]').val( $scope.data.email );
+    $('#login-form > input[name="uid"]').val( $scope.data.uid );
+
+    $('#login-form').submit();
+
   }
   $scope.gSignUp = function( data ) {
 
@@ -225,11 +239,11 @@ App.controller('epsityCtrl', ['$scope', function($scope) {
       return;
     }
 
-    var regex =/^[A-Za-z0-9 ]{3,25}$/;
+    var regex =/^[A-Za-z0-9]{3,25}$/;
     var uname = $('#signup-form > input[name="uname"]').val();
 
     if( !regex.test(uname) ) {
-      alert('User Name Must Be At Least 3 Characters, Text And Numbers Only.');
+      alert('User Name Must Be 3-25 Characters, Letters, Numbers, Dashes, and Underscores.');
       return;
     }
 

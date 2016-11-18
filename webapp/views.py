@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.http import HttpResponse , HttpResponseRedirect
 from django.contrib.sessions.models import Session
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
 
 from WebTools import randomVal, uploadImage, processImage, generateState
@@ -16,6 +16,7 @@ from models import Accounts
 # Dictionary of all pages/views for easy and dynamic rendering.
 pages = {
     'welcome': 'welcome.html',
+    'error': 'error.html',
     'login': 'login.html',
     'signup': 'signup.html',
     #
@@ -38,17 +39,43 @@ def welcome(request):
 
 # ---
 
+def errorPage(request, msg=None):
+    if msg == None or msg == '' or request.method == 'POST':
+        print '--- Error Page Redirecting...'
+        return redirect('/')
+
+    return render(request,
+                    {'errorMessage', msg},
+                    pages['error'])
+
+
+# ---
+
 @csrf_protect
 def login(request):
     if request.method == 'GET':
-        return render(request, pages['login'], {'error': ''})
+        if 'username' in request.session:
+            return redirect('/home/')
+
+        return render(request,
+                        pages['login'],
+                        {'error': ''},
+                        context_instance=RequestContext(request))
 
     if request.method == 'POST':
         try:
             email = request.POST['email']
-            pswrd = request.POST['pswrd']
+            provider_id = request.POST['providerid']
+            pswrd = hashlib.sha256( request.POST['uid'] ).hexdigest()
 
-            you = Users.objects.get( email=email, pswrd=pswrd )
+            you = Accounts.objects.filter( email=email, pswrd=pswrd ).first()
+            if you == None:
+                chance = Accounts.objects.filter( pswrd=pswrd ).first()
+                if chance == None:
+                    return render(request,
+                                    pages['login'],
+                                    {'error': 'Incorrect Info.'},
+                                    context_instance=RequestContext(request))
 
             request.session['username'] = you.uname
             request.session['email'] = you.email
@@ -56,7 +83,10 @@ def login(request):
             return redirect('/home/')
 
         except ObjectDoesNotExist:
-            return render(request, loginPage, {'error': "Incorrect info"})
+            return render(request,
+                            pages['login'],
+                            {'error': 'Incorrect Info.'},
+                            context_instance=RequestContext(request))
 
 # ---
 
@@ -67,18 +97,26 @@ def logout(request):
             del request.session['username']
             del request.session['email']
             request.session.flush()
-            print 'ok'
+
+            return redirect('/')
+
         except KeyError:
             pass
 
-        return redirect('/')
+
 
 # ---
 
 @csrf_protect
 def signup(request):
     if request.method == 'GET':
-        return render(request, pages['signup'], context_instance=RequestContext(request))
+        if 'username' in request.session:
+            return redirect('/home/')
+
+        return render(request,
+                        pages['signup'],
+                        {'error': ""},
+                        context_instance=RequestContext(request))
 
     if request.method == 'POST':
         try:
@@ -88,17 +126,23 @@ def signup(request):
             provider = request.POST['provider']
             provider_id = request.POST['providerid']
             img = request.POST['image']
-            pswrd = hashlib.md5( request.POST['uid'] ).hexdigest()
+            pswrd = hashlib.sha256( request.POST['uid'] ).hexdigest()
 
-            checkEmail = Accounts.objects.get(email=email)
+            checkEmail = Accounts.objects.filter(email=email).first()
             if checkEmail != None:
-                return
+                return render(request,
+                                pages['signup'],
+                                {'error': "That Email Is Already In Use."},
+                                context_instance=RequestContext(request))
 
-            checkUsername = Accounts.objects.get(uname=uname)
+            checkUsername = Accounts.objects.filter(uname=uname).first()
             if checkUsername != None:
-                return
+                return render(request,
+                                pages['signup'],
+                                {'error': "That Username Is Already In Use."},
+                                context_instance=RequestContext(request))
 
-            newUser = Accounts(uname=uname, displayname=displayName, img=img,
+            newUser = Accounts(uname=uname, displayname=displayName, avi=img,
                             provider=provider, provider_id=provider_id,
                             email=email, pswrd=pswrd)
             newUser.save()
@@ -108,8 +152,11 @@ def signup(request):
 
             return redirect('/home/')
 
-        except ObjectDoesNotExist:
-            return render(request, loginPage, {'error': "Incorrect info"})
+        except MultipleObjectsReturned:
+            return render(request,
+                            pages['signup'],
+                            {'error': "There Was An Error. Please Try Again."},
+                            context_instance=RequestContext(request))
 
 # ---
 
@@ -117,13 +164,25 @@ def signup(request):
 @csrf_protect
 def profileMain(request):
     if request.method == 'GET':
-        return render(request, pages['profileMain'], context_instance=RequestContext(request))
+        return render(request,
+                        pages['profileMain'],
+                        context_instance=RequestContext(request))
 
 # ---
 
 @csrf_protect
 def profileHome(request):
     if request.method == 'GET':
-        return render(request, pages['profileHome'], context_instance=RequestContext(request))
+        try:
+            you = Accounts.objects.get(uname = request.session['username'])
+            print you.serialize_basic
+            return render(request,
+                            pages['profileHome'],
+                            {'you': you},
+                            context_instance=RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            errorPage(request, msg)
 
 # ---

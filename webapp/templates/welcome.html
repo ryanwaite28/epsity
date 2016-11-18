@@ -54,6 +54,11 @@
               <br>
               <img style="cursor: pointer; width: 200px;" class="fadein-1 ico transition" ng-click="login('facebook')" src="http://i.stack.imgur.com/ZW4QC.png">
             </div>
+            <form class="middlr" id="login-form" enctype="multipart/form-data" action="/login/" method="POST">{% csrf_token %}
+                <input name="providerid" type="hidden" placeholder="Provider ID" required/>
+                <input name="email" type="hidden" placeholder="Email" required/>
+                <input name="uid" type="hidden" placeholder="Password" required/>
+            </form>
           </li>
           <li><a title="Sign Up!" href="/signup">Sign Up</a>
 

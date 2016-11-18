@@ -25,31 +25,38 @@
 
   <body style="background: #fbfbfb;" ng-app="epsityApp" ng-controller="epsityCtrl" class="transition">
 
-    <img style="margin-top: 20px;" class="middlr" src="/static/img/logo-2.png"/>
+    <img style="margin-top: 20px;" class="middlr icon-spinner-1 transition" src="/static/img/logo-2.png"/>
     <h3 class="text-center"><strong>Epsity</strong></h3>
     <p class="text-center">Sign Up!</p>
     <hr style="border-color: grey;"><br>
 
-    <img ng-click="signup('google')" class="middlr fadein-1 transition" id="g-sign-in" src="http://commondatastorage.googleapis.com/io-2013/presentations/808/images/sign-in-button.png">
-    <br><p class="text-center">Or</p><br>
-    <img style="cursor: pointer; width: 200px;" class="middlr fadein-1 ico transition" ng-click="signup('facebook')" src="http://i.stack.imgur.com/ZW4QC.png">
-    <br>
+    <div id="fg-div">
+      <img ng-click="signup('google')" class="middlr fadein-1 transition" id="g-sign-in" src="http://commondatastorage.googleapis.com/io-2013/presentations/808/images/sign-in-button.png">
+      <br><p class="text-center">Or</p><br>
+      <img style="cursor: pointer; width: 200px;" class="middlr fadein-1 ico transition" ng-click="signup('facebook')" src="http://i.stack.imgur.com/ZW4QC.png">
+      <br>
+    </div>
 
     <p id="s-msg" class="text-center"></p>
 
     <br>
 
     <form class="middlr" id="signup-form" enctype="multipart/form-data" action="/signup/" method="POST">{% csrf_token %}
-      <input name="displayname" type="hidden" placeholder="Display Name" required/>
-      <input name="provider" type="hidden" placeholder="Provider" required/>
-      <input name="providerid" type="hidden" placeholder="Provider ID" required/>
+        <input name="displayname" type="hidden" placeholder="Display Name" required/>
+        <input name="provider" type="hidden" placeholder="Provider" required/>
+        <input name="providerid" type="hidden" placeholder="Provider ID" required/>
+        <input name="email" type="hidden" placeholder="Email" required/>
+        <input name="uid" type="hidden" placeholder="Password" required/>
+        <input name="image" type="hidden" placeholder="image" required/>
+
       <input name="uname" type="text" placeholder="User Name" required/>
-      <input name="email" type="hidden" placeholder="Email" required/>
-      <input name="uid" type="hidden" placeholder="Password" required/>
-      <input name="image" type="hidden" placeholder="image" required/>
       <br>
       <input id="submit-btn" class="transition btn btn-success" type="button" value="Create"/>
     </form>
+
+    <br>
+
+    <p class="text-center"><strong>{{ error }}</strong></p>
 
     <img class="middlr" style="width: 125px; display: none;" id="loading-gif-1" src="/static/img/ajax-loading-big.gif">
     <br>

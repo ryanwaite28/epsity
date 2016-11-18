@@ -22,13 +22,13 @@ class Accounts(models.Model):
     provider = models.CharField(max_length = 20, default = '')
     provider_id = models.CharField(max_length = 100, default = '')
     avi = models.CharField(max_length = 500, default = '/static/hotspot/img/anon2.png')
-    background = models.CharField(max_length = 500, default = '')
+    background = models.CharField(max_length = 500, default = '/static/hotspot/img/bg-1.jpg')
     gender = models.CharField(max_length = 25, default = '')
     phone = models.CharField(max_length = 25, default = '')
 
     type = models.CharField(max_length = 20, choices = ACCOUNT_TYPES, default = '')
     status = models.CharField(max_length = 9, default = 'public') # either public, private or deleted
-    official = models.IntegerField() # 1 = True | 0 = False
+    official = models.IntegerField(default = 0) # 1 = True | 0 = False
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
