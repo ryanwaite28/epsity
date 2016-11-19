@@ -14,5 +14,5 @@ urlpatterns = [
     url(r'^home/$', views.profileHome, name='profilehome'),
     url(r'^mysettings/$', views.mySettings, name='mysettings'),
 
-    url(r'^user/deleteaccount/$', views.deleteAccount, name='deleteaccount'),
+    url(r'^user/settingsaction/$', views.settingsAction, name='settingsaction'),
 ]

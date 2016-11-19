@@ -47,17 +47,15 @@ def login(request):
         if 'username' in request.session:
             return redirect('/home/')
 
-        return render(request,
-                        pages['login'],
-                        {'error': ''},
-                        context_instance=RequestContext(request))
+        return render(request, pages['login'], {'error': ''},
+                        context_instance = RequestContext(request))
 
     if request.method == 'POST':
-        routines.loginAccount(request)
+        return routines.loginAccount(request)
 
 # ---
 
-# @csrf_protect
+@csrf_protect
 def logout(request):
     if request.method == 'POST':
         return redirect('/')
@@ -83,13 +81,11 @@ def signup(request):
         if 'username' in request.session:
             return redirect('/home/')
 
-        return render(request,
-                        pages['signup'],
-                        {'error': ""},
-                        context_instance=RequestContext(request))
+        return render(request, pages['signup'], {'error': ""},
+                        context_instance = RequestContext(request))
 
     if request.method == 'POST':
-        routines.createAccount(request)
+        return routines.createAccount(request)
 
 # ---
 
@@ -102,11 +98,8 @@ def profileMain(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            # print you.serialize_basic
-            return render(request,
-                            pages['profileMain'],
-                            {'you': you},
-                            context_instance=RequestContext(request))
+            return render(request, pages['profileMain'], {'you': you},
+                            context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -125,11 +118,8 @@ def profileHome(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            # print you.serialize_basic
-            return render(request,
-                            pages['profileHome'],
-                            {'you': you},
-                            context_instance=RequestContext(request))
+            return render(request, pages['profileHome'], {'you': you},
+                            context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -148,11 +138,8 @@ def mySettings(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            # print you.serialize_basic
-            return render(request,
-                            pages['mySettings'],
-                            {'you': you},
-                            context_instance=RequestContext(request))
+            return render(request, pages['mySettings'], {'you': you},
+                            context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -161,11 +148,16 @@ def mySettings(request):
 # ---
 
 @csrf_protect
-def deleteAccount(request):
+def settingsAction(request):
     if request.method == 'GET':
         return redirect('/')
 
     if request.method == 'POST':
-        routines.deleteAccount(request)
+
+        if request.POST['action'] == None or request.POST['action'] == '':
+            return redirect('/')
+
+        if request.POST['action'] == 'delete':
+            return routines.deleteAccount(request)
 
 # ---

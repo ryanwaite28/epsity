@@ -16,7 +16,6 @@ class Accounts(models.Model):
 
     uname = models.CharField(max_length = 20, default = '')
     displayname = models.CharField(max_length = 20, default = '')
-    description = models.CharField(max_length = 100, default = '')
     email = models.CharField(max_length = 50, default = '')
     pswrd = models.CharField(max_length = 50, default = '')
     provider = models.CharField(max_length = 20, default = '')
@@ -29,6 +28,12 @@ class Accounts(models.Model):
     type = models.CharField(max_length = 20, choices = ACCOUNT_TYPES, default = '')
     status = models.CharField(max_length = 9, default = 'public') # either public, private or deleted
     official = models.IntegerField(default = 0) # 1 = True | 0 = False
+
+    interests = models.CharField(max_length = 1725, default = '')
+    seeking = models.CharField(max_length = 1725, default = '')
+
+    bio_desc = models.CharField(max_length = 150, default = '')
+    bio_link = models.CharField(max_length = 150, default = '')
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -45,57 +50,17 @@ class Accounts(models.Model):
     class Meta:
         db_table = "accounts"
 
-# ---
-
-class AccountInfo(models.Model):
-
-    owner = models.ForeignKey(Accounts, related_name = "account_owner", on_delete = models.CASCADE)
-    ownerid = models.IntegerField(blank = False)
-
-    interests = models.CharField(max_length = 1725, default = '')
-    seeking = models.CharField(max_length = 1725, default = '')
-
-    class Meta:
-        db_table = "accountinfo"
-
-# ---
-
-class Bio(models.Model):
-
-    owner = models.ForeignKey(Accounts, related_name = "bio_owner", on_delete = models.CASCADE)
-    ownerid = models.IntegerField(blank = False)
-
-    bio_desc = models.CharField(max_length = 150, default = '')
-    bio_link = models.CharField(max_length = 150, default = '')
-
-    class Meta:
-        db_table = "bio"
-
-# ---
-
-class Stats(models.Model):
-
-    owner = models.ForeignKey(Accounts, related_name = "stats_owner", on_delete = models.CASCADE)
-    ownerid = models.IntegerField(blank = False)
-
-    following = models.ForeignKey(Accounts, related_name = "following", on_delete = models.CASCADE)
-    followers = models.ForeignKey(Accounts, related_name = "followers", on_delete = models.CASCADE)
-    groups = models.ForeignKey(Accounts, related_name = "groups", on_delete = models.CASCADE)
-    posts = models.ForeignKey(Accounts, related_name = "posts", on_delete = models.CASCADE)
-    likes = models.ForeignKey(Accounts, related_name = "likes", on_delete = models.CASCADE)
-
-    class Meta:
-        db_table = "stats"
-
-# ---
+# --- #
+# --- #
+# --- #
 
 class Follows(models.Model):
 
-    userid = models.IntegerField(blank = False)
-    user_rel = models.ForeignKey(Accounts, related_name = "user_rel", on_delete = models.CASCADE)
+    userid = models.IntegerField(blank = False, default = 0)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "user_rel", on_delete = models.CASCADE)
 
-    follow_id = models.IntegerField(blank = False)
-    follow_rel = models.ForeignKey(Accounts, related_name = "follow_rel", on_delete = models.CASCADE)
+    follow_id = models.IntegerField(blank = False, default = 0)
+    follow_rel = models.ForeignKey(Accounts, default = 0, related_name = "follow_rel", on_delete = models.CASCADE)
 
     date_created = models.DateField(auto_now_add=True)
 
@@ -114,8 +79,8 @@ class Posts(models.Model):
         ('Event', 'Event'),
     )
 
-    owner = models.ForeignKey(Accounts, related_name = "post_owner", on_delete = models.CASCADE)
-    ownerid = models.IntegerField(blank = False)
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "post_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False, default = 0)
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
@@ -135,11 +100,11 @@ class Posts(models.Model):
 
 class Comments(models.Model):
 
-    owner = models.ForeignKey(Accounts, related_name = "comment_owner", on_delete = models.CASCADE, blank = False)
-    ownerid = models.IntegerField(blank = False)
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "comment_owner", on_delete = models.CASCADE, blank = False)
+    ownerid = models.IntegerField(blank = False, default = 0)
 
-    post_id = models.IntegerField(blank = False)
-    post_rel = models.ForeignKey(Posts, on_delete = models.CASCADE, blank = False)
+    post_id = models.IntegerField(blank = False, default = 0)
+    post_rel = models.ForeignKey(Posts, default = 0, on_delete = models.CASCADE, blank = False)
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
@@ -154,11 +119,11 @@ class Comments(models.Model):
 
 class Likes(models.Model):
 
-    owner = models.ForeignKey(Accounts, related_name = "like_owner", on_delete = models.CASCADE)
-    ownerid = models.IntegerField(blank = False)
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "like_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False, default = 0)
 
-    post_id = models.IntegerField(blank = False)
-    post_rel = models.ForeignKey(Posts, on_delete = models.CASCADE, blank = False)
+    post_id = models.IntegerField(blank = False, default = 0)
+    post_rel = models.ForeignKey(Posts, default = 0, on_delete = models.CASCADE, blank = False)
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -170,8 +135,8 @@ class Likes(models.Model):
 
 class Conversations(models.Model):
 
-    owner = models.ForeignKey(Accounts, related_name = "convo_owner", on_delete = models.CASCADE)
-    ownerid = models.IntegerField(blank = False)
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "convo_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False, default = 0)
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -183,11 +148,11 @@ class Conversations(models.Model):
 
 class ConvoMembers(models.Model):
 
-    user = models.ForeignKey(Accounts, related_name = "convo_user", on_delete = models.CASCADE)
-    userid = models.IntegerField(blank = False)
+    user = models.ForeignKey(Accounts, default = 0, related_name = "convo_user", on_delete = models.CASCADE)
+    userid = models.IntegerField(blank = False, default = 0)
 
-    convo_id = models.IntegerField(blank = False)
-    convo_rel = models.ForeignKey(Conversations, related_name = "convo_member_rel", on_delete = models.CASCADE)
+    convo_id = models.IntegerField(blank = False, default = 0)
+    convo_rel = models.ForeignKey(Conversations, default = 0, related_name = "convo_member_rel", on_delete = models.CASCADE)
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -199,11 +164,11 @@ class ConvoMembers(models.Model):
 
 class ConvoMessages(models.Model):
 
-    user = models.ForeignKey(Accounts, related_name = "convo_user_msg", on_delete = models.CASCADE)
-    userid = models.IntegerField(blank = False)
+    user = models.ForeignKey(Accounts, default = 0, related_name = "convo_user_msg", on_delete = models.CASCADE)
+    userid = models.IntegerField(blank = False, default = 0)
 
-    convo_id = models.IntegerField(blank = False)
-    convo_rel = models.ForeignKey(Conversations, related_name = "convo_msg_rel", on_delete = models.CASCADE)
+    convo_id = models.IntegerField(blank = False, default = 0)
+    convo_rel = models.ForeignKey(Conversations, default = 0, related_name = "convo_msg_rel", on_delete = models.CASCADE)
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
@@ -218,18 +183,14 @@ class ConvoMessages(models.Model):
 
 class Notifications(models.Model):
 
-    owner = models.ForeignKey(Accounts, related_name = "notif_owner", on_delete = models.CASCADE)
-    ownerid = models.IntegerField(blank = False)
-
     type = models.CharField(max_length = 1725, default = '')
     n_type = models.CharField(max_length = 1725, default = '')
 
+    sender_id = models.IntegerField(blank = False, default = 0)
+    sender_rel = models.ForeignKey(Accounts, default = 0, related_name = "notif_sender_owner", on_delete = models.CASCADE)
 
-    sender_id = models.IntegerField(blank = False)
-    sender_rel = models.ForeignKey(Accounts, related_name = "notif_sender_owner", on_delete = models.CASCADE)
-
-    recipient_id = models.IntegerField(blank = False)
-    recipient_rel = models.ForeignKey(Accounts, related_name = "notif_recipient_owner", on_delete = models.CASCADE)
+    recipient_id = models.IntegerField(blank = False, default = 0)
+    recipient_rel = models.ForeignKey(Accounts, default = 0, related_name = "notif_recipient_owner", on_delete = models.CASCADE)
 
     text = models.CharField(max_length = 1725, default = '')
     date_created = models.DateField(auto_now=True)
@@ -244,5 +205,35 @@ class Notifications(models.Model):
 
     class Meta:
         db_table = "notifications"
+
+# ---
+
+class Groups(models.Model):
+
+    owner_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False, default = 0)
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = "groups"
+
+# ---
+
+class GroupMembers(models.Model):
+
+    group_id = models.IntegerField(blank = False, default = 0)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_member_rel", on_delete = models.CASCADE)
+
+    userid = models.IntegerField(blank = False, default = 0)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user", on_delete = models.CASCADE)
+
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = "group_members"
 
 # ---

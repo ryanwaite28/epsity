@@ -11,13 +11,15 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
 
 from WebTools import randomVal, uploadImage, processImage, generateState
-from models import Accounts, AccountInfo, Bio, Stats, Follows
+from models import Accounts
 
 from vaults import pages
 
 # --- -------- --- #
 # --- Routines --- #
 # --- -------- --- #
+
+
 
 def loginAccount(request):
     try:
@@ -29,8 +31,7 @@ def loginAccount(request):
         if you == None:
             chance = Accounts.objects.filter( pswrd=pswrd ).first()
             if chance == None:
-                return render(request,
-                                pages['login'],
+                return render(request, pages['login'],
                                 {'error': 'Incorrect Info.'},
                                 context_instance=RequestContext(request))
 
@@ -40,9 +41,7 @@ def loginAccount(request):
         return redirect('/home/')
 
     except ObjectDoesNotExist:
-        return render(request,
-                        pages['login'],
-                        {'error': 'Incorrect Info.'},
+        return render(request, pages['login'], {'error': 'Incorrect Info.'},
                         context_instance=RequestContext(request))
 
 
