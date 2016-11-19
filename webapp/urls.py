@@ -12,4 +12,7 @@ urlpatterns = [
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^main/$', views.profileMain, name='profilemain'),
     url(r'^home/$', views.profileHome, name='profilehome'),
+    url(r'^mysettings/$', views.mySettings, name='mysettings'),
+
+    url(r'^user/deleteaccount/$', views.deleteAccount, name='deleteaccount'),
 ]

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Epsity | Settings</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load staticfiles %}
+
+  {% include 'dependencies-1.html' %}
+
+  <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+  <script src="/static/js/grand.js"></script>
+  <script src="/static/js/profile.js"></script>
+</head>
+
+  <body ng-app="epsityApp" ng-controller="epsityCtrl" class="transition">
+
+    {% include 'topbar-1.html' %}
+
+    <!--  -->
+
+    <div id="main-container">
+      <div id="mc-inner" class="sdw-1">
+        <div class="container-fluid">
+
+          <div class="row">
+            <div class="col-md-12" style="height: 25px;"></div>
+            <!--  -->
+
+            <div class="col-md-3">
+              <div class="padd-1 mk-rel sbm-1">
+                <img class="polaroid-2 middlr" src="{{ you.avi }}"/>
+                <p class="text-center">{{ you.uname }}</p>
+              </div>
+              <hr>
+              <div class="padd-1 mk-rel sbm-1">
+                <ul class="nav nav-pills nav-stacked text-center">
+                  <li role="presentation" class="active"><a data-toggle="tab" href="#bio-pane">Bio</a></li>
+                  <li role="presentation"><a data-toggle="tab" href="#int-pane">Interests</a></li>
+                  <li role="presentation"><a data-toggle="tab" href="#del-pane">Delete</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="col-md-9" style="min-height: 75vh;">
+              <div>
+                <div class="tab-content">
+                  <div id="bio-pane" class="tab-pane fade in active">
+                    <h3 class="text-center">Bio</h3>
+                    <hr>
+
+                    <p>Edit Your Bio<br>Max Length: 150 Characters.</p>
+                    <form class="" id="bio-form">
+                      <textarea name="bio" placeholder="Bio Message..."/></textarea>
+                    </form>
+                  </div>
+                  <div id="int-pane" class="tab-pane fade">
+                    <h3 class="text-center">Interests</h3>
+                    <hr>
+                  </div>
+                  <div id="del-pane" class="tab-pane fade">
+                    <h3 class="text-center">Delete</h3>
+                    <hr>
+                    <p>Delete Account?</p>
+                    <a title="" href="#" class="btn btn-danger" ng-click="deleteAccount()">Delete <i class="fa fa-trash" aria-hidden="true"></i></a>
+                    <form class="" id="deleteaccount-form">{% csrf_token %}
+                      <input type="hidden" name="action" value="delete"/>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+</html>

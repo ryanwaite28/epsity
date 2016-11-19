@@ -14,16 +14,37 @@ $(document).ready(function(){
 	});
 
   $('.switch-div-ctrl').click(function(){
-
     var id = '#prof-' + $(this).text().toLowerCase() + '-div';
     //console.log( id );
     $('.switch-div').hide();
     $(id).show();
-
   });
   $('.switch-div-x').click(function(){
-
     $(this).parent().parent().hide();
+  });
+
+  var width = $(window).width();
+  if( width < 625 ) {
+    $('#menu-c').show();
+    $('#tb-collapse').removeClass('in');
+  }
+  else {
+    $('#menu-c').hide();
+    $('#tb-collapse').addClass('in');
+  }
+
+  $(window).resize(function(){
+
+    var width = $(window).width();
+
+    if( width < 625 ) {
+      $('#menu-c').show();
+      $('#tb-collapse').removeClass('in');
+    }
+    else {
+      $('#menu-c').hide();
+      $('#tb-collapse').addClass('in');
+    }
 
   });
 
@@ -50,6 +71,16 @@ App.config(['$interpolateProvider', function($interpolateProvider) {
 App.controller('epsityCtrl', ['$scope', function($scope) {
 
   window.scope = $scope;
+
+  $scope.deleteAccount = function() {
+    var ask = confirm('Are you sure you want to delete your account? All of your info will be deleted. This action is irreversable.');
+    if( ask == true ) {
+      $('#deleteaccount-form').submit();
+    }
+    else {
+      // Do Nothing
+    }
+  }
 
 
 

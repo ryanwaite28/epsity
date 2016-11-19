@@ -50,6 +50,7 @@ class Accounts(models.Model):
 class AccountInfo(models.Model):
 
     owner = models.ForeignKey(Accounts, related_name = "account_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False)
 
     interests = models.CharField(max_length = 1725, default = '')
     seeking = models.CharField(max_length = 1725, default = '')
@@ -62,6 +63,7 @@ class AccountInfo(models.Model):
 class Bio(models.Model):
 
     owner = models.ForeignKey(Accounts, related_name = "bio_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False)
 
     bio_desc = models.CharField(max_length = 150, default = '')
     bio_link = models.CharField(max_length = 150, default = '')
@@ -74,6 +76,7 @@ class Bio(models.Model):
 class Stats(models.Model):
 
     owner = models.ForeignKey(Accounts, related_name = "stats_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False)
 
     following = models.ForeignKey(Accounts, related_name = "following", on_delete = models.CASCADE)
     followers = models.ForeignKey(Accounts, related_name = "followers", on_delete = models.CASCADE)
@@ -88,7 +91,7 @@ class Stats(models.Model):
 
 class Follows(models.Model):
 
-    user_id = models.IntegerField(blank = False)
+    userid = models.IntegerField(blank = False)
     user_rel = models.ForeignKey(Accounts, related_name = "user_rel", on_delete = models.CASCADE)
 
     follow_id = models.IntegerField(blank = False)
@@ -112,6 +115,7 @@ class Posts(models.Model):
     )
 
     owner = models.ForeignKey(Accounts, related_name = "post_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False)
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
@@ -132,6 +136,7 @@ class Posts(models.Model):
 class Comments(models.Model):
 
     owner = models.ForeignKey(Accounts, related_name = "comment_owner", on_delete = models.CASCADE, blank = False)
+    ownerid = models.IntegerField(blank = False)
 
     post_id = models.IntegerField(blank = False)
     post_rel = models.ForeignKey(Posts, on_delete = models.CASCADE, blank = False)
@@ -150,6 +155,7 @@ class Comments(models.Model):
 class Likes(models.Model):
 
     owner = models.ForeignKey(Accounts, related_name = "like_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False)
 
     post_id = models.IntegerField(blank = False)
     post_rel = models.ForeignKey(Posts, on_delete = models.CASCADE, blank = False)
@@ -165,6 +171,7 @@ class Likes(models.Model):
 class Conversations(models.Model):
 
     owner = models.ForeignKey(Accounts, related_name = "convo_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False)
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -177,6 +184,7 @@ class Conversations(models.Model):
 class ConvoMembers(models.Model):
 
     user = models.ForeignKey(Accounts, related_name = "convo_user", on_delete = models.CASCADE)
+    userid = models.IntegerField(blank = False)
 
     convo_id = models.IntegerField(blank = False)
     convo_rel = models.ForeignKey(Conversations, related_name = "convo_member_rel", on_delete = models.CASCADE)
@@ -192,6 +200,7 @@ class ConvoMembers(models.Model):
 class ConvoMessages(models.Model):
 
     user = models.ForeignKey(Accounts, related_name = "convo_user_msg", on_delete = models.CASCADE)
+    userid = models.IntegerField(blank = False)
 
     convo_id = models.IntegerField(blank = False)
     convo_rel = models.ForeignKey(Conversations, related_name = "convo_msg_rel", on_delete = models.CASCADE)
@@ -210,6 +219,7 @@ class ConvoMessages(models.Model):
 class Notifications(models.Model):
 
     owner = models.ForeignKey(Accounts, related_name = "notif_owner", on_delete = models.CASCADE)
+    ownerid = models.IntegerField(blank = False)
 
     type = models.CharField(max_length = 1725, default = '')
     n_type = models.CharField(max_length = 1725, default = '')

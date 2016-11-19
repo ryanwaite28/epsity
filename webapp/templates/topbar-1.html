@@ -11,8 +11,20 @@
 
     <div id="tb-collapse" class="transition collapse in">
 
-      <div id="p-sd">
+      <!-- <div id="p-sd">
         <input id="p-sb" type="text" placeholder="Search"/>
+      </div>
+      <div id="p-s-btn-c">
+        <button id="p-s-btn" class=""><i class="fa fa-search" aria-hidden="true"></i></button>
+      </div> -->
+
+      <div id="p-sd">
+        <div class="input-group" id="p-sb2">
+          <input type="text" class="form-control transition" placeholder="Search for...">
+          <span class="input-group-btn transition">
+            <button class="btn btn-default transition" type="button">Go!</button>
+          </span>
+        </div>
       </div>
 
       <div id="p-ld">
@@ -57,7 +69,7 @@
                 <li><a title="" href="">FAQ</a></li>
                 <li><a title="" href="">Help</a></li>
                 <li><a title="" href="">Tools</a></li>
-                <li><a title="" href="">Setings</a></li>
+                <li><a title="Settings Page" href="/mysettings">Setings</a></li>
                 <li><a title="Log Out" href="/logout">Logout</a></li>
               </ul>
             </div>
@@ -65,6 +77,10 @@
         </ul>
       </div>
 
+    </div>
+
+    <div id="menu-c" class="transition">
+      <i id="tb-menu-btn" class="fa fa-bars transition" aria-hidden="true" data-toggle="collapse" data-target="#tb-collapse"></i>
     </div>
 
   </div>

@@ -149,6 +149,15 @@
     border: 1px solid transparent;
 }
 
+.polaroid-2 {
+    width: 150px;
+    max-width: 95%;
+    border: 2px solid grey;
+    border-radius: 1px;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+
 .mk-rel {
   position: relative;
 }
