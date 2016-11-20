@@ -20,3 +20,8 @@ pages = {
     'profileVideo': 'profile-video.html',
     'profileAudio': 'profile-audio.html',
 }
+
+settingsActions = [
+    'delete',
+    'update-bio'
+]

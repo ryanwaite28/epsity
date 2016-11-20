@@ -195,3 +195,14 @@
 .bg-white {
   background: white;
 }
+
+.block {
+  display: block;
+}
+
+.input-t-s1 {
+  border-radius: 3px;
+  padding: 3px;
+  border: 1px solid black;
+  color: grey;
+}

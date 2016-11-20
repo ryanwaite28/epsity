@@ -1,3 +1,21 @@
+var App = angular.module("epsityApp", ["firebase"]);
+
+App.factory("travelr", ["$firebaseArray",
+	function($firebaseArray) {
+   	var ref = new Firebase("https://the-travelr.firebaseio.com/");
+
+   	// this uses AngularFire to create the synchronized array
+    return $firebaseArray(ref);
+	}
+]);
+
+App.config(['$interpolateProvider', function($interpolateProvider) {
+  $interpolateProvider.startSymbol('{[');
+  $interpolateProvider.endSymbol(']}');
+}]);
+
+//
+
 $(document).ready(function(){
 
   $('li').addClass('transition');
@@ -29,5 +47,13 @@ $(document).ready(function(){
     }
 
   });
+
+	var csrftoken = Cookies.get('csrftoken');
+	
+	$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    }
+	});
 
 });

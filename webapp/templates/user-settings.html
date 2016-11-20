@@ -14,9 +14,10 @@
   <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
   <script src="/static/js/grand.js"></script>
   <script src="/static/js/profile.js"></script>
+  <script src="/static/js/controllers/user-settings-ctrl.js"></script>
 </head>
 
-  <body ng-app="epsityApp" ng-controller="epsityCtrl" class="transition">
+  <body ng-app="epsityApp" ng-controller="settingsCtrl" class="transition">
 
     {% include 'topbar-1.html' %}
 
@@ -49,18 +50,66 @@
               <div>
                 <div class="tab-content">
                   <div id="bio-pane" class="tab-pane fade in active">
-                    <h3 class="text-center">Bio</h3>
-                    <hr>
+                    <div>
+                      <h3 class="text-center">Bio</h3>
+                      <hr>
+                      <p>Edit Your Bio<br>Max Length: 150 Characters.</p>
+                      <form class="" id="bio-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                        <textarea id="update-bio-content" name="bio" placeholder="Bio Message...">{{ bio.desc }}</textarea>
+                        <input type="hidden" name="action" value="update bio"/>
+                        <br>
+                        <input ng-hide="updateBioBtn" title="Update Bio" class="block transition btn btn-info" type="button" value="Update" ng-click="updateAccountBio()"/>
+                        <br>
+                        <img width="125px" src="/static/img/ajax-loading-big.gif" ng-hide="updateBioImg"/>
+                        <p>{[ updateBioMsg ]}</p>
+                      </form>
+                    </div>
+                  </div>
 
-                    <p>Edit Your Bio<br>Max Length: 150 Characters.</p>
-                    <form class="" id="bio-form">
-                      <textarea name="bio" placeholder="Bio Message..."/></textarea>
-                    </form>
-                  </div>
                   <div id="int-pane" class="tab-pane fade">
-                    <h3 class="text-center">Interests</h3>
+                    <h3 class="text-center">Info</h3>
                     <hr>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="col-md-12"><h4>Interests</h4><br></div>
+                        <div class="col-md-4">
+                          <input class="block input-t-s1" type="text" placeholder="Add Interest" ng-model="newInterest"/><br>
+                          <input class="block btn btn-info transition" type="button" value="Add" ng-click="addNewInterest()"/><br>
+                          <p><strong>{[ interestMsg ]}</strong></p>
+                        </div>
+                        <div class="col-md-8">
+                          <ul class="ul-raw user-s-list" id="">
+                            <li class="transition" ng-repeat="i in interestsList">
+                              <p>{[ i ]}</p>
+                              <span class="btn btn-warning transition">Edit</span>
+                              <span class="btn btn-danger transition">Delete</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div class="col-md-12"><hr></div>
+
+                      <div class="col-md-12">
+                        <div class="col-md-12"><h4>Seeking</h4><br></div>
+                        <div class="col-md-4">
+                          <input class="block input-t-s1" type="text" placeholder="Add Seeking" ng-model="newSeeking"/><br>
+                          <input class="block btn btn-info transition" type="button" value="Add" ng-click="addNewSeeking()"/><br>
+                          <p><strong>{[ seekingMsg ]}</strong></p>
+                        </div>
+                        <div class="col-md-8">
+                          <ul class="ul-raw user-s-list" id="">
+                            <li class="transition" ng-repeat="s in seekingList">
+                              <p>{[ s ]}</p>
+                              <span class="btn btn-warning transition">Edit</span>
+                              <span class="btn btn-danger transition">Delete</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
                   <div id="del-pane" class="tab-pane fade">
                     <h3 class="text-center">Delete</h3>
                     <hr>

@@ -34,6 +34,7 @@ class Accounts(models.Model):
 
     bio_desc = models.CharField(max_length = 150, default = '')
     bio_link = models.CharField(max_length = 150, default = '')
+    #bio_link_name = models.CharField(max_length = 100, default = '')
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -45,6 +46,15 @@ class Accounts(models.Model):
             'userid': self.id,
             'uname': self.uname,
             'avi': self.avi
+        }
+
+    @property
+    def get_bio(self):
+         # Returns Data Object In Proper Format
+        return {
+            'desc': self.bio_desc,
+            'link': self.bio_link,
+            #'linkName': self.bio_link_name,
         }
 
     class Meta:

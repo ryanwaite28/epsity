@@ -2,9 +2,11 @@
 # --- Imports --- #
 # --- --- --- --- #
 
-import os, sys, cgi, random, string, hashlib
+import os, sys, cgi, random, string, hashlib, json
 from django.shortcuts import render, redirect
 from django.template import RequestContext
+from django.http import JsonResponse
+from django.core import serializers
 from django.http import HttpResponse , HttpResponseRedirect
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -14,7 +16,7 @@ from WebTools import randomVal, uploadImage, processImage, generateState
 from models import Accounts
 
 import routines
-from vaults import pages
+from vaults import pages, settingsActions
 
 # --- ----- --- #
 # --- Views --- #
@@ -118,7 +120,8 @@ def profileHome(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            return render(request, pages['profileHome'], {'you': you},
+            return render(request, pages['profileHome'],
+                            {'you': you.serialize_basic, 'bio': you.get_bio},
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -138,7 +141,8 @@ def mySettings(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            return render(request, pages['mySettings'], {'you': you},
+            return render(request, pages['mySettings'],
+                            {'you': you.serialize_basic, 'bio': you.get_bio},
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -149,15 +153,41 @@ def mySettings(request):
 
 @csrf_protect
 def settingsAction(request):
+    ''' This View Is Intended To Be Used As An AJAX Handler '''
+
     if request.method == 'GET':
         return redirect('/')
 
     if request.method == 'POST':
+        try:
+            print '--- update bio attempt'
+            print '--- ajax data'
+            print request.body
+            data = json.loads(request.body)
 
-        if request.POST['action'] == None or request.POST['action'] == '':
-            return redirect('/')
+            # return JsonResponse({'msg': 'this', 'obj':data})
 
-        if request.POST['action'] == 'delete':
-            return routines.deleteAccount(request)
+            # ------------ #
+
+            if data['action'] == None:
+                return json.dumps({'msg': 'Action Message Is Missing...'})
+
+            if data['action'] == '':
+                return json.dumps({'msg': 'Action Message Is Empty/Unidentifiable...'})
+
+            # ------------ #
+
+            if data['action'] == 'delete account':
+                return routines.deleteAccount(request)
+
+            if data['action'] == 'update bio':
+                if data['bio'] == '' or data['bio'] == None:
+                    return routines.updateAccountBio(request, '*No Bio...')
+
+                return routines.updateAccountBio(request, data['bio'])
+
+
+        except KeyError, AttributeError:
+            return json.dumps({'msg': 'Failed To Load JSON Data...'})
 
 # ---

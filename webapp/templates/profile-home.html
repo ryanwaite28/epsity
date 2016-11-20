@@ -14,9 +14,10 @@
   <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
   <script src="/static/js/grand.js"></script>
   <script src="/static/js/profile.js"></script>
+  <script src="/static/js/controllers/profile-home-ctrl.js"></script>
 </head>
 
-  <body ng-app="epsityApp" ng-controller="epsityCtrl" class="transition">
+  <body ng-app="epsityApp" ng-controller="profileHomeCtrl" class="transition">
 
     {% include 'topbar-1.html' %}
 
@@ -72,7 +73,7 @@
                 <h3 class="text-center text-lightgrey"><strong>Bio</strong></h3>
                 <hr>
                 <div class="">
-                  <p class="text-lightgrey">Write Bio...</p>
+                  <p class="text-lightgrey">{{ bio.desc }}</p>
                 </div>
               </div>
             </div>
@@ -94,7 +95,7 @@
 
           <div style="min-height: 100vh;" class="row padd-2 bg-white">
             <div class="col-md-3" id="prof-sidebar">
-              
+
             </div>
             <div class="col-md-9" id="prof-mainbar">
               <div style="min-height: 50vh;" class="padd-1 mk-rel sdw-1">

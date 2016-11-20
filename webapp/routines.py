@@ -2,8 +2,9 @@
 # --- Imports --- #
 # --- --- --- --- #
 
-import os, sys, cgi, random, string, hashlib
+import os, sys, cgi, random, string, hashlib, json
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.template import RequestContext
 from django.http import HttpResponse , HttpResponseRedirect
 from django.contrib.sessions.models import Session
@@ -19,6 +20,16 @@ from vaults import pages
 # --- Routines --- #
 # --- -------- --- #
 
+
+
+def errorPage(request, msg=None):
+    if msg == None or msg == '' or request.method == 'POST':
+        print '--- Error Page Redirecting...'
+        return redirect('/')
+
+    return render(request,
+                    {'errorMessage', msg},
+                    pages['error'])
 
 
 def loginAccount(request):
@@ -90,8 +101,23 @@ def createAccount(request):
 def deleteAccount(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
-        routines.deleteAccount(request)
+
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
         errorPage(request, msg)
+
+
+
+def updateAccountBio(request, content):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        you.bio_desc = cgi.escape(content)
+        you.save( update_fields=['bio_desc'] )
+
+
+        return JsonResponse({'msg':'successful', 'bio':content})
+
+    except ObjectDoesNotExist:
+        error = 'User Account Not Found.'
+        return JsonResponse({'msg':'unsuccessful - error', 'error': msg})

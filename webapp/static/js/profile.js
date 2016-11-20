@@ -48,40 +48,4 @@ $(document).ready(function(){
 
   });
 
-
 });
-
-var App = angular.module("epsityApp", ["firebase"]);
-
-App.factory("travelr", ["$firebaseArray",
-	function($firebaseArray) {
-
-   	var ref = new Firebase("https://the-travelr.firebaseio.com/");
-
-   	// this uses AngularFire to create the synchronized array
-    return $firebaseArray(ref);
-	}
-]);
-
-App.config(['$interpolateProvider', function($interpolateProvider) {
-  $interpolateProvider.startSymbol('{[');
-  $interpolateProvider.endSymbol(']}');
-}]);
-
-App.controller('epsityCtrl', ['$scope', function($scope) {
-
-  window.scope = $scope;
-
-  $scope.deleteAccount = function() {
-    var ask = confirm('Are you sure you want to delete your account? All of your info will be deleted. This action is irreversable.');
-    if( ask == true ) {
-      $('#deleteaccount-form').submit();
-    }
-    else {
-      // Do Nothing
-    }
-  }
-
-
-
-}])
