@@ -48,4 +48,10 @@ $(document).ready(function(){
 
   });
 
+  var interests = $('#interests').text().split(' ').join(', ');
+  $('#interests').text( interests );
+
+  var seeking = $('#seeking').text().split(' ').join(', ');
+  $('#seeking').text( seeking );
+
 });

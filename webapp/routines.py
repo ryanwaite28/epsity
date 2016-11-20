@@ -121,3 +121,49 @@ def updateAccountBio(request, content):
     except ObjectDoesNotExist:
         error = 'User Account Not Found.'
         return JsonResponse({'msg':'unsuccessful - error', 'error': msg})
+
+
+def updateAccountInterests(request, content):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        you.interests = cgi.escape(content)
+        you.save( update_fields=['interests'] )
+
+
+        return JsonResponse({'msg':'successful', 'interests':content.split()})
+
+    except ObjectDoesNotExist:
+        error = 'User Account Not Found.'
+        return JsonResponse({'msg':'unsuccessful - error', 'error': msg})
+
+
+def updateAccountSeeking(request, content):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        you.seeking = cgi.escape(content)
+        you.save( update_fields=['seeking'] )
+
+
+        return JsonResponse({'msg':'successful', 'seeking':content.split()})
+
+    except ObjectDoesNotExist:
+        error = 'User Account Not Found.'
+        return JsonResponse({'msg':'unsuccessful - error', 'error': msg})
+
+
+
+def loadSettingsLists(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        resp = {
+            'msg': 'lists',
+            'interests': you.interests.split(),
+            'seeking': you.seeking.split()
+        }
+
+        return JsonResponse(resp)
+
+    except ObjectDoesNotExist:
+        error = 'User Account Not Found.'
+        return JsonResponse({'msg':'unsuccessful - error', 'error': msg})

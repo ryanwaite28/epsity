@@ -211,12 +211,14 @@ body {
 
 .switch-div {
   display: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4)
 }
 
 .switch-div-x {
   color: lightgrey;
   font-size: 21px;
   cursor: pointer;
+
 }
 .switch-div-x:hover {
   color: green;
@@ -266,9 +268,10 @@ body {
   margin: 0px 10px 10px 0px;
   padding: 15px;
   background: lightgrey;
+  width: 160px;
 }
 .user-s-list li p {
-  font-family: Helvetica;
+  font-weight: bold;
 }
 .user-s-list li:hover {
   background: grey;

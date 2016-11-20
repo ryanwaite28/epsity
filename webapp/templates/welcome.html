@@ -6,19 +6,13 @@
     <meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
     {% load staticfiles %}
-    <link rel="stylesheet" type="text/css" href="https://ryanwaite28.github.io/my-cdn/css/bootstrap.css"/>
-    <link rel="stylesheet" type="text/css" href="https://ryanwaite28.github.io/my-cdn/css/emerald.css"/>
-    <link rel="stylesheet" type="text/css" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
+
+    {% include 'dependencies-1.html' %}
+
     <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
     <link rel="stylesheet" type="text/css" href="/static/css/welcome.css">
     <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
-    <script src="https://ryanwaite28.github.io/my-cdn/js/jquery.js"></script>
-    <script src="https://ryanwaite28.github.io/my-cdn/js/parallax/parallax.min.js"></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <script src="https://ryanwaite28.github.io/my-cdn/js/bootstrap.js"></script>
-    <script src="https://ryanwaite28.github.io/my-cdn/js/angular.js"></script>
-    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
-		<script src="https://cdn.firebase.com/libs/angularfire/1.1.4/angularfire.min.js"></script>
+
     <script src="/static/js/grand.js"></script>
     <script src="/static/js/welcome.js"></script>
   </head>
@@ -119,7 +113,7 @@
         <div class="col-sm-12">
           <div class="spacer-1 middlr">
             <h3 class="bh-text">Get Discovered!</h3>
-            <img class="middlr" src="/static/img/logo-2.png" style="margin-bottom: 35px; margin-top: -20px; position: relative;">
+            <img class="middlr icon-spinner-1 transition" src="/static/img/logo-2.png" style="margin-bottom: 35px; margin-top: -20px; position: relative;">
           </div>
         </div>
         <div class="col-md-4">

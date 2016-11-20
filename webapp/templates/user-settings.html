@@ -76,13 +76,20 @@
                           <input class="block input-t-s1" type="text" placeholder="Add Interest" ng-model="newInterest"/><br>
                           <input class="block btn btn-info transition" type="button" value="Add" ng-click="addNewInterest()"/><br>
                           <p><strong>{[ interestMsg ]}</strong></p>
+                          <br>
+                          <div ng-hide="editInterestForm">
+                            <p>Edit Interest</p>
+                            <input class="block input-t-s1" type="text" placeholder="Edit Interest" ng-model="editInterest"/><br>
+                            <input class="btn btn-info transition" type="button" value="Edit" ng-click="confirmEditInterest()"/>
+                            <input class="btn btn-default transition" type="button" value="Cancel" ng-click="cancelAddItem('interest')"/><br>
+                          </div>
                         </div>
                         <div class="col-md-8">
                           <ul class="ul-raw user-s-list" id="">
                             <li class="transition" ng-repeat="i in interestsList">
                               <p>{[ i ]}</p>
-                              <span class="btn btn-warning transition">Edit</span>
-                              <span class="btn btn-danger transition">Delete</span>
+                              <span class="btn btn-warning transition" ng-click="editInterestItem(this.i)">Edit</span>
+                              <span class="btn btn-danger transition" ng-click="deleteListItem(this.i, 'interest')">Delete</span>
                             </li>
                           </ul>
                         </div>
@@ -96,13 +103,20 @@
                           <input class="block input-t-s1" type="text" placeholder="Add Seeking" ng-model="newSeeking"/><br>
                           <input class="block btn btn-info transition" type="button" value="Add" ng-click="addNewSeeking()"/><br>
                           <p><strong>{[ seekingMsg ]}</strong></p>
+                          <br>
+                          <div ng-hide="editSeekingForm">
+                            <p>Edit Seeking</p>
+                            <input class="block input-t-s1" type="text" placeholder="Edit Seeking" ng-model="editSeeking"/><br>
+                            <input class="btn btn-info transition" type="button" value="Edit" ng-click="confirmEditSeeking()"/>
+                            <input class="btn btn-default transition" type="button" value="Cancel" ng-click="cancelAddItem('seeking')"/><br>
+                          </div>
                         </div>
                         <div class="col-md-8">
                           <ul class="ul-raw user-s-list" id="">
                             <li class="transition" ng-repeat="s in seekingList">
                               <p>{[ s ]}</p>
-                              <span class="btn btn-warning transition">Edit</span>
-                              <span class="btn btn-danger transition">Delete</span>
+                              <span class="btn btn-warning transition" ng-click="editSeekingItem(this.s)">Edit</span>
+                              <span class="btn btn-danger transition" ng-click="deleteListItem(this.s, 'seeking')">Delete</span>
                             </li>
                           </ul>
                         </div>
@@ -122,6 +136,8 @@
                 </div>
               </div>
             </div>
+
+            <div class="col-md-12"><br></div>
           </div>
 
         </div>

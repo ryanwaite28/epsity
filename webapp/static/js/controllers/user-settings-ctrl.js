@@ -3,21 +3,39 @@
 App.controller('settingsCtrl', ['$scope', function($scope) {
 
   window.scope = $scope;
-  var badChars = [
-    '@', '#', '$', '%', '^',
-    '^', '&', '*', '(', ')',
-    '-', '_', '=', '+', '`',
-    '~', '[', ']', '{', '}',
-    '\\', '|', '/', '?', '.',
-    ',', '<', '>'
-  ];
-
-  var wordsOnlyRegex = /^[a-zA-A]{3,25}/;
+  var wordsOnlyRegex = /^[a-zA-Z]{3,50}/;
 
   //
 
   $scope.interestsList = [];
   $scope.seekingList = [];
+
+  //
+
+  $(document).ready(function(){
+    var csrftoken = Cookies.get('csrftoken');
+
+    var obj = {
+      action: 'load settings lists',
+      csrfmiddlewaretoken: csrftoken,
+    }
+
+    $.ajax({
+      url: '/user/settingsaction/',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(obj),
+      success: function(resp) {
+        (function(){
+          // console.log(resp);
+          $scope.interestsList = resp.interests;
+          $scope.seekingList = resp.seeking;
+
+          $scope.$apply();
+        })()
+      }
+    });
+  });
 
   //
 
@@ -53,12 +71,13 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
       return null;
     }
 
+    var csrftoken = Cookies.get('csrftoken');
+
     var obj = {
       bio: bio,
       action: 'update bio',
       csrfmiddlewaretoken: csrftoken,
     }
-    var csrftoken = Cookies.get('csrftoken');
 
     $scope.updateBioImg = false;
     $scope.updateBioBtn = true;
@@ -101,6 +120,10 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
       $scope.interestMsg = 'You Already Have This Interest Word.';
       return;
     }
+    /*else if( interest.indexOf(' ') != -1 ) {
+      $scope.interestMsg = 'No Spaces In Interest Word.';
+      return;
+    }*/
 
     $scope.interestsList.push( interest );
     $scope.interestsList.sort();
@@ -112,12 +135,7 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
       $scope.$apply();
     } , 3000)
 
-    var l = '';
-    for( var key in $scope.interestsList ) {
-      l += $scope.interestsList[key] + ' ';
-    }
-
-    console.log(l);
+    $scope.updateInterestsList();
 
   }
 
@@ -133,34 +151,229 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
     var seeking = $scope.newSeeking.toLowerCase();
 
     if( seeking == undefined || seeking == '' ) {
-      $scope.seekingMsg = 'Please Input An Interest Word';
+      $scope.seekingMsg = 'Please Input A Seeking Word';
       return;
     }
     else if( !wordsOnlyRegex.test(seeking) ) {
-      $scope.seekingMsg = 'Interest Words Must Be 3-25 Characters, Letters Only.';
+      $scope.seekingMsg = 'Seeking Words Must Be 3-25 Characters, Letters Only.';
       return;
     }
     else if( $scope.seekingList.indexOf(seeking) != -1 ) {
       $scope.seekingMsg = 'You Already Have This Seeking Word.';
       return;
     }
+    /*else if( seeking.indexOf(' ') != -1 ) {
+      $scope.seekingMsg = 'No Spaces In Seeking Word.';
+      return;
+    }*/
 
     $scope.seekingList.push( seeking );
     $scope.seekingList.sort();
     $scope.newSeeking = '';
-    $scope.seekingtMsg = 'New Seeking Added!';
+    $scope.seekingMsg = 'New Seeking Added!';
 
     setTimeout(function(){
       $scope.seekingMsg = '';
       $scope.$apply();
     } , 3000)
 
+    $scope.updateSeekingList();
+
+  }
+
+  //
+
+  $scope.deleteListItem = function(item, msg) {
+    if(msg == '' || msg == undefined) { return }
+
+    if(msg == 'interest') {
+      var index = $scope.interestsList.indexOf(item);
+      $scope.interestsList.splice(index, 1);
+      $scope.interestMsg = 'Interest Word Deleted!';
+      $scope.editInterestForm = true;
+      $scope.editInterest = '';
+
+      setTimeout(function(){
+        $scope.interestMsg = '';
+        $scope.$apply();
+      } , 3000)
+      $scope.updateInterestsList();
+    }
+    else if(msg == 'seeking') {
+      var index = $scope.interestsList.indexOf(item);
+      $scope.seekingList.splice(index, 1);
+      $scope.seekingMsg = 'Seeking Word Deleted!';
+      $scope.editSeekingForm = true;
+      $scope.editSeeking = '';
+
+      setTimeout(function(){
+        $scope.seekingMsg = '';
+        $scope.$apply();
+      } , 3000)
+      $scope.updateSeekingList();
+    }
+  }
+
+  //
+
+  $scope.editInterestForm = true;
+  $scope.editSeekingForm = true;
+
+  $scope.cancelAddItem = function(msg) {
+    if(msg == '' || msg == undefined) { return }
+
+    if(msg == 'interest') {
+      $scope.editInterestForm = true;
+      $scope.editInterest = '';
+    }
+    else if(msg == 'seeking') {
+      $scope.editSeekingForm = true;
+      $scope.editSeeking = '';
+    }
+  }
+
+  $scope.editInterestItem = function(item) {
+
+      $scope.editInterestForm = false;
+      $scope.editInterest = item;
+
+      $scope.confirmEditInterest = function() {
+        var update = $scope.editInterest.toLowerCase();
+
+        if( update == undefined || update == '' ) {
+          $scope.interestMsg = 'Please Input An Interest Word';
+          return;
+        }
+        else if( !wordsOnlyRegex.test(update) ) {
+          $scope.interestMsg = 'Interest Words Must Be 3-25 Characters, Letters Only.';
+          return;
+        }
+        else if( $scope.interestsList.indexOf(update) != -1 ) {
+          $scope.interestMsg = 'You Already Have This Interest Word.';
+          return;
+        }
+        /*else if( update.indexOf(' ') != -1 ) {
+          $scope.interestMsg = 'No Spaces In Seeking Word.';
+          return;
+        }*/
+
+        var index = $scope.interestsList.indexOf(item);
+        $scope.interestsList[index] = update;
+
+        $scope.editInterest = '';
+        $scope.interestMsg = 'Interest Edited!';
+        $scope.editInterestForm = true;
+
+        setTimeout(function(){
+          $scope.interestMsg = '';
+        } , 3000)
+
+        $scope.updateInterestsList();
+
+      }
+  }
+
+
+  $scope.editSeekingItem = function(item) {
+
+      $scope.editSeekingForm = false;
+      $scope.editSeeking = item;
+
+      $scope.confirmEditSeeking = function() {
+        var update = $scope.editSeeking.toLowerCase();
+
+        if( update == undefined || update == '' ) {
+          $scope.seekingMsg = 'Please Input A Seeking Word';
+          return;
+        }
+        else if( !wordsOnlyRegex.test(update) ) {
+          $scope.seekingMsg = 'Seeking Words Must Be 3-25 Characters, Letters Only.';
+          return;
+        }
+        else if( $scope.interestsList.indexOf(update) != -1 ) {
+          $scope.seekingMsg = 'You Already Have This Seeking Word.';
+          return;
+        }
+        /*else if( update.indexOf(' ') != -1 ) {
+          $scope.seekingMsg = 'No Spaces In Seeking Word.';
+          return;
+        }*/
+
+        var index = $scope.seekingList.indexOf(item);
+        $scope.seekingList[index] = update;
+
+        $scope.editSeeking = '';
+        $scope.seekingMsg = 'Interest Edited!';
+        $scope.editSeekingForm = true;
+
+        setTimeout(function(){
+          $scope.seekingMsg = '';
+        } , 3000)
+
+        $scope.updateSeekingList();
+
+      }
+  }
+
+  //
+
+  $scope.updateInterestsList = function() {
+
+    var l = '';
+    for( var key in $scope.interestsList ) {
+      l += $scope.interestsList[key] + ' ';
+    }
+    l = l.slice(0, -1);
+    console.log(l);
+
+    var csrftoken = Cookies.get('csrftoken');
+
+    var obj = {
+      str: l,
+      action: 'update interests',
+      csrfmiddlewaretoken: csrftoken,
+    }
+
+    $.ajax({
+      url: '/user/settingsaction/',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(obj),
+      success: function(resp) {
+        // console.log(resp);
+        // $scope.$apply();
+      }
+    });
+
+  }
+
+  $scope.updateSeekingList = function() {
+
     var l = '';
     for( var key in $scope.seekingList ) {
       l += $scope.seekingList[key] + ' ';
     }
-
+    l = l.slice(0, -1);
     console.log(l);
+
+    var csrftoken = Cookies.get('csrftoken');
+
+    var obj = {
+      str: l,
+      action: 'update seeking',
+      csrfmiddlewaretoken: csrftoken,
+    }
+
+    $.ajax({
+      url: '/user/settingsaction/',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(obj),
+      success: function(resp) {
+        // console.log(resp);
+        // $scope.$apply();
+      }
+    });
 
   }
 

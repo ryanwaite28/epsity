@@ -121,7 +121,7 @@ def profileHome(request):
         try:
             you = Accounts.objects.get(uname = request.session['username'])
             return render(request, pages['profileHome'],
-                            {'you': you.serialize_basic, 'bio': you.get_bio},
+                            {'you': you},
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -160,9 +160,7 @@ def settingsAction(request):
 
     if request.method == 'POST':
         try:
-            print '--- update bio attempt'
-            print '--- ajax data'
-            print request.body
+
             data = json.loads(request.body)
 
             # return JsonResponse({'msg': 'this', 'obj':data})
@@ -182,9 +180,18 @@ def settingsAction(request):
 
             if data['action'] == 'update bio':
                 if data['bio'] == '' or data['bio'] == None:
-                    return routines.updateAccountBio(request, '*No Bio...')
+                    return routines.updateAccountBio(request, 'No Bio...')
 
                 return routines.updateAccountBio(request, data['bio'])
+
+            if data['action'] == 'update interests':
+                return routines.updateAccountInterests(request, data['str'])
+
+            if data['action'] == 'update seeking':
+                return routines.updateAccountSeeking(request, data['str'])
+
+            if data['action'] == 'load settings lists':
+                return routines.loadSettingsLists(request)
 
 
         except KeyError, AttributeError:

@@ -49,11 +49,20 @@ $(document).ready(function(){
   });
 
 	var csrftoken = Cookies.get('csrftoken');
-	
+
 	$.ajaxSetup({
     beforeSend: function(xhr, settings) {
         xhr.setRequestHeader("X-CSRFToken", csrftoken);
     }
 	});
+
+	 window.badChars = [
+    '@', '#', '$', '%', '^',
+    '^', '&', '*', '(', ')',
+    '-', '_', '=', '+', '`',
+    '~', '[', ']', '{', '}',
+    '\\', '|', '/', '?', '.',
+    ',', '<', '>'
+  ];
 
 });
