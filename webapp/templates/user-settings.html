@@ -165,8 +165,8 @@
                             <div class="col-md-12">
                               <form id="chg-avi-file-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update avi file"/>
-                                <input type="file" class="middlr transition btn btn-default" accept="image/*"/><br>
-                                <input title="Submit Form" class="btn btn-info transition middlr" type="button" value="Upload" ng-click="editAviFile()"/>
+                                <input type="file" name="imageFile" class="middlr transition btn btn-default" accept="image/*" required/><br>
+                                <input title="Submit Form" class="btn btn-info transition middlr" type="submit" value="Upload" ng-click="editAviFile()"/>
                               </form>
                             </div>
                           </div>
@@ -196,8 +196,8 @@
                             <div class="col-md-12">
                               <form id="chg-wp-file-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update wp file"/>
-                                <input type="file" class="middlr transition btn btn-default" accept="image/*"/><br>
-                                <input title="Submit Form" class="btn btn-info transition middlr" type="button" value="Upload" ng-click="editWpFile()"/>
+                                <input type="file" name="imageFile" class="middlr transition btn btn-default" accept="image/*" required/><br>
+                                <input title="Submit Form" class="btn btn-info transition middlr" type="submit" value="Upload" ng-click="editWpFile()"/>
                               </form>
                             </div>
                           </div>

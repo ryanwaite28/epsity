@@ -12,11 +12,12 @@ from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
 
-from WebTools import randomVal, uploadImage, processImage, generateState
+from WebTools import randomVal, processImage
 from models import Accounts
 
 import routines
-from vaults import pages, errorPage
+from vaults import current_dir, pages, errorPage, localPaths, serverPaths
+from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
 
 # --- ----- --- #
 # --- Views --- #
@@ -185,6 +186,12 @@ def settingsAction(request):
 
             if request.POST['action'] == 'update wp link':
                 return routines.updateWpLink(request)
+
+            if request.POST['action'] == 'update avi file':
+                return routines.updateAviFile(request)
+
+            if request.POST['action'] == 'update wp file':
+                return routines.updateWpFile(request)
 
 
             else:

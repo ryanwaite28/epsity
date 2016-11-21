@@ -1,28 +1,18 @@
-# --- App Tools --- #
-
-# --- Imports
+# --- --- --- --- --- #
+# --- Helper Code --- #
+# --- --- --- --- --- #
 
 import random, string, os, paramiko
 from werkzeug.utils import secure_filename
 import smtplib
-#from email.MIMEMultipart import MIMEMultipart
-#from email.MIMEText import MIMEText
+
 
 
 current_dir = os.getcwd()
 
-# ---
-
-def generateState():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
-    return state
-
-# ---
-
 def randomVal():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(16))
+                    for x in xrange(32))
 
     return state
 
@@ -54,6 +44,16 @@ def processImage(img, folder, serverPath, sfn):
     link = uploadImage( filename, filepath, serverPath, sfn )
 
     return link
+
+# --
+
+def saveImageLocal(img, folder):
+    file = img
+    filename = randomVal() + secure_filename(file.name)
+    file.save( os.path.join( folder , filename ) )
+    filepath = folder + filename
+
+    return filepath
 
 # --
 

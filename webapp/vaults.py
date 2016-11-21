@@ -11,7 +11,26 @@ from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
 
-from WebTools import randomVal
+from WebTools import randomVal, processImage
+
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+ALLOWED_PHOTOS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_VIDEOS = set(['mp4', 'avi', 'mov'])
+ALLOWED_AUDIO = set(['mp3', 'wav'])
+
+def allowed_photo(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_PHOTOS
+
+def allowed_video(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_VIDEOS
+
+def allowed_audio(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_AUDIO
 
 # Dictionary of all pages/views for easy and dynamic rendering.
 pages = {
@@ -29,6 +48,14 @@ pages = {
     'profileAudio': 'profile-audio.html',
 }
 
+localPaths = {
+    'avatars': current_dir + '/static/avatars/',
+    'backgrounds': current_dir + '/static/backgrounds/'
+}
+
+serverPaths = {
+
+}
 
 def errorPage(request, msg = None):
     if msg == None or msg == '' or request.method == 'POST':
@@ -38,3 +65,5 @@ def errorPage(request, msg = None):
     string = randomVal()
     return render(request, pages['error'],
                     {'errorMessage': msg, 'value': string})
+
+# ---
