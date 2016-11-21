@@ -128,9 +128,9 @@
                     <h3 class="text-center">Delete</h3>
                     <hr>
                     <p>Delete Account?</p>
-                    <a title="" href="#" class="btn btn-danger" ng-click="deleteAccount()">Delete <i class="fa fa-trash" aria-hidden="true"></i></a>
-                    <form class="" id="deleteaccount-form">{% csrf_token %}
-                      <input type="hidden" name="action" value="delete"/>
+                    <span class="btn btn-danger transition" ng-click="deleteAccount()">Delete <i class="fa fa-trash" aria-hidden="true"></i></span>
+                    <form class="" id="deleteaccount-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                      <input type="hidden" name="action" value="delete account"/>
                     </form>
                   </div>
                 </div>

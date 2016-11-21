@@ -12,7 +12,8 @@ urlpatterns = [
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^main/$', views.profileMain, name='profilemain'),
     url(r'^home/$', views.profileHome, name='profilehome'),
-    url(r'^mysettings/$', views.mySettings, name='mysettings'),
+    url(r'^search/$', views.searchEngine, name='profilehome'),
 
+    url(r'^mysettings/$', views.mySettings, name='mysettings'),
     url(r'^user/settingsaction/$', views.settingsAction, name='settingsaction'),
 ]

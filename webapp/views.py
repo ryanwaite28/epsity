@@ -16,7 +16,7 @@ from WebTools import randomVal, uploadImage, processImage, generateState
 from models import Accounts
 
 import routines
-from vaults import pages, settingsActions
+from vaults import pages, errorPage
 
 # --- ----- --- #
 # --- Views --- #
@@ -28,17 +28,6 @@ def welcome(request):
             return redirect('/main/')
         else:
             return render(request, pages['welcome'])
-
-# ---
-
-def errorPage(request, msg=None):
-    if msg == None or msg == '' or request.method == 'POST':
-        print '--- Error Page Redirecting...'
-        return redirect('/')
-
-    return render(request,
-                    {'errorMessage', msg},
-                    pages['error'])
 
 
 # ---
@@ -72,8 +61,6 @@ def logout(request):
 
         except KeyError:
             pass
-
-
 
 # ---
 
@@ -130,6 +117,24 @@ def profileHome(request):
 
 # ---
 
+def searchEngine(request):
+    if request.method == 'GET':
+        if 'username' not in request.session:
+            return redirect('/')
+
+        try:
+            you = Accounts.objects.get(uname = request.session['username'])
+            return render(request, pages['searchEngine'],
+                            {'you': you},
+                            context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            errorPage(request, msg)
+
+
+# ---
+
 @csrf_protect
 def mySettings(request):
     if request.method == 'POST':
@@ -153,48 +158,57 @@ def mySettings(request):
 
 @csrf_protect
 def settingsAction(request):
-    ''' This View Is Intended To Be Used As An AJAX Handler '''
+    ''' This View Is Intended To Be Used As An AJAX & Form Handler '''
 
     if request.method == 'GET':
         return redirect('/')
 
     if request.method == 'POST':
-        try:
 
-            data = json.loads(request.body)
+        # Form-Data Request
+        if not request.is_ajax():
 
-            # return JsonResponse({'msg': 'this', 'obj':data})
+            if request.POST['action'] == None:
+                return JsonResponse({'msg': 'Action Message Is Missing...'})
 
-            # ------------ #
+            if request.POST['action'] == '':
+                return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
 
-            if data['action'] == None:
-                return json.dumps({'msg': 'Action Message Is Missing...'})
-
-            if data['action'] == '':
-                return json.dumps({'msg': 'Action Message Is Empty/Unidentifiable...'})
-
-            # ------------ #
-
-            if data['action'] == 'delete account':
+            if request.POST['action'] == 'delete account':
                 return routines.deleteAccount(request)
 
-            if data['action'] == 'update bio':
-                if data['bio'] == '' or data['bio'] == None:
-                    return routines.updateAccountBio(request, 'No Bio...')
+        # ------------ #  # ------------ #  # ------------ #
 
-                return routines.updateAccountBio(request, data['bio'])
+        # AJAX Request
+        if request.is_ajax():
+            try:
+                data = json.loads(request.body)
 
-            if data['action'] == 'update interests':
-                return routines.updateAccountInterests(request, data['str'])
+                if data['action'] == None:
+                    return JsonResponse({'msg': 'Action Message Is Missing...'})
 
-            if data['action'] == 'update seeking':
-                return routines.updateAccountSeeking(request, data['str'])
-
-            if data['action'] == 'load settings lists':
-                return routines.loadSettingsLists(request)
+                if data['action'] == '':
+                    return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
 
 
-        except KeyError, AttributeError:
-            return json.dumps({'msg': 'Failed To Load JSON Data...'})
+
+                if data['action'] == 'update bio':
+                    if data['bio'] == '' or data['bio'] == None:
+                        return routines.updateAccountBio(request, 'No Bio...')
+
+                    return routines.updateAccountBio(request, data['bio'])
+
+                if data['action'] == 'update interests':
+                    return routines.updateAccountInterests(request, data['str'])
+
+                if data['action'] == 'update seeking':
+                    return routines.updateAccountSeeking(request, data['str'])
+
+                if data['action'] == 'load settings lists':
+                    return routines.loadSettingsLists(request)
+
+
+            except KeyError, AttributeError:
+                return JsonResponse({'msg': 'Failed To Load JSON Data...'})
 
 # ---

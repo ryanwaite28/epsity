@@ -14,22 +14,11 @@ from django.views.decorators.csrf import csrf_protect
 from WebTools import randomVal, uploadImage, processImage, generateState
 from models import Accounts
 
-from vaults import pages
+from vaults import pages, errorPage
 
 # --- -------- --- #
 # --- Routines --- #
 # --- -------- --- #
-
-
-
-def errorPage(request, msg=None):
-    if msg == None or msg == '' or request.method == 'POST':
-        print '--- Error Page Redirecting...'
-        return redirect('/')
-
-    return render(request,
-                    {'errorMessage', msg},
-                    pages['error'])
 
 
 def loginAccount(request):
@@ -101,7 +90,13 @@ def createAccount(request):
 def deleteAccount(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
+        you.delete()
 
+        del request.session['username']
+        del request.session['email']
+        request.session.flush()
+
+        return redirect('/')
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
