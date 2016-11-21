@@ -15,13 +15,13 @@ class Accounts(models.Model):
     )
 
     uname = models.CharField(max_length = 20, default = '')
-    displayname = models.CharField(max_length = 20, default = '')
+    displayname = models.CharField(max_length = 30, default = '')
     email = models.CharField(max_length = 50, default = '')
     pswrd = models.CharField(max_length = 50, default = '')
     provider = models.CharField(max_length = 20, default = '')
     provider_id = models.CharField(max_length = 100, default = '')
     avi = models.CharField(max_length = 500, default = '/static/hotspot/img/anon2.png')
-    background = models.CharField(max_length = 500, default = '/static/hotspot/img/bg-1.jpg')
+    background = models.CharField(max_length = 500, default = '')
     gender = models.CharField(max_length = 25, default = '')
     phone = models.CharField(max_length = 25, default = '')
 

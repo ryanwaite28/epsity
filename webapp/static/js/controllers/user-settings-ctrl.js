@@ -377,4 +377,27 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
 
   }
 
+  $scope.editDisplayName = function() {
+    var regex = /[a-zA-z0-9]{2,30}/;
+    if( !regex.test( $('#chg-dpn-form input[name="displayname"]').val() ) ) {
+      alert('That isn\'t a good displayname. It must be letters and numbers, 2-30 characters.');
+      return;
+    }
+    var ask = confirm('Are Changes Correct?');
+    if( ask == true ) {
+      $('#chg-dpn-form').submit();
+    }
+    else {
+      // Do Nothing
+    }
+  }
+
+  $scope.editAviLink = function() {
+
+  }
+
+  $scope.editWpLink = function() {
+
+  }
+
 }])

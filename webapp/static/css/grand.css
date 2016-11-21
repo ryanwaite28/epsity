@@ -188,6 +188,10 @@
   background-size: 150%;
 }
 
+.bg-trans {
+  background: transparent;
+}
+
 /* space bottom */
 .sbm-1 {
   margin-bottom: 15px;
@@ -205,4 +209,6 @@
   padding: 3px;
   border: 1px solid black;
   color: grey;
+  width: 275px;
+  max-width: 95%;
 }

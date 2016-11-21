@@ -162,3 +162,49 @@ def loadSettingsLists(request):
     except ObjectDoesNotExist:
         error = 'User Account Not Found.'
         return JsonResponse({'msg':'unsuccessful - error', 'error': msg})
+
+def updateDisplayName(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        you.displayname = cgi.escape( request.POST['displayname'] )
+        you.save( update_fields=['displayname'] )
+
+        return render(request,
+                    pages['mySettings'],
+                    {'you': you, 'message': "Displayname Updated Successfully!"},
+                    context_instance=RequestContext(request))
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        errorPage(request, msg)
+
+def updateAviLink(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        you.avi = cgi.escape( request.POST['avi'] )
+        you.save( update_fields=['avi'] )
+
+        return render(request,
+                    pages['mySettings'],
+                    {'you': you, 'message': "Avatar Updated Successfully!"},
+                    context_instance=RequestContext(request))
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        errorPage(request, msg)
+
+
+def updateWpLink(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        you.background = cgi.escape( request.POST['background'] )
+        you.save( update_fields=['background'] )
+
+        return render(request,
+                    pages['mySettings'],
+                    {'you': you, 'message': "Wallpaper Updated Successfully!"},
+                    context_instance=RequestContext(request))
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        errorPage(request, msg)

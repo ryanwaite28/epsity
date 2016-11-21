@@ -147,7 +147,7 @@ def mySettings(request):
         try:
             you = Accounts.objects.get(uname = request.session['username'])
             return render(request, pages['mySettings'],
-                            {'you': you.serialize_basic, 'bio': you.get_bio},
+                            {'you': you, 'message': ''},
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -176,6 +176,20 @@ def settingsAction(request):
 
             if request.POST['action'] == 'delete account':
                 return routines.deleteAccount(request)
+
+            if request.POST['action'] == 'update displayname':
+                return routines.updateDisplayName(request)
+
+            if request.POST['action'] == 'update avi link':
+                return routines.updateAviLink(request)
+
+            if request.POST['action'] == 'update wp link':
+                return routines.updateWpLink(request)
+
+
+            else:
+                msg = 'Unknown Action...'
+                errorPage(request, msg)
 
         # ------------ #  # ------------ #  # ------------ #
 
