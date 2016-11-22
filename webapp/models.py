@@ -1,11 +1,25 @@
 from __future__ import unicode_literals
 
+from django import forms
 from django.db import models
 from django.db.models import Model
 from django.utils import timezone
 import hashlib
 
+from vaults import current_dir, pages, errorPage, localPaths, serverPaths
+
 # Create your models here.
+
+# ---
+
+class ImageUploadForm(forms.Form):
+    """Image upload form."""
+    image = forms.ImageField()
+
+class ImageLocation(models.Model):
+    img = models.ImageField(upload_to = localPaths['images_rel'], default = localPaths['images_rel'])
+
+# ---
 
 class Accounts(models.Model):
 

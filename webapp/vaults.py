@@ -50,7 +50,10 @@ pages = {
 
 localPaths = {
     'avatars': current_dir + '/static/avatars/',
-    'backgrounds': current_dir + '/static/backgrounds/'
+    'backgrounds': current_dir + '/static/backgrounds/',
+    'avatars_rel': '/static/avatars/',
+    'backgrounds_rel': '/static/backgrounds/',
+    'images_rel': '/static/img/'
 }
 
 serverPaths = {

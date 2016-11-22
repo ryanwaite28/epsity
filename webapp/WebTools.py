@@ -50,7 +50,7 @@ def processImage(img, folder, serverPath, sfn):
 def saveImageLocal(img, folder):
     file = img
     filename = randomVal() + secure_filename(file.name)
-    file.save( os.path.join( folder , filename ) )
+    file.save(os.path.join( folder , filename ))
     filepath = folder + filename
 
     return filepath

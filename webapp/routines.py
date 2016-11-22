@@ -218,7 +218,7 @@ def updateAviFile(request):
         you = Accounts.objects.get(uname = request.session['username'])
         file = request.FILES['imageFile']
         if file and file.name != '' and allowed_photo(file.name):
-            link = saveImageLocal(file, localPaths['avatars'])
+            link = saveImageLocal(file, localPaths['avatars_rel'])
             you.avi = link
             you.save( update_fields=['avi'] )
 
@@ -243,7 +243,7 @@ def updateWpFile(request):
         you = Accounts.objects.get(uname = request.session['username'])
         file = request.FILES['imageFile']
         if file and file.name != '' and allowed_photo(file.name):
-            link = saveImageLocal(file, localPaths['avatars'])
+            link = saveImageLocal(file, localPaths['backgrounds_rel'])
             you.background = link
             you.save( update_fields=['background'] )
 
