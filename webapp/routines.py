@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_protect
 
 
 from WebTools import randomVal, processImage, saveImageLocal
-from models import Accounts, Document, DocumentForm
+from models import Accounts, AviModel, WpModel
 
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
@@ -223,7 +223,7 @@ def updateAviFile(request):
         file = request.FILES['imageFile']
 
         if file and file.name != '' and allowed_photo(file.name):
-            newdoc = Document(docfile = request.FILES['imageFile'])
+            newdoc = AviModel(docfile = request.FILES['imageFile'])
             newdoc.save()
             you.avi = newdoc.docfile.url
             you.save( update_fields=['avi'] )
@@ -249,7 +249,7 @@ def updateWpFile(request):
         file = request.FILES['imageFile']
 
         if file and file.name != '' and allowed_photo(file.name):
-            newdoc = Document(docfile = request.FILES['imageFile'])
+            newdoc = WpModel(docfile = request.FILES['imageFile'])
             newdoc.save()
             you.background = newdoc.docfile.url
             you.save( update_fields=['background'] )

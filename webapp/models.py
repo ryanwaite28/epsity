@@ -10,8 +10,12 @@ from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 
 # ---
 
-class Document(models.Model):
-    docfile = models.FileField(upload_to='avatars/')
+class AviModel(models.Model):
+    docfile = models.FileField(upload_to='avatars/', default='')
+
+# ---
+class WpModel(models.Model):
+    docfile = models.FileField(upload_to='backgrounds/', default='')
 
 # ---
 

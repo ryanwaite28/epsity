@@ -165,7 +165,7 @@ def settingsAction(request):
     ''' This View Is Intended To Be Used As An AJAX & Form Handler '''
 
     if request.method == 'GET':
-        return redirect('/')
+        return redirect('/mysettings')
 
     if request.method == 'POST':
 
