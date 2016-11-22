@@ -3,6 +3,8 @@
 # --- --- --- --- #
 
 import os, sys, cgi, random, string, hashlib, json
+import webapp
+
 from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.http import JsonResponse
@@ -16,7 +18,7 @@ from WebTools import randomVal, processImage
 from models import Accounts
 
 import routines
-from vaults import current_dir, pages, errorPage, localPaths, serverPaths
+from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
 
 # --- ----- --- #
@@ -146,6 +148,7 @@ def mySettings(request):
             return redirect('/')
 
         try:
+            print os.path.dirname(webapp.__file__)
             you = Accounts.objects.get(uname = request.session['username'])
             return render(request, pages['mySettings'],
                             {'you': you, 'message': ''},

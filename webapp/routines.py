@@ -3,6 +3,9 @@
 # --- --- --- --- #
 
 import os, sys, cgi, random, string, hashlib, json
+import webapp
+
+from django import forms
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.template import RequestContext
@@ -11,10 +14,11 @@ from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
 
-from WebTools import randomVal, processImage, saveImageLocal
-from models import Accounts
 
-from vaults import current_dir, pages, errorPage, localPaths, serverPaths
+from WebTools import randomVal, processImage, saveImageLocal
+from models import Accounts, Document, DocumentForm
+
+from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
 from vaults import allowed_audio, allowed_photo, allowed_audio
 
@@ -217,9 +221,11 @@ def updateAviFile(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
         file = request.FILES['imageFile']
+
         if file and file.name != '' and allowed_photo(file.name):
-            link = saveImageLocal(file, localPaths['avatars_rel'])
-            you.avi = link
+            newdoc = Document(docfile = request.FILES['imageFile'])
+            newdoc.save()
+            you.avi = newdoc.docfile.url
             you.save( update_fields=['avi'] )
 
             return render(request,
@@ -230,21 +236,22 @@ def updateAviFile(request):
         else:
             return render(request,
                         pages['mySettings'],
-                        {'you': you, 'message': "Error - That Was Not An Accepted Image File."},
+                        {'you': you, 'message': "Error - That Was Not An Image File."},
                         context_instance=RequestContext(request))
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
         errorPage(request, msg)
 
-
 def updateWpFile(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
         file = request.FILES['imageFile']
+
         if file and file.name != '' and allowed_photo(file.name):
-            link = saveImageLocal(file, localPaths['backgrounds_rel'])
-            you.background = link
+            newdoc = Document(docfile = request.FILES['imageFile'])
+            newdoc.save()
+            you.background = newdoc.docfile.url
             you.save( update_fields=['background'] )
 
             return render(request,
@@ -255,7 +262,7 @@ def updateWpFile(request):
         else:
             return render(request,
                         pages['mySettings'],
-                        {'you': you, 'message': "Error - That Was Not An Accepted Image File."},
+                        {'you': you, 'message': "Error - That Was Not An Image File."},
                         context_instance=RequestContext(request))
 
     except ObjectDoesNotExist:

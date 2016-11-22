@@ -5,10 +5,7 @@
 import random, string, os, paramiko
 from werkzeug.utils import secure_filename
 import smtplib
-
-
-
-current_dir = os.getcwd()
+# from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 
 def randomVal():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)

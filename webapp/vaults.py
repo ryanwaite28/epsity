@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_protect
 from WebTools import randomVal, processImage
 
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
+webapp_dir = os.path.dirname(os.path.abspath(__file__))
 
 ALLOWED_PHOTOS = set(['png', 'jpg', 'jpeg', 'gif'])
 ALLOWED_VIDEOS = set(['mp4', 'avi', 'mov'])
@@ -49,8 +49,8 @@ pages = {
 }
 
 localPaths = {
-    'avatars': current_dir + '/static/avatars/',
-    'backgrounds': current_dir + '/static/backgrounds/',
+    'avatars': webapp_dir + '/static/avatars/',
+    'backgrounds': webapp_dir + '/static/backgrounds/',
     'avatars_rel': '/static/avatars/',
     'backgrounds_rel': '/static/backgrounds/',
     'images_rel': '/static/img/'

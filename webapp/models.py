@@ -6,19 +6,18 @@ from django.db.models import Model
 from django.utils import timezone
 import hashlib
 
-from vaults import current_dir, pages, errorPage, localPaths, serverPaths
-
-# Create your models here.
+from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 
 # ---
 
-class ImageUploadForm(forms.Form):
-    """Image upload form."""
-    image = forms.ImageField()
+class Document(models.Model):
+    docfile = models.FileField(upload_to='avatars/')
 
-class ImageLocation(models.Model):
-    img = models.ImageField(upload_to = localPaths['images_rel'], default = localPaths['images_rel'])
+# ---
 
+class DocumentForm(forms.Form):
+    docfile = forms.FileField(label='Select a file')
+    docname = models.CharField(max_length = 100, default = '')
 # ---
 
 class Accounts(models.Model):
@@ -34,8 +33,10 @@ class Accounts(models.Model):
     pswrd = models.CharField(max_length = 50, default = '')
     provider = models.CharField(max_length = 20, default = '')
     provider_id = models.CharField(max_length = 100, default = '')
-    avi = models.CharField(max_length = 500, default = '/static/hotspot/img/anon2.png')
-    background = models.CharField(max_length = 500, default = '')
+    # avi = models.CharField(max_length = 500, default = '/static/hotspot/img/anon2.png')
+    avi = models.ImageField(upload_to=localPaths['avatars_rel'], max_length = 500, default = '/static/hotspot/img/anon2.png')
+    # background = models.CharField(max_length = 500, default = '')
+    background = models.ImageField(upload_to=localPaths['backgrounds_rel'], max_length = 500, default = '/static/img/grafitti-1.jpg')
     gender = models.CharField(max_length = 25, default = '')
     phone = models.CharField(max_length = 25, default = '')
 
