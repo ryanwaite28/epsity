@@ -6,6 +6,7 @@ import os, sys, cgi, random, string, hashlib, json
 import webapp
 
 from django import forms
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.template import RequestContext
@@ -268,3 +269,23 @@ def updateWpFile(request):
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
         errorPage(request, msg)
+
+
+def searchEngine(request):
+    data = json.loads(request.body)
+    print data
+
+    if data['query'] == None:
+        return JsonResponse({'msg': 'Query Is Missing...'})
+
+    if data['query'] == '':
+        return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
+
+    users = Accounts.objects.filter(uname__contains = data['query'])
+
+    resp = {
+        'msg': 'search query',
+        'users': [u.serialize_basic for u in users]
+    }
+
+    return JsonResponse(resp)

@@ -47,9 +47,16 @@
 
             <div class="col-md-9">
               <div class="padd-1 mk-rel sdw-1 sbm-1">
-                <h3 class="text-center">Results</h3>
+                <h3 class="text-center"><strong>Results</strong></h3>
                 <hr>
-
+                <p>Users</p>
+                <ul>
+                  <li ng-repeat="u in srUsers">
+                    <img src="{[ u.avi ]}"/>
+                    <p>{[ u.uname ]}</p>
+                    <br>
+                  </li>
+                </ul>
               </div>
             </div>
 

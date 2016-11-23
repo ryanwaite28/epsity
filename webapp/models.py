@@ -37,10 +37,10 @@ class Accounts(models.Model):
     pswrd = models.CharField(max_length = 50, default = '')
     provider = models.CharField(max_length = 20, default = '')
     provider_id = models.CharField(max_length = 100, default = '')
-    # avi = models.CharField(max_length = 500, default = '/static/hotspot/img/anon2.png')
-    avi = models.ImageField(upload_to=localPaths['avatars_rel'], max_length = 500, default = '/static/hotspot/img/anon2.png')
-    # background = models.CharField(max_length = 500, default = '')
-    background = models.ImageField(upload_to=localPaths['backgrounds_rel'], max_length = 500, default = '/static/img/grafitti-1.jpg')
+    avi = models.CharField(max_length = 500, default = '/static/hotspot/img/anon2.png')
+    # avi = models.ImageField(upload_to=localPaths['avatars_rel'], max_length = 500, default = '/static/hotspot/img/anon2.png')
+    background = models.CharField(max_length = 500, default = '')
+    # background = models.ImageField(upload_to=localPaths['backgrounds_rel'], max_length = 500, default = '/static/img/grafitti-1.jpg')
     gender = models.CharField(max_length = 25, default = '')
     phone = models.CharField(max_length = 25, default = '')
 
@@ -64,7 +64,9 @@ class Accounts(models.Model):
         return {
             'userid': self.id,
             'uname': self.uname,
-            'avi': self.avi
+            'displayname': self.displayname,
+            'avi': self.avi,
+            'background': self.background,
         }
 
     @property

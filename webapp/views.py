@@ -120,6 +120,7 @@ def profileHome(request):
 
 # ---
 
+@csrf_protect
 def searchEngine(request):
     if request.method == 'GET':
         if 'username' not in request.session:
@@ -135,6 +136,9 @@ def searchEngine(request):
             msg = 'User Account Not Found.'
             errorPage(request, msg)
 
+
+    if request.method == 'POST':
+        return routines.searchEngine(request)
 
 # ---
 
