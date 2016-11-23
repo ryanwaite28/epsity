@@ -244,8 +244,28 @@ class Groups(models.Model):
     owner_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_owner", on_delete = models.CASCADE)
     ownerid = models.IntegerField(blank = False, default = 0)
 
+    name = models.CharField(max_length = 1725, default = '')
+    desc = models.CharField(max_length = 1725, default = '')
+
+    avi = models.CharField(max_length = 1725, default = '')
+    background = models.CharField(max_length = 1725, default = '')
+
+    categories = models.CharField(max_length = 1725, default = '')
+
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'gid': self.id,
+            'name': self.name,
+            'desc': self.desc,
+            'avi': self.avi,
+            'background': self.background,
+            'categories': self.categories.split()
+        }
 
     class Meta:
         db_table = "groups"

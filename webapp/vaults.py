@@ -38,6 +38,7 @@ pages = {
     'error': 'error.html',
     'login': 'login.html',
     'signup': 'signup.html',
+    'createview': 'create-1.html',
     'mySettings': 'user-settings.html',
     'searchEngine': 'search-1.html',
     'profileMain': 'profile-main.html',

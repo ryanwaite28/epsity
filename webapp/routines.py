@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_protect
 
 
 from WebTools import randomVal, processImage, saveImageLocal
-from models import Accounts, AviModel, WpModel
+from models import Accounts, AviModel, WpModel, Groups, GroupMembers
 
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
@@ -289,3 +289,41 @@ def searchEngine(request):
     }
 
     return JsonResponse(resp)
+
+def createGroup(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        newGroup = Groups(owner_rel=you, ownerid=you.id,
+                            name=request.POST['name'],
+                            desc=request.POST['desc'])
+
+        aviFile = request.POST.get('imageFileAvi')
+        wpFile = request.POST.get('imageFileWp')
+
+        if aviFile and aviFile.name != '' and allowed_photo(aviFile.name):
+            newdoc = AviModel(docfile = request.FILES['imageFile'])
+            newdoc.save()
+            newGroup.avi = newdoc.docfile.url
+
+        if wpFile and wpFile.name != '' and allowed_photo(wpFile.name):
+            newdoc = WpModel(docfile = request.FILES['imageFile'])
+            newdoc.save()
+            newGroup.background = newdoc.docfile.url
+
+        newGroup.save()
+
+        print newGroup
+        print newGroup.serialize
+
+        return render(request,
+                    pages['mySettings'],
+                    {'you': you, 'message': "New Group Created!"},
+                    context_instance=RequestContext(request))
+
+
+    
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        errorPage(request, msg)

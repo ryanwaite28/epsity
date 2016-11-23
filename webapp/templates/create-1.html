@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Epsity | Profile</title>
+  <title>Epsity | Create</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% load staticfiles %}
@@ -14,30 +14,83 @@
   <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
   <script src="/static/js/grand.js"></script>
   <script src="/static/js/profile.js"></script>
+  <script src="/static/js/controllers/create-ctrl.js"></script>
 </head>
 
-  <body ng-app="epsityApp" ng-controller="epsityCtrl" class="transition">
+  <body ng-app="epsityApp" ng-controller="createCtrl" class="transition">
 
     {% include 'topbar-1.html' %}
 
     <!--  -->
 
     <div id="main-container">
-      <div id="mc-inner" class="sdw-1">
+      <div id="mc-inner" class="">
         <div class="container-fluid">
 
           <div class="row">
+            <div class="col-md-12" style="min-height: 25px;"><p class="text-center" style="padding: 15px;">{{ message }}</p></div>
+            <!--  -->
 
-            <div class="col-sm-12">
-              <div class="">
+            <div class="col-md-3">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <img class="polaroid-2 middlr" src="{{ you.avi }}"/>
+                <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
+                <p class="text-center">{{ you.displayname }}</p>
+              </div>
 
-                <ul class="nav nav-tabs">
-                  <li></li>
-                  <li></li>
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <p class="text-center"><strong>Create</strong></p>
+                <hr>
+                <ul class="nav nav-pills nav-stacked text-center">
+                  <li role="presentation" class="active"><a data-toggle="tab" href="#new-group-pane">Group</a></li>
+                  <li role="presentation"><a data-toggle="tab" href="#new-convo-pane">Conversation</a></li>
+                  <li role="presentation"><a data-toggle="tab" href="#new-event-pane">Event</a></li>
                 </ul>
-
               </div>
             </div>
+
+            <div class="col-md-9" style="min-height: 75vh;">
+              <div class="tab-content padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <div id="new-group-pane" class="tab-pane fade in active">
+                  <div>
+                    <p class="text-center">Create A Group!</p>
+                    <br>
+                    <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/create/" method="POST">{% csrf_token %}
+                      <input type="hidden" name="action" value="create group"/>
+
+                      <input class="input-t-s1 middlr" type="text" name="name" placeholder="Group Name..." ng-model="newGroupName" required/><br>
+                      <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Group Description..." ng-model="newGroupDesc" required></textarea><br>
+                      <p class="text-center">Group Avatar</p>
+                      <input type="file" name="imageFileAvi" class="middlr transition btn btn-default" accept="image/*"/><br><br>
+                      <p class="text-center">Group Wallpaper</p>
+                      <input type="file" name="imageFileWp" class="middlr transition btn btn-default" accept="image/*"/><br>
+
+                      <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createGroup()"/>
+                    </div>
+                  </div>
+                </div>
+                <div id="new-convo-pane" class="tab-pane fade">
+                  <div>
+                    <p class="text-center">Create A Conversation!</p>
+                    <br>
+                    <div class="">
+
+                    </div>
+                  </div>
+                </div>
+                <div id="new-event-pane" class="tab-pane fade">
+                  <div>
+                    <p class="text-center">Create An Event!</p>
+                    <br>
+                    <div class="">
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12"><br></div>
           </div>
 
         </div>
@@ -45,11 +98,5 @@
     </div>
 
   </body>
-
-  <!--
-
-    wp = Welcome Page
-
-  -->
 
 </html>

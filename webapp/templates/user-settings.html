@@ -32,13 +32,13 @@
             <!--  -->
 
             <div class="col-md-3">
-              <div class="padd-1 mk-rel sdw-1 sbm-1">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <img class="polaroid-2 middlr" src="{{ you.avi }}"/>
                 <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
                 <p class="text-center">{{ you.displayname }}</p>
               </div>
 
-              <div class="padd-1 mk-rel sdw-1 sbm-1">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <ul class="nav nav-pills nav-stacked text-center">
                   <li role="presentation" class="active"><a data-toggle="tab" href="#bio-pane">Bio</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#int-pane">Info</a></li>
@@ -50,21 +50,21 @@
 
             <div class="col-md-9" style="min-height: 75vh;">
               <div>
-                <div class="tab-content padd-1 mk-rel sdw-1 sbm-">
+                <div class="tab-content padd-1 mk-rel sdw-1 sbm-1 bg-white">
                   <div id="bio-pane" class="tab-pane fade in active">
                     <div>
                       <h3 class="text-center"><strong>Bio</strong></h3>
                       <hr>
-                      <p>Edit Your Bio<br>Max Length: 150 Characters.</p>
+                      <p class="text-center">Edit Your Bio<br>Max Length: 150 Characters.</p>
                       <br>
-                      <form class="" id="bio-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
-                        <textarea id="update-bio-content" name="bio" placeholder="Bio Message...">{{ you.bio_desc }}</textarea>
+                      <form class="middlr" id="bio-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                        <textarea class="middlr" id="update-bio-content" name="bio" placeholder="Bio Message...">{{ you.bio_desc }}</textarea>
                         <input type="hidden" name="action" value="update bio"/>
                         <br>
-                        <input ng-hide="updateBioBtn" title="Update Bio" class="block transition btn btn-info" type="button" value="Update" ng-click="updateAccountBio()"/>
+                        <input ng-hide="updateBioBtn" title="Update Bio" class="middlr transition btn btn-info" type="button" value="Update" ng-click="updateAccountBio()"/>
                         <br>
                         <img width="125px" src="/static/img/ajax-loading-big.gif" ng-hide="updateBioImg"/>
-                        <p>{[ updateBioMsg ]}</p>
+                        <p class="text-center">{[ updateBioMsg ]}</p>
                       </form>
                     </div>
                   </div>

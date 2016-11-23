@@ -176,7 +176,6 @@ body {
   /*padding: 10px;*/
   display: block;
   margin: auto;
-  background: white;
 }
 #mc-inner-2 {
   width: 1275px;
@@ -284,6 +283,40 @@ body {
   background: grey;
 }
 
+.sr-user-avi {
+  width: 100px;
+  display: block;
+  margin: auto;
+  padding: 3px;
+  border: 1px solid lightgrey;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.sr-user-wp {
+
+}
+
+#sr-users-list {
+  padding: 0px;
+  margin: 0px;
+  width: 100%;
+  display: block;
+  margin: auto;
+}
+#sr-users-list li {
+  list-style: none;
+}
+.sr-inner-div {
+  width: 50%;
+  padding: 15px;
+  list-style: none;
+  float: left;
+}
+.sr-inner-div div {
+  width: 100%;
+  padding: 15px;
+}
+
+
 /* --- */
 /* --- */
 /* --- */
@@ -328,6 +361,10 @@ body {
     position: fixed;
     width: 100%;
     max-width: 100%;
+  }
+  .sr-inner-div {
+    width: 100%;
+    float: none;
   }
 
 }

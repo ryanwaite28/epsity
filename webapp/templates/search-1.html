@@ -30,34 +30,55 @@
             <div class="col-md-12" style="height: 25px;"></div>
 
             <div class="col-md-3">
-              <div class="padd-1 mk-rel sdw-1 sbm-1">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <img id="" class="middlr polaroid-2" title="Profile Image" alt="Profile Image" src="{{ you.avi }}"/>
                 <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
                 <p class="text-center">{{ you.displayname }}</p>
               </div>
-              <div class="padd-1 mk-rel sdw-1 sbm-1">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <h3 class="text-center">Search</h3>
                 <br>
-                <input style="width: 375px; max-width: 90%;" type="text" class="block input-t-s1" placeholder="Search..." ng-model="searchQuery"/><br>
-                <input type="button" class="block transition btn btn-info" value="Submit" ng-click="submitSearch()"/>
+                <input style="width: 375px; max-width: 90%;" type="text" class="middlr input-t-s1" placeholder="Search..." ng-model="searchQuery"/><br>
+                <input type="button" class="middlr transition btn btn-info" value="Submit" ng-click="submitSearch()"/>
               </div>
             </div>
 
             <!--  -->
 
             <div class="col-md-9">
-              <div class="padd-1 mk-rel sdw-1 sbm-1">
-                <h3 class="text-center"><strong>Results</strong></h3>
-                <hr>
-                <p>Users</p>
-                <ul>
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
+                <p class="text-center p-emp-1"><strong>Users</strong></p>
+                <ul id="sr-users-list">
                   <li ng-repeat="u in srUsers">
-                    <img src="{[ u.avi ]}"/>
-                    <p>{[ u.uname ]}</p>
-                    <br>
+                    <div class="sr-inner-div">
+                      <div class="fill mk-rel sdw-1" style="background-image: url('{[ u.background ]}');">
+                        <div class="dim"></div>
+                        <div class="mk-rel">
+                          <img class="sr-user-avi" src="{[ u.avi ]}"/><br>
+                          <p class="text-center text-lightgrey text-sdw-2"><strong>{[ u.uname ]}</strong></p>
+                        </div>
+                      </div>
+                    </div>
                   </li>
                 </ul>
               </div>
+
+              <!-- <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
+                <p class="text-center p-emp-1"><strong>Groups</strong></p>
+                <ul id="sr-users-list">
+                  <li ng-repeat="u in srUsers">
+                    <div class="sr-inner-div">
+                      <div class="fill mk-rel sdw-1" style="background-image: url('{[ u.background ]}');">
+                        <div class="dim"></div>
+                        <div class="mk-rel">
+                          <img class="sr-user-avi" src="{[ u.avi ]}"/><br>
+                          <p class="text-center text-lightgrey text-sdw-2"><strong>{[ u.uname ]}</strong></p>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div> -->
             </div>
 
           </div>

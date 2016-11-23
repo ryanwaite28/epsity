@@ -165,6 +165,68 @@ def mySettings(request):
 # ---
 
 @csrf_protect
+def createView(request):
+
+    if request.method == 'GET':
+        if 'username' not in request.session:
+            return redirect('/')
+
+        try:
+            you = Accounts.objects.get(uname = request.session['username'])
+            return render(request, pages['createview'],
+                            {'you': you, 'message': ''},
+                            context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            errorPage(request, msg)
+
+    # --- #
+
+    if request.method == 'POST':
+
+        # Form-Data Request
+        if not request.is_ajax():
+
+            if request.POST['action'] == None:
+                return render(request, pages['createview'],
+                                {'you': you, 'message': 'Action Is Missing...'},
+                                context_instance = RequestContext(request))
+
+            if request.POST['action'] == '':
+                return render(request, pages['createview'],
+                                {'you': you, 'message': 'Action Is Unknown...'},
+                                context_instance = RequestContext(request))
+
+            if request.POST['action'] == 'create group':
+                return routines.createGroup(request)
+
+            else:
+                msg = 'Unknown Action...'
+                errorPage(request, msg)
+
+        # ------------ #  # ------------ #  # ------------ #
+
+        # AJAX Request
+        if request.is_ajax():
+            try:
+                data = json.loads(request.body)
+
+                if data['action'] == None:
+                    return JsonResponse({'msg': 'Action Message Is Missing...'})
+
+                if data['action'] == '':
+                    return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
+
+
+
+            except KeyError, AttributeError:
+                return JsonResponse({'msg': 'Failed To Load JSON Data...'})
+
+
+# ---
+
+@csrf_protect
 def settingsAction(request):
     ''' This View Is Intended To Be Used As An AJAX & Form Handler '''
 
@@ -177,10 +239,14 @@ def settingsAction(request):
         if not request.is_ajax():
 
             if request.POST['action'] == None:
-                return JsonResponse({'msg': 'Action Message Is Missing...'})
+                return render(request, pages['mySettings'],
+                                {'you': you, 'message': 'Action Message Missing...'},
+                                context_instance = RequestContext(request))
 
             if request.POST['action'] == '':
-                return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
+                return render(request, pages['mySettings'],
+                                {'you': you, 'message': 'Action Is Unknown...'},
+                                context_instance = RequestContext(request))
 
             if request.POST['action'] == 'delete account':
                 return routines.deleteAccount(request)
