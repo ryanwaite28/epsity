@@ -18,10 +18,10 @@ urlpatterns = [
     url(r'^home/$', views.profileHome, name='profilehome'),
     url(r'^search/$', views.searchEngine, name='search'),
     url(r'^create/$', views.createView, name='createview'),
-
     url(r'^mysettings/$', views.mySettings, name='mysettings'),
     url(r'^user/settingsaction/$', views.settingsAction, name='settingsaction'),
-
     url(r'^checkpoint/$', views.checkPoint, name='checkpoint'),
+    url(r'^users/(?P<query>[a-zA-Z0-9]+)/$', views.searchUsers, name='searchusers'),
+    url(r'^groups/(?P<query>[a-zA-Z0-9]+)/$', views.searchGroups, name='searchgroups'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

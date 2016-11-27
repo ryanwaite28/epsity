@@ -43,6 +43,7 @@ pages = {
     'searchEngine': 'search-1.html',
     'profileMain': 'profile-main.html',
     'profileHome': 'profile-home.html',
+    'profileHomeTwo': 'profile-home-2.html',
     'profilePosts': 'profile-posts.html',
     'profilePhoto': 'profile-photo.html',
     'profileVideo': 'profile-video.html',

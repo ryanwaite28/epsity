@@ -246,6 +246,7 @@ class Groups(models.Model):
 
     name = models.CharField(max_length = 1725, default = '')
     desc = models.CharField(max_length = 1725, default = '')
+    url = models.CharField(max_length = 1725, default = '')
     categories = models.CharField(max_length = 1725, default = '')
 
     avi = models.CharField(max_length = 1725, default = '')

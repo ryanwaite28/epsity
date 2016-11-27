@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
 
 from WebTools import randomVal, processImage
-from models import Accounts
+from models import Accounts, Groups
 
 import routines
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
@@ -81,7 +81,6 @@ def signup(request):
 
 # ---
 
-
 @csrf_protect
 def profileMain(request):
     if request.method == 'GET':
@@ -95,7 +94,7 @@ def profileMain(request):
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
-            errorPage(request, msg)
+            return errorPage(request, msg)
 
 # ---
 
@@ -116,7 +115,71 @@ def profileHome(request):
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
-            errorPage(request, msg)
+            return errorPage(request, msg)
+
+# ---
+
+@csrf_protect
+def searchUsers(request, query):
+    if request.method == 'GET':
+        print query
+        try:
+            if 'username' in request.session:
+                you = Accounts.objects.get(uname = request.session['username'])
+            else:
+                you = None
+
+            user = Accounts.objects \
+            .filter(uname__iexact = query).first()
+
+            if user == None:
+                msg = 'User Account Not Found.'
+                return errorPage(request, msg)
+
+            if 'username' in request.session:
+                if user.uname == request.session['username']:
+                    return redirect('/home')
+
+            else:
+                return render(request,
+                                pages['profileHomeTwo'],
+                                {'you': you,
+                                'user': user},
+                                context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
+
+# ---
+
+@csrf_protect
+def searchGroups(request, query):
+    if request.method == 'GET':
+        print query
+        try:
+            if 'username' in request.session:
+                you = Accounts.objects.get(uname = request.session['username'])
+            else:
+                you = None
+
+            group = Groups.objects \
+            .filter(name__iexact = query).first()
+
+            if group == None:
+                msg = 'Group Not Found.'
+                return errorPage(request, msg)
+
+            else:
+                return render(request,
+                                pages['profileHomeTwo'],
+                                {'you': you,
+                                'group': group},
+                                context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
 
 # ---
 
@@ -134,7 +197,7 @@ def searchEngine(request):
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
-            errorPage(request, msg)
+            return errorPage(request, msg)
 
 
     if request.method == 'POST':
@@ -160,7 +223,7 @@ def mySettings(request):
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
-            errorPage(request, msg)
+            return errorPage(request, msg)
 
 # ---
 
@@ -179,7 +242,7 @@ def createView(request):
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
-            errorPage(request, msg)
+            return errorPage(request, msg)
 
     # --- #
 
@@ -203,7 +266,7 @@ def createView(request):
 
             else:
                 msg = 'Unknown Action...'
-                errorPage(request, msg)
+                return errorPage(request, msg)
 
         # ------------ #  # ------------ #  # ------------ #
 
@@ -213,10 +276,12 @@ def createView(request):
                 data = json.loads(request.body)
 
                 if data['action'] == None:
-                    return JsonResponse({'msg': 'Action Message Is Missing...'})
+                    msg = {'msg': 'Action Message Is Missing...'}
+                    return JsonResponse(msg)
 
                 if data['action'] == '':
-                    return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
+                    msg = {'msg': 'Action Message Is Empty/Unidentifiable...'}
+                    return JsonResponse(msg)
 
 
 
@@ -271,7 +336,7 @@ def settingsAction(request):
 
             else:
                 msg = 'Unknown Action...'
-                errorPage(request, msg)
+                return errorPage(request, msg)
 
         # ------------ #  # ------------ #  # ------------ #
 

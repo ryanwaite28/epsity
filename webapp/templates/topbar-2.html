@@ -1,0 +1,55 @@
+<link rel="stylesheet" type="text/css" href="/static/css/welcome.css">
+
+  <div id="top-bar-2" class="transition" ng-controller="welcomeCtrl">
+
+    <div id="wp-logo-1-c">
+      <img id="wp-logo-1" class="transition" src="/static/img/logo-1.png"/>
+    </div>
+
+    <p id="drop-chev-p" class="text-center"><i aria-hidden="true" data-toggle="collapse" data-target="#links-collapse" title="Drop Down Menu" id="drop-chev-1" class="a-1 sdw-1 transition fa fa-chevron-circle-down"></i></p>
+
+    <i title="Scroll Back To Top" id="arrow-1" class="sdw-1 hide-1 transition fa fa-arrow-circle-up"></i>
+
+
+
+    <div id="links-collapse" class="transition collapse">
+      <ul id="wp-links" class="ul-raw">
+        <li><a href="">Trending</a></li>
+        <li><a href="">Discover</a></li>
+        <li><a href="">Newest</a></li>
+        <li><a href="">Featured</a></li>
+        <li><a href="">Search</a></li>
+      </ul>
+
+      <ul id="user-links" class="ul-raw">
+        <li><a title="Log In!" href="/login">Log In</a>
+          <div class="li-dropdown-s1 transition">
+            <p class="text-center">Login With Facebook/Google</p>
+            <img ng-click="login('google')" class="fadein-1 transition" id="g-sign-in" src="http://commondatastorage.googleapis.com/io-2013/presentations/808/images/sign-in-button.png">
+            <br>
+            <img style="cursor: pointer; width: 200px;" class="fadein-1 ico transition" ng-click="login('facebook')" src="http://i.stack.imgur.com/ZW4QC.png">
+          </div>
+          <form class="middlr" id="login-form" enctype="multipart/form-data" action="/login/" method="POST">{% csrf_token %}
+              <input name="providerid" type="hidden" placeholder="Provider ID" required/>
+              <input name="email" type="hidden" placeholder="Email" required/>
+              <input name="uid" type="hidden" placeholder="Password" required/>
+          </form>
+        </li>
+        <li><a title="Sign Up!" href="/signup">Sign Up</a>
+
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <style>
+    #main-container {
+      padding-top: 75px;
+    }
+    .a-1 {
+      position: absolute;
+      top: 20px;
+      right: 5px;
+    }
+  </style>

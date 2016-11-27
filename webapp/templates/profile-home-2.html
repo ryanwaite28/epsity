@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Epsity | {{ user.uname }}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load staticfiles %}
+
+  {% include 'dependencies-1.html' %}
+
+  <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+  <script src="/static/js/grand.js"></script>
+  <script src="/static/js/profile.js"></script>
+  <script src="/static/js/welcome.js"></script>
+
+  {% if you != None %}
+    <script src="/static/js/controllers/profile-home-ctrl.js"></script>
+  {% else %}
+    <script src="/static/js/controllers/user-search-ctrl.js"></script>
+  {% endif %}
+</head>
+
+
+    {% if you != None %}
+      <body ng-app="epsityApp" ng-controller="profileHomeCtrl" class="transition">
+    {% else %}
+      <body ng-app="epsityApp" ng-controller="userSearchCtrl" class="transition">
+    {% endif %}
+
+    {% if you != None %}
+      {% include 'topbar-1.html' %}
+    {% else %}
+      {% include 'topbar-2.html' %}
+    {% endif %}
+
+    <!--  -->
+
+    <div id="main-container">
+      <div id="mc-inner" style="background: transparent;">
+        <div class="container-fluid">
+
+          <div style="min-height: 75vh;" class="row fill transition" data-parallax="scroll" data-image-src="{{ user.background }}">
+            <div class="dim-4"></div>
+            <div class="col-sm-3 sdw-2">
+              <div class="dim-3"></div>
+              <div class="padd-1 mk-rel">
+                <img id="prof-img" class="middlr img-polaroid img-shadow" title="Profile Image" alt="Profile Image" src="{{ user.avi }}"/>
+                <h3 class="text-center text-lightgrey"><strong>{{ user.uname }}</strong></h3>
+                <p class="text-center text-lightgrey">{{ user.displayname }}</p>
+                <!-- <p class="text-center text-lightgrey"><strong>Rank:</strong> Average</p> -->
+                <hr>
+                <div class="">
+                  <ul id="prof-stats" class="ul-raw">
+                    <li id="prof-stats-ctrl" class="switch-div-ctrl"><strong>Stats</strong></li>
+                    <li id="prof-bio-ctrl" class="switch-div-ctrl"><strong>Bio</strong></li>
+                    <li id="prof-info-ctrl" class="switch-div-ctrl"><strong>Info</strong></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-5"></div>
+
+            <div class="col-sm-4 switch-div" id="prof-stats-div" style="display: block;">
+              <div class="dim-3"></div>
+              <div class="padd-1 mk-rel">
+                <i class="switch-div-x fa fa-times-circle-o" aria-hidden="true"></i>
+                <h3 class="text-center text-lightgrey"><strong>Stats</strong></h3>
+                <hr>
+                <div class="">
+                  <ul class="ul-raw text-lightgrey" id="">
+                    <li><strong>Following:</strong> 0</li>
+                    <li><strong>Followers:</strong> 0</li>
+                    <li><strong>Groups:</strong> 0</li>
+                    <li><strong>Posts:</strong> 0</li>
+                    <li><strong>Likes:</strong> 0</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-4 switch-div" id="prof-bio-div">
+              <div class="dim-3"></div>
+              <div class="padd-1 mk-rel">
+                <i class="switch-div-x fa fa-times-circle-o" aria-hidden="true"></i>
+                <h3 class="text-center text-lightgrey"><strong>Bio</strong></h3>
+                <hr>
+                <div class="text-lightgrey">
+                  <p class="">{% autoescape off %}{{ user.bio_desc|linebreaks }}{% endautoescape %}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-4 switch-div" id="prof-info-div">
+              <div class="dim-3"></div>
+              <div class="padd-1 mk-rel">
+                <i class="switch-div-x fa fa-times-circle-o" aria-hidden="true"></i>
+                <h3 class="text-center text-lightgrey"><strong>Info</strong></h3>
+                <hr>
+                <div class="">
+                  <p class="text-lightgrey"><strong>Interests</strong></p>
+                  <p id="interests" class="text-lightgrey">{{ user.interests }}</p>
+                </div>
+                <br>
+                <div class="">
+                  <p class="text-lightgrey"><strong>Seeking</strong></p>
+                  <p id="seeking" class="text-lightgrey">{{ user.seeking }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contents -->
+          <br>
+
+          <div style="min-height: 100vh;" class="row no-padd">
+            <div class="col-md-3" id="prof-sidebar">
+
+            </div>
+            <div class="col-md-12 no-padd" id="prof-mainbar">
+              <div style="min-height: 50vh;" class="padd-1 mk-rel sdw-1 bg-white">
+                <p class="text-center">Post Feed</p>
+                <hr>
+
+                <hr>
+              </div>
+            </div>
+          </div>
+
+          <br>
+
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+  <!--
+
+    wp = Welcome Page
+
+  -->
+
+</html>

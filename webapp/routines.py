@@ -108,7 +108,7 @@ def deleteAccount(request):
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
-        errorPage(request, msg)
+        return errorPage(request, msg)
 
 
 
@@ -187,7 +187,7 @@ def updateDisplayName(request):
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
-        errorPage(request, msg)
+        return errorPage(request, msg)
 
 def updateAviLink(request):
     try:
@@ -202,7 +202,7 @@ def updateAviLink(request):
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
-        errorPage(request, msg)
+        return errorPage(request, msg)
 
 
 def updateWpLink(request):
@@ -218,7 +218,7 @@ def updateWpLink(request):
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
-        errorPage(request, msg)
+        return errorPage(request, msg)
 
 
 def updateAviFile(request):
@@ -246,7 +246,7 @@ def updateAviFile(request):
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
-        errorPage(request, msg)
+        return errorPage(request, msg)
 
 def updateWpFile(request):
     try:
@@ -274,7 +274,7 @@ def updateWpFile(request):
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
-        errorPage(request, msg)
+        return errorPage(request, msg)
 
 
 def searchEngine(request):
@@ -383,7 +383,7 @@ def createGroup(request):
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
-        errorPage(request, msg)
+        return errorPage(request, msg)
 
 # ---
 
@@ -452,4 +452,4 @@ def updateGroup(request):
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
-        errorPage(request, msg)
+        return errorPage(request, msg)
