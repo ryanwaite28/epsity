@@ -158,11 +158,13 @@ def updateAccountSeeking(request, content):
 def loadSettingsLists(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
+        groups = Groups.objects.filter(ownerid = you.id).all()
 
         resp = {
             'msg': 'lists',
             'interests': you.interests.split(),
-            'seeking': you.seeking.split()
+            'seeking': you.seeking.split(),
+            'groups': [g.serialize for g in groups]
         }
 
         return JsonResponse(resp)
@@ -179,7 +181,8 @@ def updateDisplayName(request):
 
         return render(request,
                     pages['mySettings'],
-                    {'you': you, 'message': "Displayname Updated Successfully!"},
+                    {'you': you,
+                    'message': "Displayname Updated Successfully!"},
                     context_instance=RequestContext(request))
 
     except ObjectDoesNotExist:
@@ -237,7 +240,8 @@ def updateAviFile(request):
         else:
             return render(request,
                         pages['mySettings'],
-                        {'you': you, 'message': "Error - That Was Not An Image File."},
+                        {'you': you,
+                        'message': "Error - That Was Not An Image File."},
                         context_instance=RequestContext(request))
 
     except ObjectDoesNotExist:
@@ -257,13 +261,15 @@ def updateWpFile(request):
 
             return render(request,
                         pages['mySettings'],
-                        {'you': you, 'message': "Wallpaper Updated Successfully!"},
+                        {'you': you,
+                        'message': "Wallpaper Updated Successfully!"},
                         context_instance=RequestContext(request))
 
         else:
             return render(request,
                         pages['mySettings'],
-                        {'you': you, 'message': "Error - That Was Not An Image File."},
+                        {'you': you,
+                        'message': "Error - That Was Not An Image File."},
                         context_instance=RequestContext(request))
 
     except ObjectDoesNotExist:
@@ -281,48 +287,168 @@ def searchEngine(request):
     if data['query'] == '':
         return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
 
-    users = Accounts.objects.filter(uname__contains = data['query'])
+    users = Accounts.objects.filter(uname__contains = data['query'])[:10]
+    groups = Groups.objects.filter(name__contains = data['query'])[:10]
 
     resp = {
         'msg': 'search query',
-        'users': [u.serialize_basic for u in users]
+        'users': [u.serialize_basic for u in users],
+        'groups': [g.serialize for g in groups]
     }
 
     return JsonResponse(resp)
+
+# ---
+
+def checkGroupName(request, data):
+    if data['groupName'][-1] == ' ':
+        data['groupName'] = data['groupName'][:-1]
+    checkGroup = Groups.objects.filter(name__iexact = data['groupName']).first()
+    if checkGroup != None:
+        return JsonResponse({'msg': 'taken'})
+
+
+    else:
+        return JsonResponse({'msg': 'available'})
+
+# ---
 
 def createGroup(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
 
+        checkGroup = Groups.objects.filter(name = request.POST['name']).first()
+        if checkGroup != None:
+            checkName = checkGroup.name.lower()
+            if checkName == request.POST['name'].lower():
+                return render(request,
+                            pages['createview'],
+                            {'you': you,
+                            'message': "That Group Name Is Already In Use!"},
+                            context_instance=RequestContext(request))
+
+        if request.POST['name'][-1] == ' ':
+            request.POST['name'] = request.POST['name'][:-1]
+
         newGroup = Groups(owner_rel=you, ownerid=you.id,
                             name=request.POST['name'],
                             desc=request.POST['desc'])
-
-        aviFile = request.POST.get('imageFileAvi')
-        wpFile = request.POST.get('imageFileWp')
-
-        if aviFile and aviFile.name != '' and allowed_photo(aviFile.name):
-            newdoc = AviModel(docfile = request.FILES['imageFile'])
-            newdoc.save()
-            newGroup.avi = newdoc.docfile.url
-
-        if wpFile and wpFile.name != '' and allowed_photo(wpFile.name):
-            newdoc = WpModel(docfile = request.FILES['imageFile'])
-            newdoc.save()
-            newGroup.background = newdoc.docfile.url
-
         newGroup.save()
 
-        print newGroup
-        print newGroup.serialize
+        if request.FILES:
+            newGroup = Groups.objects.filter(name = request.POST['name'],
+                                                ownerid = you.id).first()
+
+            aviFile = request.FILES['imageFileAvi']
+            wpFile = request.FILES['imageFileWp']
+
+            if not aviFile or \
+            aviFile.name == '' or \
+            not allowed_photo(aviFile.name):
+                return render(request,
+                            pages['createview'],
+                            {'you': you,
+                            'message': 'Error - Bad Avatar File Input...'},
+                            context_instance=RequestContext(request))
+
+            if not wpFile or \
+            wpFile.name == '' or \
+            not allowed_photo(wpFile.name):
+                return render(request,
+                            pages['createview'],
+                            {'you': you,
+                            'message': 'Error - Bad Wallpaper File Input...'},
+                            context_instance=RequestContext(request))
+
+            if aviFile and aviFile.name != '' and allowed_photo(aviFile.name):
+                newdoc = AviModel(docfile = request.FILES['imageFileAvi'])
+                newdoc.save()
+                newGroup.avi = newdoc.docfile.url
+
+            if wpFile and wpFile.name != '' and allowed_photo(wpFile.name):
+                newdoc = WpModel(docfile = request.FILES['imageFileWp'])
+                newdoc.save()
+                newGroup.background = newdoc.docfile.url
+
+            newGroup.save()
+
+            print newGroup
+            print newGroup.serialize
 
         return render(request,
-                    pages['mySettings'],
+                    pages['createview'],
                     {'you': you, 'message': "New Group Created!"},
                     context_instance=RequestContext(request))
 
 
-    
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        errorPage(request, msg)
+
+# ---
+
+def updateGroup(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        group = Groups.objects.filter(id = request.POST['gid']).first()
+        if group == None:
+            return render(request,
+                        pages['mySettings'],
+                        {'you': you,
+                        'message': "Error - The Group Could Not Be Edited."},
+                        context_instance=RequestContext(request))
+
+        group.name = request.POST['name']
+        group.desc = request.POST['desc']
+        group.categories = request.POST['categories']
+
+        group.save()
+
+        if request.FILES:
+            group = Groups.objects.filter(id = request.POST['gid']).first()
+
+            aviFile = request.FILES['imageFileAvi']
+            wpFile = request.FILES['imageFileWp']
+
+            if not aviFile or \
+            aviFile.name == '' or \
+            not allowed_photo(aviFile.name):
+                return render(request,
+                            pages['mySettings'],
+                            {'you': you,
+                            'message': 'Error - Bad Avatar File Input...'},
+                            context_instance=RequestContext(request))
+
+            if not wpFile or \
+            wpFile.name == '' or \
+            not allowed_photo(wpFile.name):
+                return render(request,
+                            pages['mySettings'],
+                            {'you': you,
+                            'message': 'Error - Bad Wallpaper File Input...'},
+                            context_instance=RequestContext(request))
+
+            if aviFile and aviFile.name != '' and allowed_photo(aviFile.name):
+                newdoc = AviModel(docfile = request.FILES['imageFileAvi'])
+                newdoc.save()
+                group.avi = newdoc.docfile.url
+
+            if wpFile and wpFile.name != '' and allowed_photo(wpFile.name):
+                newdoc = WpModel(docfile = request.FILES['imageFileWp'])
+                newdoc.save()
+                group.background = newdoc.docfile.url
+
+            group.save()
+
+            print group
+            print group.serialize
+
+        return render(request,
+                    pages['mySettings'],
+                    {'you': you, 'message': "Group Updated Successfully!"},
+                    context_instance=RequestContext(request))
+
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

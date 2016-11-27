@@ -17,109 +17,114 @@
   <script src="/static/js/controllers/user-settings-ctrl.js"></script>
 </head>
 
-  <body ng-app="epsityApp" ng-controller="settingsCtrl" class="transition">
+  <body ng-app="epsityApp" ng-controller="settingsCtrl" class="transition ">
 
     {% include 'topbar-1.html' %}
 
     <!--  -->
 
     <div id="main-container">
-      <div id="mc-inner" class="">
-        <div class="container-fluid">
+      <div id="mc-inner" class="transition ">
+        <div class="transition container-fluid">
 
-          <div class="row">
-            <div class="col-md-12" style="min-height: 25px;"><p class="text-center" style="padding: 15px;">{{ message }}</p></div>
+          <div class="transition row">
+            <div class="transition col-md-12" style="min-height: 25px;"><p class="transition text-center" style="padding: 15px;">{{ message }}</p></div>
             <!--  -->
 
-            <div class="col-md-3">
-              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <img class="polaroid-2 middlr" src="{{ you.avi }}"/>
-                <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
-                <p class="text-center">{{ you.displayname }}</p>
+            <div class="transition col-md-3">
+              <div class="transition padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <img class="transition polaroid-2 middlr" src="{{ you.avi }}"/>
+                <h3 class="transition text-center"><strong>{{ you.uname }}</strong></h3>
+                <p class="transition text-center">{{ you.displayname }}</p>
               </div>
 
-              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <ul class="nav nav-pills nav-stacked text-center">
-                  <li role="presentation" class="active"><a data-toggle="tab" href="#bio-pane">Bio</a></li>
+              <div class="transition padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <ul class="transition nav nav-pills nav-stacked text-center">
+                  <li role="presentation" class="transition active"><a data-toggle="tab" href="#bio-pane">Bio</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#int-pane">Info</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#apr-pane">Appearance</a></li>
+                  <li role="presentation"><a data-toggle="tab" href="#groups-pane">Groups</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#del-pane">Delete</a></li>
                 </ul>
               </div>
             </div>
 
-            <div class="col-md-9" style="min-height: 75vh;">
+            <div class="transition col-md-9" style="min-height: 75vh;">
               <div>
-                <div class="tab-content padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                  <div id="bio-pane" class="tab-pane fade in active">
+                <div class="transition tab-content padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                  <div id="bio-pane" class="transition tab-pane fade in active">
                     <div>
-                      <h3 class="text-center"><strong>Bio</strong></h3>
-                      <hr>
-                      <p class="text-center">Edit Your Bio<br>Max Length: 150 Characters.</p>
+                      <h3 class="transition text-center"><strong>Bio</strong></h3>
+                      <hr class="transition hr-grey">
+                      <p class="transition text-center">Edit Your Bio<br>Max Length: 150 Characters.</p>
                       <br>
-                      <form class="middlr" id="bio-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
-                        <textarea class="middlr" id="update-bio-content" name="bio" placeholder="Bio Message...">{{ you.bio_desc }}</textarea>
+                      <form class="transition middlr" id="bio-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                        <textarea class="transition middlr" id="update-bio-content" name="bio" placeholder="Bio Message...">{% autoescape off %}{{ you.bio_desc }}{% endautoescape %}</textarea>
                         <input type="hidden" name="action" value="update bio"/>
                         <br>
-                        <input ng-hide="updateBioBtn" title="Update Bio" class="middlr transition btn btn-info" type="button" value="Update" ng-click="updateAccountBio()"/>
+                        <input ng-hide="updateBioBtn" title="Update Bio" class="transition middlr  btn btn-info" type="button" value="Update" ng-click="updateAccountBio()"/>
                         <br>
                         <img width="125px" src="/static/img/ajax-loading-big.gif" ng-hide="updateBioImg"/>
-                        <p class="text-center">{[ updateBioMsg ]}</p>
+                        <p class="transition text-center">{[ updateBioMsg ]}</p>
                       </form>
                     </div>
                   </div>
 
-                  <div id="int-pane" class="tab-pane fade">
-                    <h3 class="text-center"><strong>Info</strong></h3>
-                    <hr>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="col-md-12"><h4>Interests</h4><br></div>
-                        <div class="col-md-4">
-                          <input class="block input-t-s1" type="text" placeholder="Add Interest" ng-model="newInterest"/><br>
-                          <input class="block btn btn-info transition" type="button" value="Add" ng-click="addNewInterest()"/><br>
+                  <div id="int-pane" class="transition tab-pane fade">
+                    <h3 class="transition text-center"><strong>Info</strong></h3>
+                    <hr class="transition hr-grey">
+                    <div class="transition row padd-1">
+                      <div class="transition col-md-12 box-s1">
+                        <div class="transition col-md-12"><h4 class="transition text-center">Interests</h4><br></div>
+                        <div class="transition col-md-4">
+                          <input class="transition middlr input-t-s1" type="text" placeholder="Add Interest" ng-model="newInterest"/><br>
+                          <input class="transition middlr btn btn-info " type="button" value="Add" ng-click="addNewInterest()"/><br>
                           <p><strong>{[ interestMsg ]}</strong></p>
                           <br>
                           <div ng-hide="editInterestForm">
-                            <p>Edit Interest</p>
-                            <input class="block input-t-s1" type="text" placeholder="Edit Interest" ng-model="editInterest"/><br>
-                            <input class="btn btn-info transition" type="button" value="Edit" ng-click="confirmEditInterest()"/>
-                            <input class="btn btn-default transition" type="button" value="Cancel" ng-click="cancelAddItem('interest')"/><br>
+                            <p class="transition text-center">Edit Interest</p>
+                            <input class="transition middlr input-t-s1" type="text" placeholder="Edit Interest" ng-model="editInterest"/><br>
+                            <div class="transition text-center">
+                              <input class="transition btn btn-info " type="button" value="Edit" ng-click="confirmEditInterest()"/>
+                              <input class="transition btn btn-default " type="button" value="Cancel" ng-click="cancelAddItem('interest')"/><br>
+                            </div>
                           </div>
                         </div>
-                        <div class="col-md-8">
-                          <ul class="ul-raw user-s-list" id="">
-                            <li class="transition" ng-repeat="i in interestsList">
+                        <div class="transition col-md-8">
+                          <ul class="transition ul-raw user-s-list" id="">
+                            <li class="transition " ng-repeat="i in interestsList">
                               <p>{[ i ]}</p>
-                              <span class="btn btn-warning transition" ng-click="editInterestItem(this.i)">Edit</span>
-                              <span class="btn btn-danger transition" ng-click="deleteListItem(this.i, 'interest')">Delete</span>
+                              <span class="transition btn btn-warning " ng-click="editInterestItem(this.i)">Edit</span>
+                              <span class="transition btn btn-danger " ng-click="deleteListItem(this.i, 'interest')">Delete</span>
                             </li>
                           </ul>
                         </div>
                       </div>
 
-                      <div class="col-md-12"><hr></div>
+                      <div class="transition col-md-12"><br></div>
 
-                      <div class="col-md-12">
-                        <div class="col-md-12"><h4>Seeking</h4><br></div>
-                        <div class="col-md-4">
-                          <input class="block input-t-s1" type="text" placeholder="Add Seeking" ng-model="newSeeking"/><br>
-                          <input class="block btn btn-info transition" type="button" value="Add" ng-click="addNewSeeking()"/><br>
+                      <div class="transition col-md-12 box-s1">
+                        <div class="transition col-md-12"><h4 class="transition text-center">Seeking</h4><br></div>
+                        <div class="transition col-md-4">
+                          <input class="transition middlr input-t-s1" type="text" placeholder="Add Seeking" ng-model="newSeeking"/><br>
+                          <input class="transition middlr btn btn-info " type="button" value="Add" ng-click="addNewSeeking()"/><br>
                           <p><strong>{[ seekingMsg ]}</strong></p>
                           <br>
                           <div ng-hide="editSeekingForm">
-                            <p>Edit Seeking</p>
-                            <input class="block input-t-s1" type="text" placeholder="Edit Seeking" ng-model="editSeeking"/><br>
-                            <input class="btn btn-info transition" type="button" value="Edit" ng-click="confirmEditSeeking()"/>
-                            <input class="btn btn-default transition" type="button" value="Cancel" ng-click="cancelAddItem('seeking')"/><br>
+                            <p class="transition text-center">Edit Seeking</p>
+                            <input class="transition middlr input-t-s1" type="text" placeholder="Edit Seeking" ng-model="editSeeking"/><br>
+                            <div class="transition text-center">
+                              <input class="transition btn btn-info " type="button" value="Edit" ng-click="confirmEditSeeking()"/>
+                              <input class="transition btn btn-default " type="button" value="Cancel" ng-click="cancelAddItem('seeking')"/><br>
+                            </div>
                           </div>
                         </div>
-                        <div class="col-md-8">
-                          <ul class="ul-raw user-s-list" id="">
-                            <li class="transition" ng-repeat="s in seekingList">
+                        <div class="transition col-md-8">
+                          <ul class="transition ul-raw user-s-list" id="">
+                            <li class="transition " ng-repeat="s in seekingList">
                               <p>{[ s ]}</p>
-                              <span class="btn btn-warning transition" ng-click="editSeekingItem(this.s)">Edit</span>
-                              <span class="btn btn-danger transition" ng-click="deleteListItem(this.s, 'seeking')">Delete</span>
+                              <span class="transition btn btn-warning " ng-click="editSeekingItem(this.s)">Edit</span>
+                              <span class="transition btn btn-danger " ng-click="deleteListItem(this.s, 'seeking')">Delete</span>
                             </li>
                           </ul>
                         </div>
@@ -127,77 +132,77 @@
                     </div>
                   </div>
 
-                  <div id="apr-pane" class="tab-pane fade">
-                    <h3 class="text-center"><strong>Appearance</strong></h3>
-                    <hr>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <p class="text-center">Change DisplayName</p><br>
-                        <div class="col-md-12">
+                  <div id="apr-pane" class="transition tab-pane fade">
+                    <h3 class="transition text-center"><strong>Appearance</strong></h3>
+                    <hr class="transition hr-grey">
+                    <div class="transition row padd-1">
+                      <div class="transition col-md-12 box-s1">
+                        <p class="transition text-center">Change DisplayName</p><br>
+                        <div class="transition col-md-12">
                           <form id="chg-dpn-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
                             <input type="hidden" name="action" value="update displayname"/>
-                            <input type="text" name="displayname" class="transition middlr input-t-s1" value="{{ you.displayname }}" placeholder="Ender Displayname..."/><br>
-                            <input title="Submit Form" class="btn btn-info transition middlr" type="button" value="Edit" ng-click="editDisplayName()"/>
+                            <input type="text" name="displayname" class="transition  middlr input-t-s1" value="{{ you.displayname }}" placeholder="Ender Displayname..."/><br>
+                            <input title="Submit Form" class="transition btn btn-info  middlr" type="button" value="Edit" ng-click="editDisplayName()"/>
                           </form>
                         </div>
                       </div>
                     </div>
-                    <hr>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <p class="text-center">Change Avatar</p><br>
-                        <ul class="nav nav-tabs nav-justified text-center">
-                          <li role="presentation" class="active"><a data-toggle="tab" href="#avi-link-pane">Link</a></li>
+
+                    <div class="transition row padd-1">
+                      <div class="transition col-md-12 box-s1">
+                        <p class="transition text-center">Change Avatar</p><br>
+                        <ul class="transition nav nav-tabs nav-justified text-center">
+                          <li role="presentation" class="transition active"><a data-toggle="tab" href="#avi-link-pane">Link</a></li>
                           <li role="presentation"><a data-toggle="tab" href="#avi-file-pane">File</a></li>
                         </ul>
                         <br>
-                        <div class="tab-content">
-                          <div id="avi-link-pane" class="tab-pane in active fade">
-                            <div class="col-md-12">
+                        <div class="transition tab-content">
+                          <div id="avi-link-pane" class="transition tab-pane in active fade">
+                            <div class="transition col-md-12">
                               <form id="chg-avi-link-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update avi link"/>
-                                <input type="text" name="avi" class="middlr transition block input-t-s1" placeholder="Link To Avatar Image..." required/><br>
-                                <input title="Submit Form" class="btn btn-info transition middlr" type="submit" value="Edit" ng-click=""/>
+                                <input type="text" name="avi" class="transition middlr  block input-t-s1" placeholder="Link To Avatar Image..." required/><br>
+                                <input title="Submit Form" class="transition btn btn-info  middlr" type="submit" value="Edit" ng-click=""/>
                               </form>
                             </div>
                           </div>
-                          <div id="avi-file-pane" class="tab-pane fade">
-                            <div class="col-md-12">
+                          <div id="avi-file-pane" class="transition tab-pane fade">
+                            <div class="transition col-md-12">
                               <form id="chg-avi-file-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update avi file"/>
-                                <input type="file" name="imageFile" class="middlr transition btn btn-default" accept="image/*" required/><br>
-                                <input title="Submit Form" class="btn btn-info transition middlr" type="submit" value="Upload" ng-click="editAviFile()"/>
+                                <input type="file" name="imageFile" class="transition middlr  btn btn-default" accept="image/*" required/><br>
+                                <input title="Submit Form" class="transition btn btn-info  middlr" type="submit" value="Upload" ng-click="editAviFile()"/>
                               </form>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <hr>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <p class="text-center">Change Wallpaper</p><br>
-                        <ul class="nav nav-tabs nav-justified text-center">
-                          <li role="presentation" class="active"><a data-toggle="tab" href="#wp-link-pane">Link</a></li>
+
+                    <div class="transition row padd-1">
+                      <div class="transition col-md-12 box-s1">
+                        <p class="transition text-center">Change Wallpaper</p><br>
+                        <ul class="transition nav nav-tabs nav-justified text-center">
+                          <li role="presentation" class="transition active"><a data-toggle="tab" href="#wp-link-pane">Link</a></li>
                           <li role="presentation"><a data-toggle="tab" href="#wp-file-pane">File</a></li>
                         </ul>
                         <br>
-                        <div class="tab-content">
-                          <div id="wp-link-pane" class="tab-pane in active fade">
-                            <div class="col-md-12">
+                        <div class="transition tab-content">
+                          <div id="wp-link-pane" class="transition tab-pane in active fade">
+                            <div class="transition col-md-12">
                               <form id="chg-wp-link-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update wp link"/>
-                                <input type="text" name="background" class="transition middlr input-t-s1" placeholder="Link To Background Image..." required/><br>
-                                <input title="Submit Form" class="btn btn-info transition middlr" type="submit" value="Edit" ng-click=""/>
+                                <input type="text" name="background" class="transition  middlr input-t-s1" placeholder="Link To Background Image..." required/><br>
+                                <input title="Submit Form" class="transition btn btn-info  middlr" type="submit" value="Edit" ng-click=""/>
                               </form>
                             </div>
                           </div>
-                          <div id="wp-file-pane" class="tab-pane fade">
-                            <div class="col-md-12">
+                          <div id="wp-file-pane" class="transition tab-pane fade">
+                            <div class="transition col-md-12">
                               <form id="chg-wp-file-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update wp file"/>
-                                <input type="file" name="imageFile" class="middlr transition btn btn-default" accept="image/*" required/><br>
-                                <input title="Submit Form" class="btn btn-info transition middlr" type="submit" value="Upload" ng-click="editWpFile()"/>
+                                <input type="file" name="imageFile" class="transition middlr  btn btn-default" accept="image/*" required/><br>
+                                <input title="Submit Form" class="transition btn btn-info  middlr" type="submit" value="Upload" ng-click="editWpFile()"/>
                               </form>
                             </div>
                           </div>
@@ -206,12 +211,84 @@
                     </div>
                   </div>
 
-                  <div id="del-pane" class="tab-pane fade">
-                    <h3 class="text-center"><strong>Delete</strong></h3>
-                    <hr>
+                  <div id="groups-pane" class="transition tab-pane fade">
+                    <h3 class="transition text-center"><strong>Groups</strong></h3>
+                    <hr class="transition hr-grey">
+                    <div class="transition row padd-1">
+                      <div class="transition col-md-12">
+                        <div ng-hide="groupsView">
+                          <ul id="groups-list">
+                            <li ng-repeat="g in groupsList">
+                              <div class="transition ">
+                                <div class="transition fill mk-rel sdw-1 padd-3" style="background-image: url('{[ g.background ]}');">
+                                  <div class="transition dim-3"></div>
+                                  <div class="transition mk-rel">
+                                    <img class="transition sr-user-avi" src="{[ g.avi ]}"/><br>
+                                    <p class="transition text-center text-lightgrey text-sdw-2"><strong>{[ g.name ]}</strong></p>
+                                  </div>
+                                </div>
+                              </div>
+                              <br>
+                              <input title="Edit - {[ g.name ]}" class="transition  middlr btn btn-info" type="button" value="Edit" ng-click="openGroupEditor(this.g)"/>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="transition col-md-12">
+                        <div ng-hide="groupEditor">
+                          <h3 class="transition text-center no-marg"><strong>Edit {[ editGroup.name ]}</strong></h3><br>
+                          <input title="Cancel Editor" class="transition  middlr btn btn-default" type="button" value="Cancel" ng-click="cancelGroupEditor()"/>
+                          <hr>
+                          <form class="transition middlr" id="edit-group-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                            <input type="hidden" name="action" value="update group"/>
+                            <h3 class="transition text-center no-marg">Info</h3>
+                            <br>
+                            <input class="transition input-t-s1 middlr" type="text" name="name" placeholder="Group Name..." id="edit-groupname" required/><br>
+                            <textarea style="min-height: 150px;" class="transition input-t-s1 middlr" name="desc" type="text" placeholder="Group Description..." id="edit-groupdesc" required></textarea><br>
+                            <p class="transition text-center">Group Avatar</p>
+                            <input type="file" name="imageFileAvi" class="transition middlr btn btn-default" accept="image/*"/><br><br>
+                            <p class="transition text-center">Group Wallpaper</p>
+                            <input type="file" name="imageFileWp" class="transition middlr btn btn-default" accept="image/*"/><br>
+                            <hr>
+                            <h3 class="transition text-center no-marg">Categories</h3>
+                            <br>
+                            <div class="transition row">
+                              <div class="transition col-md-4">
+                                <input class="transition middlr input-t-s1" type="text" placeholder="Category Name..." ng-model="newEditGroupCategory"/><br>
+                                <input style="width: 90px;" class="transition middlr btn btn-info" value="Add" ng-click="addEditGroupCategory()"/>
+                                <br><br>
+                                <div ng-hide="categoryEditor">
+                                  <input class="transition middlr input-t-s1" type="text" placeholder="Category Name..." ng-model="groupCategoryEditName"/><br>
+                                  <span style="width: 90px;" class="transition middlr btn btn-info" ng-click="returnEditGroupCategory()"/>Edit</span><br>
+                                  <span style="width: 90px;" class="transition middlr btn btn-default" ng-click="cancelEditGroupCategory()"/>Cancel</span>
+                                </div>
+                              </div>
+                              <div class="transition col-md-8">
+                                  <ul class="transition ul-raw user-s-list">
+                                    <li ng-repeat="c in editGroup.categories">
+                                      <p>{[ c ]}</p>
+                                      <span class="transition btn btn-warning " ng-click="editGroupCategory(this.c)">Edit</span>
+                                      <span class="transition btn btn-danger " ng-click="deleteGroupCategory(this.c)">Delete</span>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </div>
+                            <input id="edit-groupcategories" name="categories" type="hidden"/>
+                            <input id="edit-groupid" name="gid" type="hidden"/>
+                            <hr class="hr-grey">
+                            <input class="transition middlr btn btn-info " type="button" value="Update" ng-click="checkGroupName()"/>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="del-pane" class="transition tab-pane fade">
+                    <h3 class="transition text-center"><strong>Delete</strong></h3>
+                    <hr class="transition hr-grey">
                     <p>Delete Account?</p>
-                    <span class="btn btn-danger transition" ng-click="deleteAccount()">Delete <i class="fa fa-trash" aria-hidden="true"></i></span>
-                    <form class="" id="deleteaccount-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                    <span class="transition btn btn-danger " ng-click="deleteAccount()">Delete <i class="transition fa fa-trash" aria-hidden="true"></i></span>
+                    <form class="transition " id="deleteaccount-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
                       <input type="hidden" name="action" value="delete account"/>
                     </form>
                   </div>
@@ -219,7 +296,7 @@
               </div>
             </div>
 
-            <div class="col-md-12"><br></div>
+            <div class="transition col-md-12"><br></div>
           </div>
 
         </div>

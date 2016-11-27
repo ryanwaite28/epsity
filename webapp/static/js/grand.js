@@ -1,3 +1,5 @@
+/* Master Application */
+
 var App = angular.module("epsityApp", ["firebase"]);
 
 App.factory("travelr", ["$firebaseArray",
@@ -14,12 +16,15 @@ App.config(['$interpolateProvider', function($interpolateProvider) {
   $interpolateProvider.endSymbol(']}');
 }]);
 
-//
+// Initializers
 
 $(document).ready(function(){
 
   $('li').addClass('transition');
   $('a').addClass('transition');
+	$('i').addClass('transition');
+	//$('input').addClass('transition');
+	//$('span').addClass('transition');
 
   $('.rotator').click(function(){
     //console.log(this);
@@ -66,6 +71,13 @@ $(document).ready(function(){
   ];
 
 	window.linkRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-	window.alphaNumeric = /^[a-z0-9]+$/i;
+	window.alphaNumeric = /^[a-zA-Z0-9]+$/i;
+	window.alphaNum_one = /^[a-zA-Z0-9\.]{3,25}/;
+
+	window.backToTop = function() {
+		$('html, body').animate({
+				scrollTop: 0
+		}, 1000);
+	}
 
 });

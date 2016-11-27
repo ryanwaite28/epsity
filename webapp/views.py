@@ -266,6 +266,8 @@ def settingsAction(request):
             if request.POST['action'] == 'update wp file':
                 return routines.updateWpFile(request)
 
+            if request.POST['action'] == 'update group':
+                return routines.updateGroup(request)
 
             else:
                 msg = 'Unknown Action...'
@@ -306,3 +308,27 @@ def settingsAction(request):
                 return JsonResponse({'msg': 'Failed To Load JSON Data...'})
 
 # ---
+
+@csrf_protect
+def checkPoint(request):
+    ''' This View Function Is Intended To Be Called By AJAX Request  '''
+    if request.method == 'GET':
+        return redirect('/')
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            if data['action'] == None:
+                return JsonResponse({'msg': 'Action Message Is Missing...'})
+
+            if data['action'] == '':
+                return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
+
+            # ----- #
+
+            if data['action'] == 'check group name':
+                return routines.checkGroupName(request, data)
+
+        except:
+            return JsonResponse({'msg': 'Failed To Load JSON Data...'})

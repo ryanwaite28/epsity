@@ -246,11 +246,10 @@ class Groups(models.Model):
 
     name = models.CharField(max_length = 1725, default = '')
     desc = models.CharField(max_length = 1725, default = '')
+    categories = models.CharField(max_length = 1725, default = '')
 
     avi = models.CharField(max_length = 1725, default = '')
     background = models.CharField(max_length = 1725, default = '')
-
-    categories = models.CharField(max_length = 1725, default = '')
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -264,7 +263,8 @@ class Groups(models.Model):
             'desc': self.desc,
             'avi': self.avi,
             'background': self.background,
-            'categories': self.categories.split()
+            'categories': self.categories.split(),
+            'owner': self.owner_rel.serialize_basic
         }
 
     class Meta:

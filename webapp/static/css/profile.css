@@ -316,6 +316,31 @@ body {
   padding: 15px;
 }
 
+#groups-list {
+  padding: 0px;
+  margin: 0px;
+  width: 100%;
+  display: block;
+  margin: auto;
+}
+#groups-list li {
+  list-style: none;
+  float: left;
+  margin-bottom: 50px;
+  width: 33.33%;
+}
+#groups-list li div {
+  padding: 15px;
+}
+#groups-list li div.fill {
+  padding: 20px;
+  height: 275px;
+}
+
+#groups-list li > div > div:first-child {
+  height: 250px;
+}
+
 
 /* --- */
 /* --- */

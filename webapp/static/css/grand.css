@@ -114,6 +114,9 @@
 .padd-2 {
   padding: 10px;
 }
+.padd-3 {
+  padding: 30px;
+}
 
 .img-polaroid {
   padding: 5px;
@@ -200,11 +203,9 @@
 .bg-zoom-1:hover {
   background-size: 150%;
 }
-
 .bg-trans {
   background: transparent;
 }
-
 /* space bottom */
 .sbm-1 {
   margin-bottom: 15px;
@@ -212,11 +213,9 @@
 .bg-white {
   background: white;
 }
-
 .block {
   display: block;
 }
-
 .input-t-s1 {
   border-radius: 3px;
   padding: 3px;
@@ -225,7 +224,17 @@
   width: 275px;
   max-width: 95%;
 }
-
 .no-padd {
   padding: 0px;
+}
+.no-marg {
+  margin: 0px;
+}
+.hr-grey {
+  border-color: grey;
+}
+.box-s1 {
+  border: 1px solid black;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
 }

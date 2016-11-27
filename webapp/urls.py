@@ -22,4 +22,6 @@ urlpatterns = [
     url(r'^mysettings/$', views.mySettings, name='mysettings'),
     url(r'^user/settingsaction/$', views.settingsAction, name='settingsaction'),
 
+    url(r'^checkpoint/$', views.checkPoint, name='checkpoint'),
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

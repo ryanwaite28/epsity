@@ -5,8 +5,6 @@ $(document).ready(function(){
   var fast = 'fast';
   var slow = 'slow';
 
-  $('i').addClass('transition');
-
   $('#arrow-1').click(function(){
 	  $('html, body').animate({
 	    scrollTop: 0
