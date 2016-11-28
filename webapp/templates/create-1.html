@@ -58,7 +58,8 @@
                     <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/create/" method="POST">{% csrf_token %}
                       <input type="hidden" name="action" value="create group"/>
 
-                      <input class="input-t-s1 middlr" type="text" name="name" placeholder="Group Name..." ng-model="newGroupName" required/><br>
+                      <input class="input-t-s1 middlr" type="text" name="displayname" placeholder="Group Display Name..." ng-model="newGroupName" required/><br>
+                      <input class="input-t-s1 middlr" type="text" name="uname" placeholder="Group Username..." ng-model="newGroupUserName" required/><br>
                       <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Group Description..." ng-model="newGroupDesc" required></textarea><br>
                       <p class="text-center">Group Avatar</p>
                       <input type="file" name="imageFileAvi" class="middlr transition btn btn-default" accept="image/*"/><br><br>

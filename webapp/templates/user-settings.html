@@ -75,7 +75,7 @@
                     <hr class="transition hr-grey">
                     <div class="transition row padd-1">
                       <div class="transition col-md-12 box-s1">
-                        <div class="transition col-md-12"><h4 class="transition text-center">Interests</h4><br></div>
+                        <div class="transition col-md-12"><h4 class="transition text-center">Interests<br>{[ interestsList.length ]}</h4><br></div>
                         <div class="transition col-md-4">
                           <input class="transition middlr input-t-s1" type="text" placeholder="Add Interest" ng-model="newInterest"/><br>
                           <input class="transition middlr btn btn-info " type="button" value="Add" ng-click="addNewInterest()"/><br>
@@ -104,7 +104,7 @@
                       <div class="transition col-md-12"><br></div>
 
                       <div class="transition col-md-12 box-s1">
-                        <div class="transition col-md-12"><h4 class="transition text-center">Seeking</h4><br></div>
+                        <div class="transition col-md-12"><h4 class="transition text-center">Seeking<br>{[ seekingList.length ]}</h4><br></div>
                         <div class="transition col-md-4">
                           <input class="transition middlr input-t-s1" type="text" placeholder="Add Seeking" ng-model="newSeeking"/><br>
                           <input class="transition middlr btn btn-info " type="button" value="Add" ng-click="addNewSeeking()"/><br>
@@ -211,8 +211,10 @@
                     </div>
                   </div>
 
-                  <div id="groups-pane" class="transition tab-pane fade">
+                  <div id="groups-pane" class="transition tab-pane fade mk-rel">
+                    <a title="Go To Create Center" href="/create"><i class="top-right fa fa-plus-square p-emp-1" aria-hidden="true"></i></a>
                     <h3 class="transition text-center"><strong>Groups</strong></h3>
+                    <p class="text-center">{[ groupsList.length ]}</p>
                     <hr class="transition hr-grey">
                     <div class="transition row padd-1">
                       <div class="transition col-md-12">
@@ -224,16 +226,26 @@
                                   <div class="transition dim-3"></div>
                                   <div class="transition mk-rel">
                                     <img class="transition sr-user-avi" src="{[ g.avi ]}"/><br>
-                                    <p class="transition text-center text-lightgrey text-sdw-2"><strong>{[ g.name ]}</strong></p>
+                                    <h4 class="text-center text-lightgrey text-sdw-2"><strong>{[ g.uname ]}</strong></h4>
+                                    <p class="text-center"><a class="transition" title="See {[ g.uname ]}'s Page" href="/groups/{[ g.uname ]}"><strong>See Page</strong></a></p>
                                   </div>
                                 </div>
                               </div>
-                              <br>
-                              <input title="Edit - {[ g.name ]}" class="transition  middlr btn btn-info" type="button" value="Edit" ng-click="openGroupEditor(this.g)"/>
+
+                              <div class="text-center">
+                                <input title="Edit - {[ g.uname ]}" class="transition btn btn-info" type="button" value="Edit" ng-click="openGroupEditor(this.g)"/>
+                                <input title="Add Member To - {[ g.uname ]}" class="transition btn btn-success" type="button" value="Add Member" ng-click="addGroupMember(this.g)"/>
+                                <input title="Delete - {[ g.uname ]}" class="transition btn btn-danger" type="button" value="Delete" ng-click="deleteGroup(this.g)"/>
+                              </div>
                             </li>
                           </ul>
+                          <form class="transition middlr" id="delete-group-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                            <input type="hidden" name="action" value="delete group"/>
+                            <input type="hidden" name="gid" value=""/>
+                          </form>
                         </div>
                       </div>
+
                       <div class="transition col-md-12">
                         <div ng-hide="groupEditor">
                           <h3 class="transition text-center no-marg"><strong>Edit {[ editGroup.name ]}</strong></h3><br>
@@ -243,7 +255,8 @@
                             <input type="hidden" name="action" value="update group"/>
                             <h3 class="transition text-center no-marg">Info</h3>
                             <br>
-                            <input class="transition input-t-s1 middlr" type="text" name="name" placeholder="Group Name..." id="edit-groupname" required/><br>
+                            <input class="transition input-t-s1 middlr" type="text" name="displayname" placeholder="Group Name..." id="edit-groupdisplayname" required/><br>
+                            <input class="transition input-t-s1 middlr" type="text" name="uname" placeholder="Group Username..." id="edit-groupuname" required/><br>
                             <textarea style="min-height: 150px;" class="transition input-t-s1 middlr" name="desc" type="text" placeholder="Group Description..." id="edit-groupdesc" required></textarea><br>
                             <p class="transition text-center">Group Avatar</p>
                             <input type="file" name="imageFileAvi" class="transition middlr btn btn-default" accept="image/*"/><br><br>
@@ -276,8 +289,12 @@
                             <input id="edit-groupcategories" name="categories" type="hidden"/>
                             <input id="edit-groupid" name="gid" type="hidden"/>
                             <hr class="hr-grey">
-                            <input class="transition middlr btn btn-info " type="button" value="Update" ng-click="checkGroupName()"/>
+                            <input class="transition middlr btn btn-info " type="button" value="Update" ng-click="checkGroupUserName()"/>
                           </form>
+                        </div>
+
+                        <div ng-hide="addMemberForm">
+
                         </div>
                       </div>
                     </div>

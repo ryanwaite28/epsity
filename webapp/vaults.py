@@ -43,7 +43,8 @@ pages = {
     'searchEngine': 'search-1.html',
     'profileMain': 'profile-main.html',
     'profileHome': 'profile-home.html',
-    'profileHomeTwo': 'profile-home-2.html',
+    'UserPage': 'user-page-view.html',
+    'GroupPage': 'group-page-view.html',
     'profilePosts': 'profile-posts.html',
     'profilePhoto': 'profile-photo.html',
     'profileVideo': 'profile-video.html',
@@ -64,11 +65,13 @@ serverPaths = {
 
 def errorPage(request, msg = None):
     if msg == None or msg == '' or request.method == 'POST':
-        print '--- Error Page Redirecting...'
+        # print '--- Error Page Redirecting...'
         return redirect('/')
 
     string = randomVal()
-    return render(request, pages['error'],
-                    {'errorMessage': msg, 'value': string})
+    return render(request,
+                    pages['error'],
+                    {'errorMessage': msg,
+                    'value': string})
 
 # ---

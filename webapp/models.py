@@ -241,12 +241,12 @@ class Notifications(models.Model):
 
 class Groups(models.Model):
 
-    owner_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_owner", on_delete = models.CASCADE)
+    owner_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_owner") # on_delete = models.CASCADE
     ownerid = models.IntegerField(blank = False, default = 0)
 
-    name = models.CharField(max_length = 1725, default = '')
+    displayname = models.CharField(max_length = 1725, default = '')
     desc = models.CharField(max_length = 1725, default = '')
-    url = models.CharField(max_length = 1725, default = '')
+    uname = models.CharField(max_length = 1725, default = '')
     categories = models.CharField(max_length = 1725, default = '')
 
     avi = models.CharField(max_length = 1725, default = '')
@@ -260,7 +260,8 @@ class Groups(models.Model):
          # Returns Data Object In Proper Format
         return {
             'gid': self.id,
-            'name': self.name,
+            'displayname': self.displayname,
+            'uname': self.uname,
             'desc': self.desc,
             'avi': self.avi,
             'background': self.background,

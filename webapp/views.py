@@ -109,6 +109,7 @@ def profileHome(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
+            # print you.serialize_basic
             return render(request, pages['profileHome'],
                             {'you': you},
                             context_instance = RequestContext(request))
@@ -122,7 +123,7 @@ def profileHome(request):
 @csrf_protect
 def searchUsers(request, query):
     if request.method == 'GET':
-        print query
+        # print query
         try:
             if 'username' in request.session:
                 you = Accounts.objects.get(uname = request.session['username'])
@@ -136,16 +137,23 @@ def searchUsers(request, query):
                 msg = 'User Account Not Found.'
                 return errorPage(request, msg)
 
-            if 'username' in request.session:
-                if user.uname == request.session['username']:
-                    return redirect('/home')
-
             else:
-                return render(request,
-                                pages['profileHomeTwo'],
-                                {'you': you,
-                                'user': user},
-                                context_instance = RequestContext(request))
+                if 'username' in request.session:
+                    if user.uname == request.session['username']:
+                        return redirect('/home')
+
+                    else:
+                        return render(request,
+                                        pages['UserPage'],
+                                        {'you': you,
+                                        'user': user},
+                                        context_instance = RequestContext(request))
+                else:
+                    return render(request,
+                                    pages['UserPage'],
+                                    {'you': you,
+                                    'user': user},
+                                    context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -156,7 +164,7 @@ def searchUsers(request, query):
 @csrf_protect
 def searchGroups(request, query):
     if request.method == 'GET':
-        print query
+        # print query
         try:
             if 'username' in request.session:
                 you = Accounts.objects.get(uname = request.session['username'])
@@ -164,7 +172,7 @@ def searchGroups(request, query):
                 you = None
 
             group = Groups.objects \
-            .filter(name__iexact = query).first()
+            .filter(uname__iexact = query).first()
 
             if group == None:
                 msg = 'Group Not Found.'
@@ -172,7 +180,7 @@ def searchGroups(request, query):
 
             else:
                 return render(request,
-                                pages['profileHomeTwo'],
+                                pages['GroupPage'],
                                 {'you': you,
                                 'group': group},
                                 context_instance = RequestContext(request))
@@ -215,7 +223,7 @@ def mySettings(request):
             return redirect('/')
 
         try:
-            print os.path.dirname(webapp.__file__)
+            # print os.path.dirname(webapp.__file__)
             you = Accounts.objects.get(uname = request.session['username'])
             return render(request, pages['mySettings'],
                             {'you': you, 'message': ''},
@@ -334,6 +342,9 @@ def settingsAction(request):
             if request.POST['action'] == 'update group':
                 return routines.updateGroup(request)
 
+            if request.POST['action'] == 'delete group':
+                return routines.deleteGroup(request)
+
             else:
                 msg = 'Unknown Action...'
                 return errorPage(request, msg)
@@ -392,8 +403,9 @@ def checkPoint(request):
 
             # ----- #
 
-            if data['action'] == 'check group name':
-                return routines.checkGroupName(request, data)
+            if data['action'] == 'check group uname':
+                # print data
+                return routines.checkGroupUserName(request, data)
 
         except:
             return JsonResponse({'msg': 'Failed To Load JSON Data...'})

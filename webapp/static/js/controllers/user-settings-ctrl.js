@@ -399,14 +399,15 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
   $scope.groupEditor = true;
   $scope.categoryEditor = true;
   $scope.editGroup = {};
-  $scope.goodGroupName = true;
+  $scope.goodGroupUserName = true;
 
   $scope.openGroupEditor = function(group) {
     // console.log(group);
     $scope.groupsView = true;
     $scope.groupEditor = false;
     $scope.editGroup = group;
-    $('#edit-groupname').val($scope.editGroup.name);
+    $('#edit-groupdisplayname').val($scope.editGroup.displayname);
+    $('#edit-groupuname').val($scope.editGroup.uname);
     $('#edit-groupdesc').val($scope.editGroup.desc);
 
     backToTop();
@@ -421,21 +422,22 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
       alert('The Max Amount Of Categories Is 25.');
       return;
     }
-    else if( $scope.newEditGroupCategory == '' ) {
+    if( $scope.newEditGroupCategory == '' ) {
       return;
     }
-    else if( $scope.editGroup.categories.indexOf($scope.newEditGroupCategory.toLowerCase().split(' ').join('')) != -1 ) {
+    if( $scope.editGroup.categories.indexOf($scope.newEditGroupCategory.toLowerCase().split(' ').join('')) != -1 ) {
       alert('That Is Already A Category.');
       return;
     }
-    else if( !alphaNumeric.test($scope.newEditGroupCategory) ) {
-      alert('Please Use Letters Only, 3-25 Characters Long.');
+    if( !catCheck.test($scope.newEditGroupCategory) ) {
+      alert('Please Use Letters & Numbers Only, 3-25 Characters Long.');
       return;
     }
-    else if($scope.newEditGroupCategory.substring($scope.newEditGroupCategory.length - 1) == ' ') {
+    if($scope.newEditGroupCategory.substring($scope.newEditGroupCategory.length - 1) == ' ') {
       alert('Please Remove Any Trailing Space.');
       return;
     }
+
     $scope.editGroup.categories.push($scope.newEditGroupCategory.toLowerCase().split(' ').join(''));
     $scope.editGroup.categories.sort();
     $scope.newEditGroupCategory = '';
@@ -480,38 +482,50 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
     $scope.editGroup.categories.sort();
   }
 
-  $scope.checkGroupName = function() {
-    var groupName = $('#edit-groupname').val().toLowerCase();
-    if(groupName.substring(groupName.length - 1) == ' ') {
-      alert('Please Remove Any Trailing Space From The Group Name Field.');
+  $scope.checkGroupUserName = function() {
+    var groupDisplayName = $('#edit-groupdisplayname').val().toLowerCase();
+    var groupUserName = $('#edit-groupuname').val().toLowerCase();
+
+    if(groupDisplayName.substring(groupDisplayName.length - 1) == ' ') {
+      alert('Please Remove Any Trailing Space From The Group Display Name Field.');
       return;
     }
-    if( !alphaNum_one.test(groupName) ) {
-      alert('Group Name Must Be Lettters & Numbers, 3-25 Characters.');
-      $scope.goodGroupName = false;
+    if(groupUserName.substring(groupUserName.length - 1) == ' ') {
+      alert('Please Remove Any Trailing Space From The Group UserName Field.');
       return;
     }
-    if ( groupName == $scope.editGroup.name.toLowerCase() ) {
-      $scope.goodGroupName = true;
+    if( !alphaNum_one.test(groupDisplayName) ) {
+      alert('Group Display Name Must Be Lettters & Numbers, 3-25 Characters.');
+      $scope.goodGroupUserName = false;
+      return;
+    }
+    if( !alphaNum_two.test( groupUserName ) ) {
+      alert('Group UserName Must Be Lettters, Numbers, dashes, and/or underscores, 3-25 Characters.');
+      $scope.goodGroupUserName = false;
+      return;
+    }
+    if ( groupUserName == $scope.editGroup.uname.toLowerCase() ) {
+      $scope.goodGroupUserName = true;
       $scope.confirmGroupEdits();
     }
-    if( groupName != $scope.editGroup.name.toLowerCase() ) {
+    if( groupUserName != $scope.editGroup.uname.toLowerCase() ) {
       $.ajax({
         url: '/checkpoint/',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
-          groupName: $('#edit-groupname').val(),
-          action: 'check group name',
+          groupUserName: groupUserName,
+          action: 'check group uname',
           csrfmiddlewaretoken: Cookies.get('csrftoken'),
         }),
         success: function(resp) {
+          console.log(resp);
           if( resp.msg == 'taken' ) {
-            $scope.goodGroupName = false;
-            alert('Sorry, That Group Name Is Taken.');
+            $scope.goodGroupUserName = false;
+            alert('Sorry, That Group UserName Is Taken.');
           }
           else {
-            $scope.goodGroupName = true;
+            $scope.goodGroupUserName = true;
             $scope.confirmGroupEdits();
           }
         }
@@ -524,10 +538,11 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
       alert('Group Description Must Not Exceed 275 Characters.');
       return;
     }
+
     var ask = confirm('Are These Edits Correct?');
     if( ask == true ) {
-      if( $scope.goodGroupName == false ) {
-        alert('Group Name Must Be Changed (Unavailable Or Invalid).');
+      if( $scope.goodGroupUserName == false ) {
+        alert('Group UserName Must Be Changed (Unavailable Or Invalid).');
         return;
       }
       else {
@@ -546,6 +561,18 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
     $('#edit-groupid').val($scope.editGroup.gid);
     $('#edit-groupcategories').val(catString);
     $('#edit-group-form').submit();
+  }
+
+  $scope.deleteGroup = function(group) {
+    console.log(group);
+    var ask = confirm('Are You Sure You Want To Delete This Group? \
+    All Information Relating To This Group Will Be Deleted. \
+    Changes Are Irreversible.');
+
+    if( ask == true ) {
+      $('#delete-group-form input[name="gid"]').val(group.gid);
+      $('#delete-group-form').submit();
+    }
   }
 
 }])

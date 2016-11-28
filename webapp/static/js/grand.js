@@ -73,6 +73,8 @@ $(document).ready(function(){
 	window.linkRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 	window.alphaNumeric = /^[a-zA-Z0-9]+$/i;
 	window.alphaNum_one = /^[a-zA-Z0-9\.]{3,25}/;
+	window.alphaNum_two = /^[a-zA-Z0-9\_\-]{3,25}/;
+	window.catCheck = /^[a-zA-Z0-9\_\-\.]{3,25}/;
 
 	window.backToTop = function() {
 		$('html, body').animate({

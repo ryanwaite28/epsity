@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
-    <title>Epsity | Log In!</title>
-    <meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-    {% load staticfiles %}
-    <link rel="stylesheet" type="text/css" href="https://ryanwaite28.github.io/my-cdn/css/bootstrap.css"/>
-    <link rel="stylesheet" type="text/css" href="https://ryanwaite28.github.io/my-cdn/css/emerald.css"/>
-    <link rel="stylesheet" type="text/css" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/welcome.css">
-    <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
-    <script src="https://ryanwaite28.github.io/my-cdn/js/jquery.js"></script>
-    <script src="https://ryanwaite28.github.io/my-cdn/js/parallax/parallax.min.js"></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <script src="https://ryanwaite28.github.io/my-cdn/js/bootstrap.js"></script>
-    <script src="https://ryanwaite28.github.io/my-cdn/js/angular.js"></script>
-    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
-		<script src="https://cdn.firebase.com/libs/angularfire/1.1.4/angularfire.min.js"></script>
-    <script src="/static/js/grand.js"></script>
-    <script src="/static/js/welcome.js"></script>
-  </head>
+<head>
+  <title>Epsity | Welcome!</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load staticfiles %}
 
-  <body style="background: #fbfbfb;" ng-app="epsityApp" ng-controller="epsityCtrl" class="transition">
+  {% include 'dependencies-1.html' %}
 
-    <img style="margin-top: 20px;" class="middlr transition" src="/static/img/logo-2.png"/>
+  <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/welcome.css">
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+
+  <script src="/static/js/grand.js"></script>
+  <script src="/static/js/welcome.js"></script>
+</head>
+
+  <body style="background: #fbfbfb;" ng-app="epsityApp" ng-controller="welcomeCtrl" class="transition">
+
+    <!-- <img style="margin-top: 20px;" class="middlr transition" src="/static/img/logo-2.png"/>
     <h3 class="text-center"><strong>Epsity</strong></h3>
     <p class="text-center"></p>
     <hr style="border-color: grey;">
-    <br>
+    <br> -->
 
-    <p class="text-center">{{ errorMessage }}</p>
+    {% include 'topbar-2.html' %}
+
+    <h2 class="text-center no-marg" style="padding-top: 45vh;"><strong>Error:</strong></h2>
+    <h4 class="text-center">{{ errorMessage }}</h4>
 
     <br>
 
@@ -43,7 +40,7 @@
 
     <script>
       $(document).ready(function(){
-        location.href += {{ value }}
+        location.href += '#{{ value }}'
       });
     </script>
 

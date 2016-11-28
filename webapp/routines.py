@@ -35,13 +35,17 @@ def loginAccount(request):
         provider_id = request.POST['providerid']
         pswrd = hashlib.sha256( request.POST['uid'] ).hexdigest()
 
-        you = Accounts.objects.filter( email=email, pswrd=pswrd ).first()
+        print email
+        print pswrd
+
+        you = Accounts.objects.filter( email=email ).first()
+        print you
+        print you.serialize_basic
         if you == None:
-            chance = Accounts.objects.filter( pswrd=pswrd ).first()
-            if chance == None:
-                return render(request, pages['login'],
-                                {'error': 'Incorrect Info.'},
-                                context_instance=RequestContext(request))
+            return render(request,
+                            pages['login'],
+                            {'error': 'Incorrect Info.'},
+                            context_instance=RequestContext(request))
 
         request.session['username'] = you.uname
         request.session['email'] = you.email
@@ -49,7 +53,9 @@ def loginAccount(request):
         return redirect('/home/')
 
     except ObjectDoesNotExist:
-        return render(request, pages['login'], {'error': 'Incorrect Info.'},
+        return render(request,
+                        pages['login'],
+                        {'error': 'Incorrect Info.'},
                         context_instance=RequestContext(request))
 
 
@@ -78,9 +84,14 @@ def createAccount(request):
                             {'error': "That Username Is Already In Use."},
                             context_instance=RequestContext(request))
 
-        newUser = Accounts(uname=uname, displayname=displayName, avi=img,
-                        provider=provider, provider_id=provider_id,
-                        email=email, pswrd=pswrd)
+        newUser = Accounts(uname=uname,
+                            displayname=displayName,
+                            avi=img,
+                            provider=provider,
+                            provider_id=provider_id,
+                            email=email,
+                            pswrd=pswrd)
+
         newUser.save()
 
         request.session['username'] = uname
@@ -279,7 +290,7 @@ def updateWpFile(request):
 
 def searchEngine(request):
     data = json.loads(request.body)
-    print data
+    # print data
 
     if data['query'] == None:
         return JsonResponse({'msg': 'Query Is Missing...'})
@@ -288,7 +299,7 @@ def searchEngine(request):
         return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
 
     users = Accounts.objects.filter(uname__contains = data['query'])[:10]
-    groups = Groups.objects.filter(name__contains = data['query'])[:10]
+    groups = Groups.objects.filter(uname__contains = data['query'])[:10]
 
     resp = {
         'msg': 'search query',
@@ -300,13 +311,12 @@ def searchEngine(request):
 
 # ---
 
-def checkGroupName(request, data):
-    if data['groupName'][-1] == ' ':
-        data['groupName'] = data['groupName'][:-1]
-    checkGroup = Groups.objects.filter(name__iexact = data['groupName']).first()
+def checkGroupUserName(request, data):
+    if data['groupUserName'][-1] == ' ':
+        data['groupUserName'] = data['groupUserName'][:-1]
+    checkGroup = Groups.objects.filter(uname__iexact = data['groupUserName']).first()
     if checkGroup != None:
         return JsonResponse({'msg': 'taken'})
-
 
     else:
         return JsonResponse({'msg': 'available'})
@@ -317,27 +327,26 @@ def createGroup(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
 
-        checkGroup = Groups.objects.filter(name = request.POST['name']).first()
+        checkGroup = Groups.objects.filter(uname = request.POST['uname']).first()
         if checkGroup != None:
-            checkName = checkGroup.name.lower()
-            if checkName == request.POST['name'].lower():
-                return render(request,
-                            pages['createview'],
-                            {'you': you,
-                            'message': "That Group Name Is Already In Use!"},
-                            context_instance=RequestContext(request))
+            return render(request,
+                        pages['createview'],
+                        {'you': you,
+                        'message': "That Group Name Is Already In Use!"},
+                        context_instance=RequestContext(request))
 
-        if request.POST['name'][-1] == ' ':
-            request.POST['name'] = request.POST['name'][:-1]
+        if request.POST['displayname'][-1] == ' ':
+            request.POST['displayname'] = request.POST['displayname'][:-1]
 
-        newGroup = Groups(owner_rel=you, ownerid=you.id,
-                            name=request.POST['name'],
+        newGroup = Groups(owner_rel=you,
+                            ownerid=you.id,
+                            displayname=request.POST['displayname'],
+                            uname=request.POST['uname'].lower(),
                             desc=request.POST['desc'])
         newGroup.save()
 
         if request.FILES:
-            newGroup = Groups.objects.filter(name = request.POST['name'],
-                                                ownerid = you.id).first()
+            group = Groups.objects.filter(id = newGroup.id).first()
 
             aviFile = request.FILES['imageFileAvi']
             wpFile = request.FILES['imageFileWp']
@@ -363,17 +372,17 @@ def createGroup(request):
             if aviFile and aviFile.name != '' and allowed_photo(aviFile.name):
                 newdoc = AviModel(docfile = request.FILES['imageFileAvi'])
                 newdoc.save()
-                newGroup.avi = newdoc.docfile.url
+                group.avi = newdoc.docfile.url
 
             if wpFile and wpFile.name != '' and allowed_photo(wpFile.name):
                 newdoc = WpModel(docfile = request.FILES['imageFileWp'])
                 newdoc.save()
-                newGroup.background = newdoc.docfile.url
+                group.background = newdoc.docfile.url
 
-            newGroup.save()
+            group.save()
 
-            print newGroup
-            print newGroup.serialize
+            # print group
+            # print group.serialize
 
         return render(request,
                     pages['createview'],
@@ -399,7 +408,8 @@ def updateGroup(request):
                         'message': "Error - The Group Could Not Be Edited."},
                         context_instance=RequestContext(request))
 
-        group.name = request.POST['name']
+        group.displayname = request.POST['displayname']
+        group.uname = request.POST['uname'].lower()
         group.desc = request.POST['desc']
         group.categories = request.POST['categories']
 
@@ -441,14 +451,36 @@ def updateGroup(request):
 
             group.save()
 
-            print group
-            print group.serialize
+            # print group
+            # print group.serialize
 
         return render(request,
                     pages['mySettings'],
                     {'you': you, 'message': "Group Updated Successfully!"},
                     context_instance=RequestContext(request))
 
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+def deleteGroup(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        group = Groups.objects.filter(id = request.POST['gid']).first()
+
+        if group != None:
+            group.delete()
+            return render(request,
+                        pages['mySettings'],
+                        {'you': you, 'message': "Group Deleted Successfully!"},
+                        context_instance=RequestContext(request))
+
+        else:
+            return render(request,
+                        pages['mySettings'],
+                        {'you': you, 'message': "Error - Unable To Delete Group"},
+                        context_instance=RequestContext(request))
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
