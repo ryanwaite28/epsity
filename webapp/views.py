@@ -41,7 +41,7 @@ def login(request):
         if 'username' in request.session:
             return redirect('/home/')
 
-        return render(request, pages['login'], {'error': ''},
+        return render(request, pages['login'], {'error': '1'},
                         context_instance = RequestContext(request))
 
     if request.method == 'POST':
