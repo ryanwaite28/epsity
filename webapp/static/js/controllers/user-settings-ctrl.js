@@ -1,6 +1,6 @@
 // User Settings
 
-App.controller('settingsCtrl', ['$scope', function($scope) {
+App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
 
   window.scope = $scope;
   var wordsOnlyRegex = /^[a-zA-Z]{3,50}/;
@@ -35,6 +35,17 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
 
           $scope.$apply();
         })()
+      }
+    });
+
+    $(document).keyup(function(e){
+      if( e.keyCode == 13 ) {
+        // Find Which Input Is In Focus.
+        if( $('input[name="newgroupcat"]').is(':focus') ) {
+          $scope.addEditGroupCategory();
+          $scope.$apply();
+        }
+
       }
     });
   });
@@ -394,10 +405,14 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
     }
   }
 
-  //
+  // true = hide | false = show
+
   $scope.groupsView = false;
+
   $scope.groupEditor = true;
+  $scope.groupAddMemberEditor = true;
   $scope.categoryEditor = true;
+
   $scope.editGroup = {};
   $scope.goodGroupUserName = true;
 
@@ -405,7 +420,10 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
     // console.log(group);
     $scope.groupsView = true;
     $scope.groupEditor = false;
+    $scope.groupAddMemberEditor = true;
+
     $scope.editGroup = group;
+
     $('#edit-groupdisplayname').val($scope.editGroup.displayname);
     $('#edit-groupuname').val($scope.editGroup.uname);
     $('#edit-groupdesc').val($scope.editGroup.desc);
@@ -415,6 +433,9 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
   $scope.cancelGroupEditor = function() {
     $scope.groupsView = false;
     $scope.groupEditor = true;
+    $scope.groupAddMemberEditor = true;
+
+    $scope.editGroup = {};
   }
 
   $scope.addEditGroupCategory = function() {
@@ -563,8 +584,57 @@ App.controller('settingsCtrl', ['$scope', function($scope) {
     $('#edit-group-form').submit();
   }
 
+  //
+
+  $scope.openGroupAddMemberEditor = function(group) {
+    // console.log(group);
+    $scope.groupsView = true;
+    $scope.groupEditor = true;
+    $scope.groupAddMemberEditor = false;
+
+    $scope.editGroup = group;
+
+    backToTop();
+  }
+  $scope.cancelGroupAddMemberEditor = function() {
+    $scope.groupsView = false;
+    $scope.groupEditor = true;
+    $scope.groupAddMemberEditor = true;
+
+    $scope.editGroup = {};
+  }
+
+  $scope.searchForMembers = function() {
+    var req = {
+      method: 'POST',
+      url: '/search/',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      data: JSON.stringify({
+        action: 'search for members',
+        gid: $scope.editGroup.gid,
+        limit: 10,
+        query: $scope.searchQuery,
+        csrfmiddlewaretoken: Cookies.get('csrftoken'),
+      })
+    }
+    $http(req).then(function(resp){
+      // Success Callback
+      console.log(resp);
+      $scope.srMembersList = resp.data.users;
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
+  }
+
+  //
+
   $scope.deleteGroup = function(group) {
-    console.log(group);
+
     var ask = confirm('Are You Sure You Want To Delete This Group? \
     All Information Relating To This Group Will Be Deleted. \
     Changes Are Irreversible.');

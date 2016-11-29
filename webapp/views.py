@@ -109,7 +109,7 @@ def profileHome(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            # print you.serialize_basic
+            # print you.serialize
             return render(request, pages['profileHome'],
                             {'you': you},
                             context_instance = RequestContext(request))
@@ -121,7 +121,7 @@ def profileHome(request):
 # ---
 
 @csrf_protect
-def searchUsers(request, query):
+def userPage(request, query):
     if request.method == 'GET':
         # print query
         try:
@@ -162,7 +162,7 @@ def searchUsers(request, query):
 # ---
 
 @csrf_protect
-def searchGroups(request, query):
+def groupPage(request, query):
     if request.method == 'GET':
         # print query
         try:
@@ -209,7 +209,13 @@ def searchEngine(request):
 
 
     if request.method == 'POST':
-        return routines.searchEngine(request)
+        data = json.loads(request.body)
+
+        if data['action'] == 'search query':
+            return routines.searchEngine(request)
+
+        if data['action'] == 'search for members':
+            return routines.searchForMembers(request)
 
 # ---
 

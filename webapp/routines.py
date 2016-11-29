@@ -14,10 +14,11 @@ from django.http import HttpResponse , HttpResponseRedirect
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
-
+from django.db.models import Q
 
 from WebTools import randomVal, processImage, saveImageLocal
 from models import Accounts, AviModel, WpModel, Groups, GroupMembers
+from models import Follows
 
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
@@ -35,12 +36,7 @@ def loginAccount(request):
         provider_id = request.POST['providerid']
         pswrd = hashlib.sha256( request.POST['uid'] ).hexdigest()
 
-        print email
-        print pswrd
-
         you = Accounts.objects.filter( email=email ).first()
-        print you
-        print you.serialize_basic
         if you == None:
             return render(request,
                             pages['login'],
@@ -245,7 +241,8 @@ def updateAviFile(request):
 
             return render(request,
                         pages['mySettings'],
-                        {'you': you, 'message': "Avatar Updated Successfully!"},
+                        {'you': you,
+                        'message': "Avatar Updated Successfully!"},
                         context_instance=RequestContext(request))
 
         else:
@@ -290,6 +287,7 @@ def updateWpFile(request):
 
 def searchEngine(request):
     data = json.loads(request.body)
+    you = Accounts.objects.get(uname = request.session['username'])
     # print data
 
     if data['query'] == None:
@@ -298,13 +296,104 @@ def searchEngine(request):
     if data['query'] == '':
         return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
 
-    users = Accounts.objects.filter(uname__contains = data['query'])[:10]
+    users = Accounts.objects.exclude(id = you.id) \
+    .filter(uname__contains = data['query'])[:10]
     groups = Groups.objects.filter(uname__contains = data['query'])[:10]
+
+    users = [u.serialize for u in users]
+    groups = [g.serialize for g in groups]
+
+    for u in users:
+        checkFollow = Follows.objects \
+        .filter(userid = you.id, follow_id = u['userid']).first()
+
+        if checkFollow == None:
+            u['status'] = 'Not Following'
+            u['btn'] = 'success'
+            u['msg'] = 'Follow'
+            u['action'] = 'followUser'
+
+        else:
+            u['status'] = 'Currently Following'
+            u['btn'] = 'default'
+            u['msg'] = 'Following'
+            u['action'] = 'unfollowUser'
+
+    # print users
+
+    for g in groups:
+        checkMembership = GroupMembers.objects \
+        .filter(group_id = g['gid'], userid = you.id).first()
+
+        if checkMembership == None:
+            g['status'] = 'Not A Member'
+            g['btn'] = 'success'
+            g['msg'] = 'Request Invitation'
+            g['action'] = 'requestGroupInvitation'
+
+        else:
+            g['status'] = 'Currently A Member'
+            g['btn'] = 'default'
+            g['msg'] = 'Leave Group'
+            g['action'] = 'leaveGroup'
+
+    # print groups
 
     resp = {
         'msg': 'search query',
-        'users': [u.serialize_basic for u in users],
-        'groups': [g.serialize for g in groups]
+        'users': users,
+        'groups': groups
+    }
+
+    return JsonResponse(resp)
+
+# ---
+
+def searchForMembers(request):
+    data = json.loads(request.body)
+    you = Accounts.objects.get(uname = request.session['username'])
+    group = Groups.objects.filter(id = data['gid']).first()
+
+    if group == None:
+        return JsonResponse({'msg': 'Group Could Not Be Loaded...'})
+
+    if data['query'] == None:
+        return JsonResponse({'msg': 'Query Is Missing...'})
+
+    if data['query'] == '':
+        return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
+
+    if data['limit'] == None or data['limit'] == '' or data['limit'] >= 30:
+        data['limit'] = 15
+
+    users = Accounts.objects \
+    .exclude(id = you.id) \
+    .filter(uname__contains = data['query'])[:data['limit']]
+
+    users = [u.serialize for u in users]
+    # print len(users)
+
+    for u in users:
+        checkMembership = GroupMembers.objects \
+        .filter(group_id = data['gid'], userid = u['userid']).first()
+
+        if checkMembership == None:
+            u['status'] = 'Not A Member'
+            u['btn'] = 'success'
+            u['msg'] = 'Send Invitation!'
+            u['action'] = 'sendGroupInvitation'
+
+        else:
+            u['status'] = 'Currently A Member'
+            u['btn'] = 'default'
+            u['msg'] = 'Currently A Member'
+            u['action'] = 'None'
+
+    print users
+
+    resp = {
+        'msg': 'search results',
+        'users': users,
     }
 
     return JsonResponse(resp)
@@ -314,7 +403,8 @@ def searchEngine(request):
 def checkGroupUserName(request, data):
     if data['groupUserName'][-1] == ' ':
         data['groupUserName'] = data['groupUserName'][:-1]
-    checkGroup = Groups.objects.filter(uname__iexact = data['groupUserName']).first()
+    checkGroup = Groups.objects \
+    .filter(uname__iexact = data['groupUserName']).first()
     if checkGroup != None:
         return JsonResponse({'msg': 'taken'})
 
@@ -327,7 +417,8 @@ def createGroup(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
 
-        checkGroup = Groups.objects.filter(uname = request.POST['uname']).first()
+        checkGroup = Groups.objects \
+        .filter(uname = request.POST['uname']).first()
         if checkGroup != None:
             return render(request,
                         pages['createview'],
@@ -473,13 +564,15 @@ def deleteGroup(request):
             group.delete()
             return render(request,
                         pages['mySettings'],
-                        {'you': you, 'message': "Group Deleted Successfully!"},
+                        {'you': you,
+                        'message': "Group Deleted Successfully!"},
                         context_instance=RequestContext(request))
 
         else:
             return render(request,
                         pages['mySettings'],
-                        {'you': you, 'message': "Error - Unable To Delete Group"},
+                        {'you': you,
+                        'message': "Error - Unable To Delete Group"},
                         context_instance=RequestContext(request))
 
     except ObjectDoesNotExist:

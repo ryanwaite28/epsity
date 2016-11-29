@@ -59,7 +59,7 @@ class Accounts(models.Model):
     last_active = models.DateField(auto_now=True)
 
     @property
-    def serialize_basic(self):
+    def serialize(self):
          # Returns Data Object In Proper Format
         return {
             'userid': self.id,
@@ -94,6 +94,49 @@ class Follows(models.Model):
     follow_rel = models.ForeignKey(Accounts, default = 0, related_name = "follow_rel", on_delete = models.CASCADE)
 
     date_created = models.DateField(auto_now_add=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'fid': self.id,
+
+            'userid': self.userid,
+            'user': self.user_rel.serialize,
+            'followid': self.follow_id,
+            'follow': self.follow_rel.serialize,
+            'date_created': self.date_created
+            #'linkName': self.bio_link_name,
+        }
+
+    class Meta:
+        db_table = "follows"
+
+# ---
+
+class FollowRequest(models.Model):
+
+    sender_id = models.IntegerField(blank = False, default = 0)
+    sender_rel = models.ForeignKey(Accounts, default = 0, related_name = "f_sender_rel", on_delete = models.CASCADE)
+
+    recipient_id = models.IntegerField(blank = False, default = 0)
+    recipient_rel = models.ForeignKey(Accounts, default = 0, related_name = "f_recipient_rel", on_delete = models.CASCADE)
+
+    date_created = models.DateField(auto_now_add=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'fid': self.id,
+
+            'senderid': self.sender_id,
+            'sender_rel': self.sender_rel.serialize,
+            'recipientid': self.recipient_id,
+            'recipient_rel': self.recipient_rel.serialize,
+            'date_created': self.date_created
+            #'linkName': self.bio_link_name,
+        }
 
     class Meta:
         db_table = "follows"
@@ -171,6 +214,15 @@ class Conversations(models.Model):
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            'owner': self.owner.serialize,
+            'ownerid': self.ownerid,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
 
     class Meta:
         db_table = "conversations"
@@ -266,11 +318,44 @@ class Groups(models.Model):
             'avi': self.avi,
             'background': self.background,
             'categories': self.categories.split(),
-            'owner': self.owner_rel.serialize_basic
+            'owner': self.owner_rel.serialize
         }
 
     class Meta:
         db_table = "groups"
+
+# ---
+
+class GroupInvitations(models.Model):
+
+    group_id = models.IntegerField(blank = False, default = 0)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_member_rel", on_delete = models.CASCADE)
+
+    userid = models.IntegerField(blank = False, default = 0)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user", on_delete = models.CASCADE)
+
+    # status = models.CharField(max_length = 1725, default = '')
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'gmid': self.id,
+
+            'group_id': self.group_id,
+            'group_rel': self.group_rel.serialize,
+            'userid': self.userid,
+            'user_rel': self.user_rel.serialize,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+            #'linkName': self.bio_link_name,
+        }
+
+    class Meta:
+        db_table = "group_members"
 
 # ---
 
@@ -285,6 +370,21 @@ class GroupMembers(models.Model):
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'gmid': self.id,
+
+            'group_id': self.group_id,
+            'group_rel': self.group_rel.serialize,
+            'userid': self.userid,
+            'user_rel': self.user_rel.serialize,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+            #'linkName': self.bio_link_name,
+        }
 
     class Meta:
         db_table = "group_members"

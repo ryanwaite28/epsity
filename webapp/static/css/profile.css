@@ -187,6 +187,7 @@ body {
 
 #prof-img {
   width: 200px;
+  max-width: 95%;
   min-height: 50px;
 }
 .prof-bg-img {
@@ -343,6 +344,18 @@ body {
 
 }
 
+#sr-members-list {
+
+}
+#sr-members-list li {
+  display: block;
+  margin: auto;
+  width: 100%;
+}
+
+.sr-members-img {
+  
+}
 
 /* --- */
 /* --- */

@@ -234,7 +234,7 @@
 
                               <div class="text-center">
                                 <input title="Edit - {[ g.uname ]}" class="transition btn btn-info" type="button" value="Edit" ng-click="openGroupEditor(this.g)"/>
-                                <input title="Add Member To - {[ g.uname ]}" class="transition btn btn-success" type="button" value="Add Member" ng-click="addGroupMember(this.g)"/>
+                                <input title="Add Member To - {[ g.uname ]}" class="transition btn btn-success" type="button" value="Add Member" ng-click="openGroupAddMemberEditor(this.g)"/>
                                 <input title="Delete - {[ g.uname ]}" class="transition btn btn-danger" type="button" value="Delete" ng-click="deleteGroup(this.g)"/>
                               </div>
                             </li>
@@ -248,7 +248,7 @@
 
                       <div class="transition col-md-12">
                         <div ng-hide="groupEditor">
-                          <h3 class="transition text-center no-marg"><strong>Edit {[ editGroup.name ]}</strong></h3><br>
+                          <h3 class="transition text-center no-marg"><strong>Edit - {[ editGroup.uname ]}</strong></h3><br>
                           <input title="Cancel Editor" class="transition  middlr btn btn-default" type="button" value="Cancel" ng-click="cancelGroupEditor()"/>
                           <hr>
                           <form class="transition middlr" id="edit-group-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
@@ -267,7 +267,7 @@
                             <br>
                             <div class="transition row">
                               <div class="transition col-md-4">
-                                <input class="transition middlr input-t-s1" type="text" placeholder="Category Name..." ng-model="newEditGroupCategory"/><br>
+                                <input id="new-group-cat" name="newgroupcat" class="transition middlr input-t-s1" type="text" placeholder="Category Name..." ng-model="newEditGroupCategory"/><br>
                                 <input style="width: 90px;" class="transition middlr btn btn-info" value="Add" ng-click="addEditGroupCategory()"/>
                                 <br><br>
                                 <div ng-hide="categoryEditor">
@@ -293,8 +293,34 @@
                           </form>
                         </div>
 
-                        <div ng-hide="addMemberForm">
-
+                        <div ng-hide="groupAddMemberEditor">
+                          <h3 class="transition text-center no-marg"><strong>Add Member To - {[ editGroup.uname ]}</strong></h3><br>
+                          <input title="Cancel Editor" class="transition  middlr btn btn-default" type="button" value="Cancel" ng-click="cancelGroupAddMemberEditor()"/>
+                          <hr>
+                          <div class="col-md-4">
+                            <div style="margin-bottom: 15px;">
+                              <h3 class="text-center">Search</h3>
+                              <br>
+                              <input style="width: 375px; max-width: 90%;" type="text" class="middlr input-t-s1 ng-pristine ng-valid ng-touched" placeholder="Search By Username..." ng-model="searchQuery"><br>
+                              <input type="button" class="middlr transition btn btn-info" value="Submit" ng-click="searchForMembers()">
+                            </div>
+                          </div>
+                          <div class="col-md-8">
+                            <ul id="sr-members-list" class="ul-raw">
+                              <li ng-repeat="m in srMembersList">
+                                <div class="row">
+                                  <div class="col-xs-6">
+                                    <img class="polaroid-2 sr-members-img middlr" src="{[ m.avi ]}"/>
+                                  </div>
+                                  <div class="col-xs-6 text-center">
+                                    <h4><strong><a title="See {[ m.uname ]}'s Page" href="/users/{[ m.uname ]}">{[ m.uname ]}</a></strong></h4>
+                                    <a title="{[ m.msg ]}" data-status="{[ m.status ]}" class="follow-status btn btn-{[ m.btn ]}" ng-click="followAction( this.m )">{[ m.msg ]}</a>
+                                  </div>
+                                </div>
+                                <hr>
+                              </li>
+                            </ul>
+                          </div>
                         </div>
                       </div>
                     </div>

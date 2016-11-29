@@ -14,6 +14,7 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
       alert('Alphanumeric Query Only (Letters & Numbers).');
       return;
     }
+
     var req = {
       method: 'POST',
       url: '/search/',
@@ -21,11 +22,11 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
         'Content-Type': 'application/json',
         'X-CSRFToken': Cookies.get('csrftoken')
       },
-      data: JSON.stringify({
+      data: {
         action: 'search query',
         query: $scope.searchQuery,
         csrfmiddlewaretoken: Cookies.get('csrftoken'),
-      })
+      }
     }
     $http(req).then(function(resp){
       // Success Callback
@@ -37,6 +38,7 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
       // Error Callback
       console.log(resp);
     });
+
   }
 
 
