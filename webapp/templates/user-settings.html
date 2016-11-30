@@ -28,7 +28,8 @@
         <div class="transition container-fluid">
 
           <div class="transition row">
-            <div class="transition col-md-12" style="min-height: 25px;"><p class="transition text-center" style="padding: 15px;">{{ message }}</p></div>
+            <div class="transition col-md-3"></div>
+            <div class="transition col-md-9" style="min-height: 25px;"><p class="transition text-center" style="padding: 15px;">{{ message }}</p></div>
             <!--  -->
 
             <div class="transition col-md-3">
@@ -135,6 +136,24 @@
                   <div id="apr-pane" class="transition tab-pane fade">
                     <h3 class="transition text-center"><strong>Appearance</strong></h3>
                     <hr class="transition hr-grey">
+
+                    <div class="transition row padd-1">
+                      <div class="transition col-md-12 box-s1">
+                        <p class="transition text-center">Change Account Status<br>Current Status: {{ you.status }}</p><br>
+                        <div class="transition col-md-12">
+                          <form id="chg-accountstatus-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                            <input type="hidden" name="action" value="update account status"/>
+                            <select class="middlr" name="select" required>
+                              <option name="status" value="public">Public</option>
+                              <option name="status" value="private">Private</option>
+                            </select>
+                            <br>
+                            <input title="Submit Form" class="transition btn btn-info  middlr" type="button" value="Edit" ng-click="editAccountStatus()"/>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
                     <div class="transition row padd-1">
                       <div class="transition col-md-12 box-s1">
                         <p class="transition text-center">Change DisplayName</p><br>

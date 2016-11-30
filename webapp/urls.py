@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^mysettings/$', views.mySettings, name='mysettings'),
     url(r'^user/settingsaction/$', views.settingsAction, name='settingsaction'),
     url(r'^checkpoint/$', views.checkPoint, name='checkpoint'),
+    url(r'^action/$', views.userAction, name='useraction'),
     url(r'^users/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.userPage, name='userpage'),
     url(r'^groups/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.groupPage, name='grouppage'),
 

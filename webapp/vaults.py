@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_protect
 
 from WebTools import randomVal, processImage
 
+# --- #
 
 webapp_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -62,6 +63,8 @@ localPaths = {
 serverPaths = {
 
 }
+
+# --- #
 
 def errorPage(request, msg = None):
     if msg == None or msg == '' or request.method == 'POST':

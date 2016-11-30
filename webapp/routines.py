@@ -18,7 +18,7 @@ from django.db.models import Q
 
 from WebTools import randomVal, processImage, saveImageLocal
 from models import Accounts, AviModel, WpModel, Groups, GroupMembers
-from models import Follows
+from models import Follows, FollowRequests
 
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
@@ -140,7 +140,7 @@ def updateAccountInterests(request, content):
         you.save( update_fields=['interests'] )
 
 
-        return JsonResponse({'msg':'successful', 'interests':content.split()})
+        return JsonResponse({'msg':'successful', 'interests':content.split(';')})
 
     except ObjectDoesNotExist:
         error = 'User Account Not Found.'
@@ -154,7 +154,7 @@ def updateAccountSeeking(request, content):
         you.save( update_fields=['seeking'] )
 
 
-        return JsonResponse({'msg':'successful', 'seeking':content.split()})
+        return JsonResponse({'msg':'successful', 'seeking':content.split(';')})
 
     except ObjectDoesNotExist:
         error = 'User Account Not Found.'
@@ -169,8 +169,8 @@ def loadSettingsLists(request):
 
         resp = {
             'msg': 'lists',
-            'interests': you.interests.split(),
-            'seeking': you.seeking.split(),
+            'interests': you.interests.split(';'),
+            'seeking': you.seeking.split(';'),
             'groups': [g.serialize for g in groups]
         }
 
@@ -195,6 +195,26 @@ def updateDisplayName(request):
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
         return errorPage(request, msg)
+
+
+def editAccountStatus(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        you.status = request.POST['select']
+        you.save( update_fields=['status'] )
+
+        print you.status
+
+        return render(request,
+                    pages['mySettings'],
+                    {'you': you,
+                    'message': "Status Updated Successfully!"},
+                    context_instance=RequestContext(request))
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
 
 def updateAviLink(request):
     try:
@@ -308,16 +328,29 @@ def searchEngine(request):
         .filter(userid = you.id, follow_id = u['userid']).first()
 
         if checkFollow == None:
-            u['status'] = 'Not Following'
-            u['btn'] = 'success'
-            u['msg'] = 'Follow'
-            u['action'] = 'followUser'
+            checkFollowRequest = FollowRequests.objects \
+            .filter(sender_id=you.id , recipient_id=u['userid']).first()
 
-        else:
+            if checkFollowRequest != None:
+                u['status'] = 'Pending Follow'
+                u['btn'] = 'default'
+                u['msg'] = 'Pending'
+                u['action'] = 'cancelPending'
+                u['title'] = 'Cancel Pending'
+
+            else:
+                u['status'] = 'Not Following'
+                u['btn'] = 'success'
+                u['msg'] = 'Follow'
+                u['action'] = 'followUser'
+                u['title'] = 'Follow User'
+
+        if checkFollow != None:
             u['status'] = 'Currently Following'
-            u['btn'] = 'default'
-            u['msg'] = 'Following'
+            u['btn'] = 'warning'
+            u['msg'] = 'Unfollow'
             u['action'] = 'unfollowUser'
+            u['title'] = 'Unfollow User'
 
     # print users
 
@@ -333,7 +366,7 @@ def searchEngine(request):
 
         else:
             g['status'] = 'Currently A Member'
-            g['btn'] = 'default'
+            g['btn'] = 'warning'
             g['msg'] = 'Leave Group'
             g['action'] = 'leaveGroup'
 
@@ -387,7 +420,7 @@ def searchForMembers(request):
             u['status'] = 'Currently A Member'
             u['btn'] = 'default'
             u['msg'] = 'Currently A Member'
-            u['action'] = 'None'
+            u['action'] = 'Remove Member'
 
     print users
 
@@ -574,6 +607,118 @@ def deleteGroup(request):
                         {'you': you,
                         'message': "Error - Unable To Delete Group"},
                         context_instance=RequestContext(request))
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def followUser(request, data):
+    try:
+        if data['user']['action'] != 'followUser':
+            return JsonResponse({'msg': 'Error - Bad Action msg.'})
+
+        you = Accounts.objects.get(uname = request.session['username'])
+        user = Accounts.objects.get(uname = data['user']['uname'])
+
+        print user.serialize
+
+        if user == None:
+            return JsonResponse({'msg': 'Error - User Could Not Be Loaded.'})
+
+        checkFollow = Follows.objects \
+        .filter(userid=you.id , follow_id=user.id).first()
+
+        if checkFollow != None:
+            return JsonResponse({'msg': 'Already Following.'})
+
+
+        if user.status == 'public':
+            newFollow = Follows(userid=you.id,
+                                    user_rel=you,
+                                    follow_id=user.id,
+                                    follow_rel=user)
+            newFollow.save()
+
+            return JsonResponse({'msg': 'Now Following!',
+                                'status': 'following'})
+
+        if user.status == 'private':
+            checkFollowRequest = FollowRequests.objects \
+            .filter(sender_id=you.id , recipient_id=user.id).first()
+
+            if checkFollowRequest != None:
+                return JsonResponse({'msg': 'Follow Request Already Exist!'})
+
+            if checkFollowRequest == None:
+                newFollowRequest = FollowRequests(sender_id=you.id,
+                                                    sender_rel=you,
+                                                    recipient_id=user.id,
+                                                    recipient_rel=user)
+                newFollowRequest.save()
+
+                return JsonResponse({'msg': 'Follow Request Sent!',
+                                    'status': 'pending'})
+
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def unfollowUser(request, data):
+    try:
+        if data['user']['action'] != 'unfollowUser':
+            return JsonResponse({'msg': 'Error - Bad Action msg.'})
+
+        you = Accounts.objects.get(uname = request.session['username'])
+        user = Accounts.objects.get(uname = data['user']['uname'])
+
+        if user == None:
+            return JsonResponse({'msg': 'Error - User Could Not Be Loaded.'})
+
+        checkFollow = Follows.objects \
+        .filter(userid=you.id , follow_id=user.id).first()
+
+        if checkFollow == None:
+            return JsonResponse({'msg': 'Cannot Following.'})
+
+        if checkFollow != None:
+            checkFollow.delete()
+            return JsonResponse({'msg': 'Unfollowed!',
+                                'status': 'not following'})
+
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def cancelPending(request, data):
+    try:
+        if data['user']['action'] != 'cancelPending':
+            return JsonResponse({'msg': 'Error - Bad Action msg.'})
+
+        you = Accounts.objects.get(uname = request.session['username'])
+        user = Accounts.objects.get(uname = data['user']['uname'])
+
+        if user == None:
+            return JsonResponse({'msg': 'Error - User Could Not Be Loaded.'})
+
+        checkFollowRequest = FollowRequests.objects \
+        .filter(sender_id=you.id , recipient_id=user.id).first()
+
+        if checkFollowRequest != None:
+            checkFollowRequest.delete()
+            return JsonResponse({'msg': 'Follow Request Canceled!',
+                                'status': 'not following'})
+
+        elif checkFollowRequest == None:
+            return JsonResponse({'msg': 'Cannot Cancel Follow Request.'})
+
+
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

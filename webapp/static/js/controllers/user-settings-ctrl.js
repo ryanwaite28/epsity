@@ -112,6 +112,15 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
 
   //
 
+  $scope.editAccountStatus = function() {
+    var ask = confirm('Are Changes Correct?');
+    if( ask == true ) {
+      $('#chg-accountstatus-form').submit();
+    }
+  }
+
+  //
+
   $scope.addNewInterest = function() {
 
     if( $scope.interestsList.length >= 20 ) {
@@ -334,7 +343,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
 
     var l = '';
     for( var key in $scope.interestsList ) {
-      l += $scope.interestsList[key] + ' ';
+      l += $scope.interestsList[key] + ';';
     }
     l = l.slice(0, -1);
     console.log(l);
@@ -364,7 +373,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
 
     var l = '';
     for( var key in $scope.seekingList ) {
-      l += $scope.seekingList[key] + ' ';
+      l += $scope.seekingList[key] + ';';
     }
     l = l.slice(0, -1);
     console.log(l);
@@ -575,7 +584,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
   $scope.saveGroupEdits = function() {
     var catString = '';
     for( var key in $scope.editGroup.categories ) {
-      catString += $scope.editGroup.categories[key] + ' ';
+      catString += $scope.editGroup.categories[key] + ';';
     }
     catString = catString.slice(0, -1);
 

@@ -6,8 +6,6 @@ App.controller('followCtrl', ['$scope', '$http', function($scope, $http) {
 
   //
 
-  $scope.followAction = function(obj) {
-    
-  }
+  
 
 }])

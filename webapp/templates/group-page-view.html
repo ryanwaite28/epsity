@@ -131,7 +131,7 @@
 
     <script>
       $(document).ready(function(){
-        var categories = $('#categories').text().split(' ').join(', ');
+        var categories = $('#categories').text().split(';').join('; ');
         $('#categories').text( categories );
       });
     </script>

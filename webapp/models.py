@@ -66,6 +66,7 @@ class Accounts(models.Model):
             'uname': self.uname,
             'displayname': self.displayname,
             'avi': self.avi,
+            'status': self.status,
             'background': self.background,
         }
 
@@ -75,6 +76,15 @@ class Accounts(models.Model):
         return {
             'desc': self.bio_desc,
             'link': self.bio_link,
+            #'linkName': self.bio_link_name,
+        }
+
+    @property
+    def get_info(self):
+         # Returns Data Object In Proper Format
+        return {
+            'interests': self.interests,
+            'seeking': self.seeking,
             #'linkName': self.bio_link_name,
         }
 
@@ -114,13 +124,15 @@ class Follows(models.Model):
 
 # ---
 
-class FollowRequest(models.Model):
+class FollowRequests(models.Model):
 
     sender_id = models.IntegerField(blank = False, default = 0)
     sender_rel = models.ForeignKey(Accounts, default = 0, related_name = "f_sender_rel", on_delete = models.CASCADE)
 
     recipient_id = models.IntegerField(blank = False, default = 0)
     recipient_rel = models.ForeignKey(Accounts, default = 0, related_name = "f_recipient_rel", on_delete = models.CASCADE)
+
+    msg = models.CharField(max_length = 500, default = '')
 
     date_created = models.DateField(auto_now_add=True)
 
@@ -134,12 +146,13 @@ class FollowRequest(models.Model):
             'sender_rel': self.sender_rel.serialize,
             'recipientid': self.recipient_id,
             'recipient_rel': self.recipient_rel.serialize,
+            'msg': self.msg,
             'date_created': self.date_created
             #'linkName': self.bio_link_name,
         }
 
     class Meta:
-        db_table = "follows"
+        db_table = "follow_requests"
 
 # ---
 
@@ -150,7 +163,6 @@ class Posts(models.Model):
         ('Photo', 'Photo'),
         ('Video', 'Video'),
         ('Audio', 'Audio'),
-        ('Event', 'Event'),
     )
 
     owner = models.ForeignKey(Accounts, default = 0, related_name = "post_owner", on_delete = models.CASCADE)
@@ -267,7 +279,6 @@ class ConvoMessages(models.Model):
 class Notifications(models.Model):
 
     type = models.CharField(max_length = 1725, default = '')
-    n_type = models.CharField(max_length = 1725, default = '')
 
     sender_id = models.IntegerField(blank = False, default = 0)
     sender_rel = models.ForeignKey(Accounts, default = 0, related_name = "notif_sender_owner", on_delete = models.CASCADE)
@@ -276,14 +287,22 @@ class Notifications(models.Model):
     recipient_rel = models.ForeignKey(Accounts, default = 0, related_name = "notif_recipient_owner", on_delete = models.CASCADE)
 
     text = models.CharField(max_length = 1725, default = '')
-    date_created = models.DateField(auto_now=True)
     link = models.CharField(max_length = 1725, default = '')
+    date_created = models.DateField(auto_now=True)
 
     @property
     def serialize(self):
          # Returns Data Object In Proper Format
         return {
-            'notif_id': self.id
+            'notif_id': self.id,
+            'type': self.type,
+            'senderid': self.sender_id,
+            'sender_rel': self.sender_rel.serialize,
+            'recipientid': self.recipient_id,
+            'recipient_rel': self.recipient_rel.serialize,
+            'text': self.text,
+            'link': self.link,
+            'date_created': self.date_created
         }
 
     class Meta:
@@ -317,7 +336,7 @@ class Groups(models.Model):
             'desc': self.desc,
             'avi': self.avi,
             'background': self.background,
-            'categories': self.categories.split(),
+            'categories': self.categories.split(';'),
             'owner': self.owner_rel.serialize
         }
 
@@ -329,7 +348,7 @@ class Groups(models.Model):
 class GroupInvitations(models.Model):
 
     group_id = models.IntegerField(blank = False, default = 0)
-    group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_member_rel", on_delete = models.CASCADE)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_rel", on_delete = models.CASCADE)
 
     userid = models.IntegerField(blank = False, default = 0)
     user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user", on_delete = models.CASCADE)
@@ -355,7 +374,7 @@ class GroupInvitations(models.Model):
         }
 
     class Meta:
-        db_table = "group_members"
+        db_table = "group_invitations"
 
 # ---
 
@@ -365,7 +384,7 @@ class GroupMembers(models.Model):
     group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_member_rel", on_delete = models.CASCADE)
 
     userid = models.IntegerField(blank = False, default = 0)
-    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user", on_delete = models.CASCADE)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user_rel", on_delete = models.CASCADE)
 
 
     date_created = models.DateField(auto_now_add=True)

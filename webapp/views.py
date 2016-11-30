@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
 
 from WebTools import randomVal, processImage
-from models import Accounts, Groups
+from models import Accounts, Groups, Follows, FollowRequests
 
 import routines
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
@@ -109,9 +109,13 @@ def profileHome(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            # print you.serialize
+            followers = Follows.objects.filter(follow_id=you.id)
+            following = Follows.objects.filter(userid=you.id)
             return render(request, pages['profileHome'],
-                            {'you': you},
+                            {'you': you,
+                            'info': you.get_info,
+                            'followers': len(followers),
+                            'following': len(following)},
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -348,6 +352,9 @@ def settingsAction(request):
             if request.POST['action'] == 'update group':
                 return routines.updateGroup(request)
 
+            if request.POST['action'] == 'update account status':
+                return routines.editAccountStatus(request)
+
             if request.POST['action'] == 'delete group':
                 return routines.deleteGroup(request)
 
@@ -393,7 +400,7 @@ def settingsAction(request):
 
 @csrf_protect
 def checkPoint(request):
-    ''' This View Function Is Intended To Be Called By AJAX Request  '''
+    ''' This View Function Is Intended To Be Called By AJAX Requests '''
     if request.method == 'GET':
         return redirect('/')
 
@@ -410,8 +417,42 @@ def checkPoint(request):
             # ----- #
 
             if data['action'] == 'check group uname':
-                # print data
                 return routines.checkGroupUserName(request, data)
+
+        except:
+            return JsonResponse({'msg': 'Failed To Load JSON Data...'})
+
+
+# ---
+
+@csrf_protect
+def userAction(request):
+    ''' This View Function Is Intended To Be Called By AJAX Requests '''
+    if request.method == 'GET':
+        return redirect('/')
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            # ----- #
+
+            if data['action'] == None:
+                return JsonResponse({'msg': 'Action Message Is Missing...'})
+
+            if data['action'] == '':
+                return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
+
+            # ----- #
+
+            if data['action'] == 'followUser':
+                return routines.followUser(request, data)
+
+            if data['action'] == 'unfollowUser':
+                return routines.unfollowUser(request, data)
+
+            if data['action'] == 'cancelPending':
+                return routines.cancelPending(request, data)
 
         except:
             return JsonResponse({'msg': 'Failed To Load JSON Data...'})
