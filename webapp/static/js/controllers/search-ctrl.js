@@ -81,8 +81,8 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
         user.status = 'Pending Follow';
         user.btn = 'default';
         user.msg = 'Pending';
-        user.action = 'cancelPending';
-        user.title = 'Cancel Pending Request';
+        user.action = 'cancelPendingFollow';
+        user.title = 'Cancel Pending Follow Request';
       }
     },
     function(resp){

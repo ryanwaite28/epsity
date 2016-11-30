@@ -18,7 +18,7 @@ from django.db.models import Q
 
 from WebTools import randomVal, processImage, saveImageLocal
 from models import Accounts, AviModel, WpModel, Groups, GroupMembers
-from models import Follows, FollowRequests
+from models import Follows, FollowRequests, GroupInvitations
 
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
@@ -318,7 +318,9 @@ def searchEngine(request):
 
     users = Accounts.objects.exclude(id = you.id) \
     .filter(uname__contains = data['query'])[:10]
-    groups = Groups.objects.filter(uname__contains = data['query'])[:10]
+    groups = Groups.objects \
+    .exclude(ownerid = you.id) \
+    .filter(uname__contains = data['query'])[:10]
 
     users = [u.serialize for u in users]
     groups = [g.serialize for g in groups]
@@ -335,7 +337,7 @@ def searchEngine(request):
                 u['status'] = 'Pending Follow'
                 u['btn'] = 'default'
                 u['msg'] = 'Pending'
-                u['action'] = 'cancelPending'
+                u['action'] = 'cancelPendingFollow'
                 u['title'] = 'Cancel Pending'
 
             else:
@@ -359,16 +361,28 @@ def searchEngine(request):
         .filter(group_id = g['gid'], userid = you.id).first()
 
         if checkMembership == None:
-            g['status'] = 'Not A Member'
-            g['btn'] = 'success'
-            g['msg'] = 'Request Invitation'
-            g['action'] = 'requestGroupInvitation'
+            checkGroupInvite = GroupInvitations.objects \
+            .filter(group_id=g['gid'], userid=you.id).first()
+            if checkGroupInvite != None:
+                g['status'] = 'Pending Invite'
+                g['btn'] = 'default'
+                g['msg'] = 'Pending'
+                g['action'] = 'cancelPendingGroupInvite'
+                g['title'] = 'Cancel Pending Group Invite'
+
+            else:
+                g['status'] = 'Not A Member'
+                g['btn'] = 'success'
+                g['msg'] = 'Request Invite'
+                g['action'] = 'requestGroupInvite'
+                g['title'] = 'Request Group Invite'
 
         else:
             g['status'] = 'Currently A Member'
             g['btn'] = 'warning'
             g['msg'] = 'Leave Group'
             g['action'] = 'leaveGroup'
+            g['title'] = 'Leave Group'
 
     # print groups
 
@@ -411,18 +425,30 @@ def searchForMembers(request):
         .filter(group_id = data['gid'], userid = u['userid']).first()
 
         if checkMembership == None:
-            u['status'] = 'Not A Member'
-            u['btn'] = 'success'
-            u['msg'] = 'Send Invitation!'
-            u['action'] = 'sendGroupInvitation'
+            checkGroupInvite = GroupInvitations.objects \
+            .filter(group_id=data['gid'], userid=u['userid']).first()
+            if checkGroupInvite != None:
+                u['status'] = 'pending invite'
+                u['btn'] = 'default'
+                u['msg'] = 'Pending'
+                u['action'] = 'cancelPendingGroupInvite'
+                u['title'] = 'Cancel Pending Group Invite'
+
+            else:
+                u['status'] = 'not a member'
+                u['btn'] = 'success'
+                u['msg'] = 'Send Group Invite'
+                u['action'] = 'sendGroupInvitation'
+                u['title'] = 'Send Group Invite'
 
         else:
-            u['status'] = 'Currently A Member'
-            u['btn'] = 'default'
-            u['msg'] = 'Currently A Member'
-            u['action'] = 'Remove Member'
+            u['status'] = 'currently a member'
+            u['btn'] = 'warning'
+            u['msg'] = 'Remove Member'
+            u['action'] = 'removeMember'
+            u['title'] = 'Remove From Group'
 
-    print users
+    # print users
 
     resp = {
         'msg': 'search results',
@@ -696,9 +722,9 @@ def unfollowUser(request, data):
         return errorPage(request, msg)
 
 
-def cancelPending(request, data):
+def cancelPendingFollow(request, data):
     try:
-        if data['user']['action'] != 'cancelPending':
+        if data['user']['action'] != 'cancelPendingFollow':
             return JsonResponse({'msg': 'Error - Bad Action msg.'})
 
         you = Accounts.objects.get(uname = request.session['username'])
@@ -719,6 +745,257 @@ def cancelPending(request, data):
             return JsonResponse({'msg': 'Cannot Cancel Follow Request.'})
 
 
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+# ---
+
+def loadNotesAll(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        pendingFollows = FollowRequests.objects.filter(recipient_id = you.id)
+        pendingFollows = [pf.serialize for pf in pendingFollows]
+        for pf in pendingFollows:
+            pf['status'] = 'Pending Follow'
+            pf['btn'] = 'default'
+            pf['action'] = 'cancelPendingFollow'
+            pf['title'] = 'Cancel Pending'
+
+
+        pendingInvites = GroupInvitations.objects.filter(userid = you.id)
+        pendingInvites = [pi.serialize for pi in pendingInvites]
+        for pi in pendingInvites:
+            pi['status'] = 'Pending Invitation'
+            pi['btn'] = 'default'
+            pi['action'] = 'cancelPendingFollow'
+            pi['title'] = 'Cancel Pending'
+
+        resp = {
+            'msg': 'Notes All',
+            'pendingFollows': pendingFollows,
+            'pendingInvites': pendingInvites
+        }
+
+        return JsonResponse(resp)
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def acceptFollow(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        if you.id != data['pf']['recipient_rel']['userid']:
+            return JsonResponse({'msg': 'Error - Conflict Occured.'})
+
+        pendingFollow = FollowRequests.objects \
+        .filter(sender_id = data['pf']['sender_rel']['userid'],
+            recipient_id = data['pf']['recipient_rel']['userid']).first()
+
+        if pendingFollow == None:
+            return JsonResponse({'msg': 'Error - Conflict Occured.'})
+
+        else:
+            pendingFollow.delete()
+            user = Accounts.objects \
+            .get(uname = data['pf']['sender_rel']['uname'])
+
+            newFollow = Follows(userid=user.id,
+                                    user_rel=user,
+                                    follow_id=you.id,
+                                    follow_rel=you)
+            newFollow.save()
+
+            return JsonResponse({'msg': 'Follow Accepted!'})
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+# ---
+
+def declineFollow(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        if you.id != data['pf']['recipient_rel']['userid']:
+            return JsonResponse({'msg': 'Error - Conflict Occured.'})
+
+        pendingFollow = FollowRequests.objects \
+        .filter(sender_id = data['pf']['sender_rel']['userid'],
+            recipient_id = data['pf']['recipient_rel']['userid']).first()
+
+        if pendingFollow == None:
+            return JsonResponse({'msg': 'Error - Conflict Occured.'})
+
+        else:
+            pendingFollow.delete()
+
+            return JsonResponse({'msg': 'Follow Declined!'})
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+# ---
+
+
+def sendGroupInvitation(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        group = Groups.objects.get(id =  data['group']['gid'])
+        if group == None:
+            return JsonResponse({'msg': 'Error - Group Cannot Be Loaded.'})
+
+        checkMembership = GroupMembers.objects.filter \
+        (group_id = data['group']['gid'], userid = data['user']['userid']).first()
+
+        if checkMembership != None:
+            return JsonResponse({'msg': 'Already A Member'})
+
+        if checkMembership == None:
+            checkGroupInvite = GroupInvitations.objects.filter \
+            (group_id=data['group']['gid'], userid=data['user']['userid']).first()
+
+            if checkGroupInvite != None:
+                return JsonResponse({'msg': 'Already A Pending Invite'})
+
+            if checkGroupInvite == None:
+                user = Accounts.objects.get(id = data['user']['userid'])
+
+                newGroupInvite = GroupInvitations \
+                (group_id = group.id, group_rel = group,
+                userid = user.id, user_rel = user)
+
+                newGroupInvite.save()
+
+                return JsonResponse({'msg': 'Group Invite Created!',
+                                    'status': 'pending'})
+
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def requestGroupInvitation(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def acceptGroupInvitation(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        group = Groups.objects.get(id =  data['pi']['group_rel']['gid'])
+        if group == None:
+            return JsonResponse({'msg': 'Error - Group Cannot Be Loaded.'})
+
+        checkGroupInvite = GroupInvitations.objects.filter \
+        (group_id=group.id, userid=data['pi']['userid']).first()
+
+        if checkGroupInvite == None:
+            return JsonResponse({'msg': 'Group Invite Not Found!'})
+
+        if checkGroupInvite != None:
+            checkGroupInvite.delete()
+
+            newGroupInvite = GroupMembers \
+            (group_id = group.id, group_rel = group,
+            userid = you.id, user_rel = you)
+
+            newGroupInvite.save()
+
+            return JsonResponse({'msg': 'Group Invite Declined!',
+                                'status': 'currently a member'})
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def declineGroupInvitation(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        group = Groups.objects.get(id =  data['pi']['group_rel']['gid'])
+        if group == None:
+            return JsonResponse({'msg': 'Error - Group Cannot Be Loaded.'})
+
+        checkGroupInvite = GroupInvitations.objects.filter \
+        (group_id=group.id, userid=data['pi']['userid']).first()
+
+        if checkGroupInvite == None:
+            return JsonResponse({'msg': 'Group Invite Not Found!'})
+
+        if checkGroupInvite != None:
+            checkGroupInvite.delete()
+            return JsonResponse({'msg': 'Group Invite Declined!',
+                                'status': 'not a member'})
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def cancelPendingGroupInvite(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        group = Groups.objects.get(id =  data['group']['gid'])
+        if group == None:
+            return JsonResponse({'msg': 'Error - Group Cannot Be Loaded.'})
+
+        checkGroupInvite = GroupInvitations.objects.filter \
+        (group_id=data['group']['gid'], userid=data['user']['userid']).first()
+
+        if checkGroupInvite == None:
+            return JsonResponse({'msg': 'Error - Group Invite Not Found'})
+
+        if checkGroupInvite != None:
+            checkGroupInvite.delete()
+
+            return JsonResponse({'msg': 'Group Invite Canceled!',
+                                'status': 'not a member'})
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def cancelPendingGroupRequest(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def removeGroupMember(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        group = Groups.objects.get(id =  data['group']['gid'])
+        if group == None:
+            return JsonResponse({'msg': 'Error - Group Cannot Be Loaded.'})
+
+        checkMembership = GroupMembers.objects.filter \
+        (group_id = data['group']['gid'], userid = data['user']['userid']).first()
+
+        if checkMembership == None:
+            return JsonResponse({'msg': 'User Is Not A Member'})
+
+        if checkMembership != None:
+            checkMembership.delete()
+            return JsonResponse({'msg': 'Group Invite Created!',
+                                'status': 'not a member'})
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

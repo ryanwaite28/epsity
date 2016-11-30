@@ -252,6 +252,18 @@ class ConvoMembers(models.Model):
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
 
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'cvm_id': self.id,
+            'user': self.user.serialize,
+            'userid': self.userid,
+            'convo_id': self.convo_id,
+            'convo_rel': self.convo_rel.serialize
+
+        }
+
     class Meta:
         db_table = "convo_members"
 
@@ -270,6 +282,20 @@ class ConvoMessages(models.Model):
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'cvm_id': self.id,
+            'user': self.user.serialize,
+            'userid': self.userid,
+            'convo_id': self.convo_id,
+            'convo_rel': self.convo_rel.serialize,
+            'contents': self.contents,
+            'attachment': self.attachment,
+            'date_created': self.date_created,
+        }
 
     class Meta:
         db_table = "convo_messages"

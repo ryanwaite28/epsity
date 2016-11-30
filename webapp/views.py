@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
 
 from WebTools import randomVal, processImage
-from models import Accounts, Groups, Follows, FollowRequests
+from models import Accounts, Groups, GroupMembers, Follows, FollowRequests
 
 import routines
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
@@ -41,7 +41,7 @@ def login(request):
         if 'username' in request.session:
             return redirect('/home/')
 
-        return render(request, pages['login'], {'error': '1'},
+        return render(request, pages['login'], {'error': ''},
                         context_instance = RequestContext(request))
 
     if request.method == 'POST':
@@ -111,11 +111,14 @@ def profileHome(request):
             you = Accounts.objects.get(uname = request.session['username'])
             followers = Follows.objects.filter(follow_id=you.id)
             following = Follows.objects.filter(userid=you.id)
+            groups = GroupMembers.objects.filter(userid=you.id)
+
             return render(request, pages['profileHome'],
                             {'you': you,
                             'info': you.get_info,
                             'followers': len(followers),
-                            'following': len(following)},
+                            'following': len(following),
+                            'groups': len(groups)},
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -137,6 +140,10 @@ def userPage(request, query):
             user = Accounts.objects \
             .filter(uname__iexact = query).first()
 
+            followers = Follows.objects.filter(follow_id=user.id)
+            following = Follows.objects.filter(userid=user.id)
+            groups = GroupMembers.objects.filter(userid=user.id)
+
             if user == None:
                 msg = 'User Account Not Found.'
                 return errorPage(request, msg)
@@ -150,13 +157,21 @@ def userPage(request, query):
                         return render(request,
                                         pages['UserPage'],
                                         {'you': you,
-                                        'user': user},
+                                        'user': user,
+                                        'info': user.get_info,
+                                        'followers': len(followers),
+                                        'following': len(following),
+                                        'groups': len(groups)},
                                         context_instance = RequestContext(request))
                 else:
                     return render(request,
                                     pages['UserPage'],
                                     {'you': you,
-                                    'user': user},
+                                    'user': user,
+                                    'info': user.get_info,
+                                    'followers': len(followers),
+                                    'following': len(following),
+                                    'groups': len(groups)},
                                     context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -451,8 +466,54 @@ def userAction(request):
             if data['action'] == 'unfollowUser':
                 return routines.unfollowUser(request, data)
 
-            if data['action'] == 'cancelPending':
-                return routines.cancelPending(request, data)
+            if data['action'] == 'cancelPendingFollow':
+                return routines.cancelPendingFollow(request, data)
 
-        except:
-            return JsonResponse({'msg': 'Failed To Load JSON Data...'})
+            if data['action'] == 'accept follow':
+                return routines.acceptFollow(request, data)
+
+            if data['action'] == 'decline follow':
+                return routines.declineFollow(request, data)
+
+            # ---
+
+            if data['action'] == 'sendGroupInvitation':
+                return routines.sendGroupInvitation(request, data)
+
+            if data['action'] == 'cancelPendingGroupInvite':
+                return routines.cancelPendingGroupInvite(request, data)
+
+            if data['action'] == 'accept group invite':
+                return routines.acceptGroupInvitation(request, data)
+
+            if data['action'] == 'decline group invite':
+                return routines.declineGroupInvitation(request, data)
+
+            if data['action'] == 'removeMember':
+                return routines.removeGroupMember(request, data)
+
+            # ---
+
+            if data['action'] == 'load notes all':
+                return routines.loadNotesAll(request, data)
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
+
+# ---
+
+def notificationsView(request):
+    if request.method == 'GET':
+        if 'username' not in request.session:
+            return redirect('/')
+
+        try:
+            you = Accounts.objects.get(uname = request.session['username'])
+            return render(request, pages['notificationsView'],
+                            {'you': you, 'message': ''},
+                            context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)

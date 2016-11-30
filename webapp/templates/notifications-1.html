@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Epsity | Notifications</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load staticfiles %}
+
+  {% include 'dependencies-1.html' %}
+
+  <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+  <script src="/static/js/grand.js"></script>
+  <script src="/static/js/profile.js"></script>
+  <script src="/static/js/controllers/notifications-ctrl.js"></script>
+  <!-- <script src="/static/js/controllers/follow-ctrl.js"></script> -->
+</head>
+
+  <body ng-app="epsityApp" ng-controller="notificationsCtrl" class="transition">
+
+    {% include 'topbar-1.html' %}
+
+    <!--  -->
+
+    <div id="main-container">
+      <div id="mc-inner" class="">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12" style="height: 25px;"></div>
+
+            <div class="col-md-3">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <img id="" class="middlr polaroid-2" title="Profile Image" alt="Profile Image" src="{{ you.avi }}"/>
+                <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
+                <p class="text-center">{{ you.displayname }}</p>
+              </div>
+              <!-- <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+
+              </div> -->
+            </div>
+
+            <!-- ng-controller="followCtrl" -->
+
+            <div class="col-md-9">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
+                <p class="text-center p-emp-1"><strong>Pending Follow Requests</strong></p>
+                <hr class="hr-grey">
+                <ul id="sr-users-list">
+                  <li ng-repeat="pf in pendingFollows">
+                    <div class="sr-inner-div">
+                      <div class="fill mk-rel sdw-1" style="background-image: url('{[ pf.sender_rel.background ]}');">
+                        <div class="dim"></div>
+                        <div class="mk-rel">
+                          <img class="sr-user-avi" src="{[ pf.sender_rel.avi ]}"/><br>
+                          <h4 class="text-center text-lightgrey text-sdw-2"><strong><a class="transition text-sdw-2" title="See {[ pf.sender_rel.uname ]}'s Page" href="/users/{[ pf.sender_rel.uname ]}">{[ pf.sender_rel.uname ]}</a></strong></h4>
+                          <br>
+                          <p class="text-center">
+                            <a class="sdw-1 transition btn btn-primary" title="Accept {[ pf.sender_rel.uname ]}'s Follow Request" ng-click="acceptFollow(this.pf)">Accept</a>
+                            <a class="sdw-1 transition btn btn-danger" title="Decline {[ pf.sender_rel.uname ]}'s Follow Request'" ng-click="declineFollow(this.pf)">Decline</a>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <br>
+
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
+                <p class="text-center p-emp-1"><strong>Pending Group Requests</strong></p>
+                <hr class="hr-grey">
+                <ul id="sr-users-list">
+                  <li ng-repeat="pi in pendingInvites">
+                    <div class="sr-inner-div">
+                      <div class="fill mk-rel sdw-1" style="background-image: url('{[ pi.group_rel.background ]}');">
+                        <div class="dim"></div>
+                        <div class="mk-rel">
+                          <img class="sr-user-avi" src="{[ pi.group_rel.avi ]}"/><br>
+                          <h4 class="text-center text-lightgrey text-sdw-2"><strong><a class="transition text-sdw-2" title="See {[ pi.group_rel.uname ]}'s Page" href="/users/{[ pi.group_rel.uname ]}">{[ pi.group_rel.uname ]}</a></strong></h4>
+                          <br>
+                          <p class="text-center">
+                            <a class="sdw-1 transition btn btn-primary" title="Accept {[ pi.group_rel.uname ]}'s Group invite" ng-click="acceptGroupInvite(this.pi)">Accept</a>
+                            <a class="sdw-1 transition btn btn-danger" title="Decline {[ pi.group_rel.uname ]}'s Group Invite'" ng-click="declineGroupInvite(this.pi)">Decline</a>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <br>
+
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
+                <p class="text-center p-emp-1"><strong>Notifications</strong></p>
+                <hr class="hr-grey">
+                <ul id="sr-users-list">
+                  <li >
+
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+  <!--
+
+    wp = Welcome Page
+
+  -->
+
+</html>

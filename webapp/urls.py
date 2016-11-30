@@ -19,10 +19,14 @@ urlpatterns = [
     url(r'^search/$', views.searchEngine, name='search'),
     url(r'^create/$', views.createView, name='createview'),
     url(r'^mysettings/$', views.mySettings, name='mysettings'),
+    url(r'^notifications/$', views.notificationsView, name='notifications'),
     url(r'^user/settingsaction/$', views.settingsAction, name='settingsaction'),
     url(r'^checkpoint/$', views.checkPoint, name='checkpoint'),
     url(r'^action/$', views.userAction, name='useraction'),
+
     url(r'^users/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.userPage, name='userpage'),
+    #url(r'^users/(?P<query>[a-zA-Z0-9\-\_]+)/groupmember/$', views.userGroupMember, name='usergroupmember'),
     url(r'^groups/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.groupPage, name='grouppage'),
+    #url(r'^groups/(?P<query>[a-zA-Z0-9\-\_]+)/members/$', views.groupMembers, name='groupmembers'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
