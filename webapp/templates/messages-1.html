@@ -43,7 +43,7 @@
                   <li class="transition" ng-repeat="m in messages">
                     <div class="row">
                       <div class="col-xs-12">
-                        <p class="no-marg">{[ m.userA_rel.uname ]} - {[ m.userB_rel.uname ]}</p>
+                        <p class="no-marg">{[ m.userA_rel.uname ]} &amp; {[ m.userB_rel.uname ]}</p>
                         <br>
                         <a title="See Messages" class="btn btn-info transition" ng-click="openMessages(this.m)">Open</a>
                       </div>
@@ -57,7 +57,8 @@
 
             <div class="col-md-9">
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
-                <p class="text-center p-emp-1"><strong>Messages</strong></p>
+                <p class="text-center p-emp-1"><strong>Messages</strong><br>
+                <a class="btn btn-sm btn-primary transition" data-toggle="modal" data-target="#attachmentModal">Show Attachment</a></p>
                 <hr class="hr-grey">
                 <ul class="ul-raw">
                   <li ng-repeat="r in currentMessages.replies">
@@ -73,13 +74,31 @@
                               <strong>{[ r.user_rel.uname ]}</strong>
                             </a>
                           <p> -->
-                          <p class="text-{[ r.pos ]}">{[ r.contents ]}</p>
+                          <p class="text-{[ r.pos ]}">{[ r.contents ]}<br>
+                          <a class="{[ r.class ]}" title="See attachment" ng-click="showMsgAttachment(this.r)">{[ r.attachment_type ]}</a></p><br>
+                          <p class="text-{[ r.pos ]}">{[ r.date_created | date : "MM/dd/y" ]}</p>
                         </div>
                       </div>
                     </div>
                   </li>
                 </ul>
                 <hr class="hr-grey">
+                <form ng-hide="sendmsgForm" class="middlr text-center" id="sendmsg-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="send message"/>
+
+                  <input type="hidden" name="origin" value=""/>
+                  <input type="hidden" name="senderid" value=""/>
+                  <input type="hidden" name="recipientid" value=""/>
+
+                  <textarea id="send-msg-1" name="contents" placeholder="Send Message..." ng-model="messageContents"></textarea>
+                  <br>
+                  <input type="file" name="media" class="middlr transition btn btn-default"/>
+                  <br>
+                  <a title="Send Message To {{ user.uname }}" class="btn btn-info transition" ng-click="sendMessageTwo()">Send Message</a>
+                  <p class="text-center">{[ msgResp ]}</p>
+                </form>
+
               </div>
             </div>
 
@@ -87,6 +106,29 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal -->
+<div id="attachmentModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title text-center">Attachment</h4>
+      </div>
+
+      <div class="modal-body" id="modal-body">
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
   </body>
 

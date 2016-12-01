@@ -1,0 +1,15 @@
+<form class="middlr text-center" id="sendmsg-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="send message"/>
+
+  <input type="hidden" name="origin" value=""/>
+  <input type="hidden" name="senderid" value=""/>
+  <input type="hidden" name="recipientid" value=""/>
+
+  <textarea id="send-msg-1" name="contents" placeholder="Send Message..." ng-model="messageContents"></textarea>
+  <br>
+  <input type="file" name="media" class="middlr transition btn btn-default"/>
+  <br>
+  <a title="Send Message To {{ user.uname }}" class="btn btn-info transition" ng-click="sendMessage({{ you.id }} , {{ user.id }})">Send Message</a>
+  <p class="text-center">{[ msgResp ]}</p>
+</form>

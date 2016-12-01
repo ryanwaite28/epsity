@@ -49,7 +49,7 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
 
     var req = {
       method: 'POST',
-      url: '/action/',
+      url: '/action/ajax/',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': Cookies.get('csrftoken')

@@ -370,13 +370,14 @@ body {
   border: 1px solid black;
   padding: 10px;
   cursor: pointer;
+  margin-bottom: 15px;
 }
 #messages-list li:hover {
   background: #fbfbfb;
 }
 
 .message-box-1 {
-  width: 250px;
+  width: 325px;
   max-width: 95%;
   margin-bottom: 20px;
   overflow: hidden;

@@ -121,7 +121,7 @@
                 <i class="switch-div-x fa fa-times-circle-o" aria-hidden="true"></i>
                 <h3 class="text-center text-lightgrey"><strong>Send Message</strong></h3>
                 <hr>
-                <form class="middlr text-center" id="sendmsg-form" enctype="multipart/form-data" action="/action/" method="POST">
+                <form class="middlr text-center" id="sendmsg-form" enctype="multipart/form-data" action="/action/form/" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="action" value="send message"/>
 
@@ -136,6 +136,7 @@
                   <a title="Send Message To {{ user.uname }}" class="btn btn-info transition" ng-click="sendMessage({{ you.id }} , {{ user.id }})">Send Message</a>
                   <p class="text-center">{[ msgResp ]}</p>
                 </form>
+
               </div>
             </div>
           </div>

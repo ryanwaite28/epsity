@@ -347,90 +347,90 @@ def createView(request):
 # ---
 
 @csrf_protect
-def settingsAction(request):
-    ''' This View Is Intended To Be Used As An AJAX & Form Handler '''
+def settingsActionFORM(request):
+    ''' This View Is Intended To Be Used As A Form Handler '''
 
     if request.method == 'GET':
         return redirect('/mysettings')
 
     if request.method == 'POST':
-        # Form-Data Request
-        if not request.is_ajax:
+        if request.POST['action'] == None or request.POST['action'] == '':
+            return render(request, pages['mySettings'],
+                            {'you': you, 'message': 'Action Message Missing...'},
+                            context_instance = RequestContext(request))
 
-            if request.POST['action'] == None:
-                return render(request, pages['mySettings'],
-                                {'you': you, 'message': 'Action Message Missing...'},
-                                context_instance = RequestContext(request))
+        if request.POST['action'] == 'delete account':
+            return routines.deleteAccount(request)
 
-            if request.POST['action'] == '':
-                return render(request, pages['mySettings'],
-                                {'you': you, 'message': 'Action Is Unknown...'},
-                                context_instance = RequestContext(request))
+        if request.POST['action'] == 'update displayname':
+            return routines.updateDisplayName(request)
 
-            if request.POST['action'] == 'delete account':
-                return routines.deleteAccount(request)
+        if request.POST['action'] == 'update avi link':
+            return routines.updateAviLink(request)
 
-            if request.POST['action'] == 'update displayname':
-                return routines.updateDisplayName(request)
+        if request.POST['action'] == 'update wp link':
+            return routines.updateWpLink(request)
 
-            if request.POST['action'] == 'update avi link':
-                return routines.updateAviLink(request)
+        if request.POST['action'] == 'update avi file':
+            return routines.updateAviFile(request)
 
-            if request.POST['action'] == 'update wp link':
-                return routines.updateWpLink(request)
+        if request.POST['action'] == 'update wp file':
+            return routines.updateWpFile(request)
 
-            if request.POST['action'] == 'update avi file':
-                return routines.updateAviFile(request)
+        if request.POST['action'] == 'update group':
+            return routines.updateGroup(request)
 
-            if request.POST['action'] == 'update wp file':
-                return routines.updateWpFile(request)
+        if request.POST['action'] == 'update account status':
+            return routines.editAccountStatus(request)
 
-            if request.POST['action'] == 'update group':
-                return routines.updateGroup(request)
+        if request.POST['action'] == 'delete group':
+            return routines.deleteGroup(request)
 
-            if request.POST['action'] == 'update account status':
-                return routines.editAccountStatus(request)
-
-            if request.POST['action'] == 'delete group':
-                return routines.deleteGroup(request)
-
-            else:
-                msg = 'Unknown Action...'
-                return errorPage(request, msg)
+        else:
+            msg = 'Unknown Action...'
+            return errorPage(request, msg)
 
         # ------------ #  # ------------ #  # ------------ #
+# ---
 
-        # AJAX Request
-        if request.is_ajax:
-            try:
-                data = json.loads(request.body)
+@csrf_protect
+def settingsActionAJAX(request):
+    ''' This View Is Intended To Be Used As An AJAX Handler '''
 
-                if data['action'] == None:
-                    return JsonResponse({'msg': 'Action Message Is Missing...'})
+    if request.method == 'GET':
+        return redirect('/mysettings')
 
-                if data['action'] == '':
-                    return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
 
+            if data['action'] == None:
+                return JsonResponse({'msg': 'Action Message Is Missing...'})
 
-
-                if data['action'] == 'update bio':
-                    if data['bio'] == '' or data['bio'] == None:
-                        return routines.updateAccountBio(request, 'No Bio...')
-
-                    return routines.updateAccountBio(request, data['bio'])
-
-                if data['action'] == 'update interests':
-                    return routines.updateAccountInterests(request, data['str'])
-
-                if data['action'] == 'update seeking':
-                    return routines.updateAccountSeeking(request, data['str'])
-
-                if data['action'] == 'load settings lists':
-                    return routines.loadSettingsLists(request)
+            if data['action'] == '':
+                return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
 
 
-            except KeyError, AttributeError:
-                return JsonResponse({'msg': 'Failed To Load JSON Data...'})
+
+            if data['action'] == 'update bio':
+                if data['bio'] == '' or data['bio'] == None:
+                    return routines.updateAccountBio(request, 'No Bio...')
+
+                return routines.updateAccountBio(request, data['bio'])
+
+            if data['action'] == 'update interests':
+                return routines.updateAccountInterests(request, data['str'])
+
+            if data['action'] == 'update seeking':
+                return routines.updateAccountSeeking(request, data['str'])
+
+            if data['action'] == 'load settings lists':
+                return routines.loadSettingsLists(request)
+
+        except:
+            return JsonResponse({'msg': 'Failed To Load JSON Data...'})
+
+    # ------------ #  # ------------ #  # ------------ #
 
 # ---
 
@@ -462,87 +462,94 @@ def checkPoint(request):
 # ---
 
 @csrf_protect
-def userAction(request):
+def userActionFORM(request):
+    ''' This View Function Is Intended To Be Called By Form Data Requests '''
+    if request.method == 'GET':
+        return redirect('/')
+
+    if request.method == 'POST':
+        if request.POST['action'] == '' or request.POST['action'] == None:
+            msg = 'Unknown Action...'
+            return errorPage(request, msg)
+
+        # --- #
+
+        if request.POST['action'] == 'send message':
+            return routines.sendMessage(request)
+
+
+
+        else:
+            msg = 'Unknown Action...'
+            return errorPage(request, msg)
+
+# ---
+
+
+@csrf_protect
+def userActionAJAX(request):
     ''' This View Function Is Intended To Be Called By AJAX Requests '''
     if request.method == 'GET':
         return redirect('/')
 
     if request.method == 'POST':
-        if not request.is_ajax:
+        try:
+            data = json.loads(request.body)
+            # ----- #
 
-            if request.POST['action'] == '' or request.POST['action'] == None:
-                msg = 'Unknown Action...'
-                return errorPage(request, msg)
+            if data['action'] == None:
+                return JsonResponse({'msg': 'Action Message Is Missing...'})
 
-            # --- #
+            if data['action'] == '':
+                return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
 
-            if request.POST['action'] == 'send message':
-                return routines.sendMessage(request)
+            # ----- #
 
-            else:
-                msg = 'Unknown Action...'
-                return errorPage(request, msg)
+            if data['action'] == 'followUser':
+                return routines.followUser(request, data)
 
+            if data['action'] == 'unfollowUser':
+                return routines.unfollowUser(request, data)
 
-        if request.is_ajax:
-            try:
-                data = json.loads(request.body)
+            if data['action'] == 'cancelPendingFollow':
+                return routines.cancelPendingFollow(request, data)
 
-                # ----- #
+            if data['action'] == 'accept follow':
+                return routines.acceptFollow(request, data)
 
-                if data['action'] == None:
-                    return JsonResponse({'msg': 'Action Message Is Missing...'})
+            if data['action'] == 'decline follow':
+                return routines.declineFollow(request, data)
 
-                if data['action'] == '':
-                    return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
+            # ---
 
-                # ----- #
+            if data['action'] == 'sendGroupInvitation':
+                return routines.sendGroupInvitation(request, data)
 
-                if data['action'] == 'followUser':
-                    return routines.followUser(request, data)
+            if data['action'] == 'cancelPendingGroupInvite':
+                return routines.cancelPendingGroupInvite(request, data)
 
-                if data['action'] == 'unfollowUser':
-                    return routines.unfollowUser(request, data)
+            if data['action'] == 'accept group invite':
+                return routines.acceptGroupInvitation(request, data)
 
-                if data['action'] == 'cancelPendingFollow':
-                    return routines.cancelPendingFollow(request, data)
+            if data['action'] == 'decline group invite':
+                return routines.declineGroupInvitation(request, data)
 
-                if data['action'] == 'accept follow':
-                    return routines.acceptFollow(request, data)
+            if data['action'] == 'removeMember':
+                return routines.removeGroupMember(request, data)
 
-                if data['action'] == 'decline follow':
-                    return routines.declineFollow(request, data)
+            # ---
 
-                # ---
+            if data['action'] == 'load notes all':
+                return routines.loadNotesAll(request, data)
 
-                if data['action'] == 'sendGroupInvitation':
-                    return routines.sendGroupInvitation(request, data)
+            # ---
 
-                if data['action'] == 'cancelPendingGroupInvite':
-                    return routines.cancelPendingGroupInvite(request, data)
+            if data['action'] == 'load messages':
+                return routines.loadMessages(request, data)
 
-                if data['action'] == 'accept group invite':
-                    return routines.acceptGroupInvitation(request, data)
-
-                if data['action'] == 'decline group invite':
-                    return routines.declineGroupInvitation(request, data)
-
-                if data['action'] == 'removeMember':
-                    return routines.removeGroupMember(request, data)
-
-                # ---
-
-                if data['action'] == 'load notes all':
-                    return routines.loadNotesAll(request, data)
-
-                # ---
-
-                if data['action'] == 'load messages':
-                    return routines.loadMessages(request, data)
-
-            except ObjectDoesNotExist:
-                msg = 'User Account Not Found.'
-                return errorPage(request, msg)
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
 
 # ---
 

@@ -22,7 +22,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
     }
 
     $.ajax({
-      url: '/user/settingsaction/',
+      url: '/user/settingsaction/ajax/',
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(obj),
@@ -96,7 +96,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.updateBioBtn = true;
 
     $.ajax({
-      url: '/user/settingsaction/',
+      url: '/user/settingsaction/ajax/',
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(obj),
@@ -357,7 +357,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
     }
 
     $.ajax({
-      url: '/user/settingsaction/',
+      url: '/user/settingsaction/ajax/',
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(obj),
@@ -387,7 +387,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
     }
 
     $.ajax({
-      url: '/user/settingsaction/',
+      url: '/user/settingsaction/ajax/',
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(obj),
@@ -646,7 +646,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
     console.log(user);
     var req = {
       method: 'POST',
-      url: '/action/',
+      url: '/action/ajax/',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': Cookies.get('csrftoken')

@@ -19,10 +19,24 @@ class WpModel(models.Model):
 
 # ---
 
-class mediaModel(models.Model):
-    docfile = models.FileField(upload_to='media/', default='')
+
+
+class mediaPhotoModel(models.Model):
+    docfile = models.FileField(upload_to='media/photo/', default='')
 
 # ---
+
+class mediaVideoModel(models.Model):
+    docfile = models.FileField(upload_to='media/video/', default='')
+
+# ---
+
+class mediaAudioModel(models.Model):
+    docfile = models.FileField(upload_to='media/audio/', default='')
+
+# ---
+
+
 
 class DocumentForm(forms.Form):
     docfile = forms.FileField(label='Select a file')
@@ -42,8 +56,8 @@ class Accounts(models.Model):
     pswrd = models.CharField(max_length = 50, default = '')
     provider = models.CharField(max_length = 20, default = '')
     provider_id = models.CharField(max_length = 100, default = '')
-    avi = models.CharField(max_length = 500, default = '/static/hotspot/img/anon2.png')
-    background = models.CharField(max_length = 500, default = '')
+    avi = models.CharField(max_length = 500, default = '/static/img/anon2.png')
+    background = models.CharField(max_length = 500, default = '/static/img/bg-default.jpg')
     gender = models.CharField(max_length = 25, default = '')
     phone = models.CharField(max_length = 25, default = '')
 
@@ -173,7 +187,7 @@ class Posts(models.Model):
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
-    image = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(max_length = 500, default = '')
     link = models.CharField(max_length = 500, default = '')
 
     type = models.CharField(max_length = 20, choices = POST_TYPES, default = '')
@@ -181,6 +195,23 @@ class Posts(models.Model):
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            'p_id': self.id,
+
+            'ownerid': self.ownerid,
+            'owner': self.owner.serialize,
+            'contents': self.contents,
+            'attachment': self.attachment,
+            'attachment_type': self.attachment_type,
+            'link': self.link,
+            'type': self.type,
+            'status': self.status,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
 
     class Meta:
         db_table = "posts"
@@ -197,6 +228,7 @@ class Comments(models.Model):
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(max_length = 500, default = '')
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -212,6 +244,7 @@ class Comments(models.Model):
             'post_rel': self.post_rel.serialize,
             'contents': self.contents,
             'attachment': self.attachment,
+            'attachment_type': self.attachment_type,
             'date_created': self.date_created,
             'last_active': self.last_active
         }
@@ -231,6 +264,7 @@ class Replies(models.Model):
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(max_length = 500, default = '')
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -246,6 +280,7 @@ class Replies(models.Model):
             'comment_rel': self.comment_rel.serialize,
             'contents': self.contents,
             'attachment': self.attachment,
+            'attachment_type': self.attachment_type,
             'date_created': self.date_created,
             'last_active': self.last_active
         }
@@ -344,6 +379,7 @@ class ConvoMessages(models.Model):
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(max_length = 500, default = '')
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -359,6 +395,7 @@ class ConvoMessages(models.Model):
             'convo_rel': self.convo_rel.serialize,
             'contents': self.contents,
             'attachment': self.attachment,
+            'attachment_type': self.attachment_type,
             'date_created': self.date_created,
         }
 
@@ -540,6 +577,7 @@ class MessageReply(models.Model):
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(max_length = 500, default = '')
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -551,11 +589,12 @@ class MessageReply(models.Model):
             'mr_id': self.id,
 
             'message_id': self.message_id,
-            'message_rel': self.message_rel.serialize,
+            #'message_rel': self.message_rel.serialize,
             'userid': self.userid,
             'user_rel': self.user_rel.serialize,
             'contents': self.contents,
             'attachment': self.attachment,
+            'attachment_type': self.attachment_type,
             'date_created': self.date_created,
             'last_active': self.last_active
             #'linkName': self.bio_link_name,

@@ -17,13 +17,14 @@ from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 
 from WebTools import randomVal, processImage, saveImageLocal
-from models import Accounts, AviModel, WpModel, mediaModel, Groups, GroupMembers
+from models import Accounts, AviModel, WpModel, Groups, GroupMembers
 from models import Follows, FollowRequests, GroupInvitations
 from models import Messages, MessageReply
+from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
 
 from vaults import webapp_dir, pages, errorPage, genericPage, localPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
-from vaults import allowed_audio, allowed_photo, allowed_audio, allowed_media
+from vaults import allowed_audio, allowed_photo, allowed_video, allowed_media
 
 
 # --- -------- --- #
@@ -1020,9 +1021,16 @@ def loadMessages(request, data):
                 if mr['userid'] == you.id:
                     mr['pos'] = 'right'
                     mr['color'] = 'lightgrey'
+
                 else:
                     mr['pos'] = 'left'
                     mr['color'] = '#fbfbfb'
+
+                if mr['attachment'] != '':
+                    mr['class'] = 'transition btn btn-sm btn-default point-cursor'
+
+                else:
+                    mr['class'] = 'transition point-cursor'
 
             m['replies'] = messagesReplies
 
@@ -1063,6 +1071,7 @@ def sendMessage(request):
         # ---
 
         newdoc = None # Default For Message Media
+        doctype = ''
         if request.FILES:
             media = request.FILES['media']
 
@@ -1072,9 +1081,20 @@ def sendMessage(request):
                                     msg = 'Error - Bad Media File Input.',
                                     redirect=request.POST['origin'])
 
-            if media and media.name != '' and \
-            allowed_media(media.name):
-                newdoc = mediaModel(docfile = request.FILES['media'])
+            if media and media.name != '':
+                if allowed_audio(media.name):
+                    newdoc = mediaAudioModel(docfile = request.FILES['media'])
+                    doctype = 'audio'
+
+                if allowed_video(media.name):
+                    newdoc = mediaVideoModel(docfile = request.FILES['media'])
+                    doctype = 'video'
+
+                if allowed_photo(media.name):
+                    newdoc = mediaPhotoModel(docfile = request.FILES['media'])
+                    doctype = 'photo'
+
+
                 newdoc.save()
 
         # ---
@@ -1103,6 +1123,9 @@ def sendMessage(request):
 
         if newdoc != None:
             newMessageReply.attachment = newdoc.docfile.url
+
+        if doctype != '':
+            newMessageReply.attachment_type = doctype
 
         newMessageReply.save()
 

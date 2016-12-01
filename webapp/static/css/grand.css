@@ -171,6 +171,10 @@
     margin-bottom: 15px;
 }
 
+.point-cursor {
+  cursor: pointer;
+}
+
 .mk-rel {
   position: relative;
 }
@@ -262,4 +266,11 @@
 
 .brd-lg {
   border: 1px solid lightgrey;
+}
+
+.max-w {
+  width: 100%;
+}
+.max-h {
+  height: 100%;
 }

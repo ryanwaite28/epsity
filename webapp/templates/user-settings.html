@@ -59,7 +59,7 @@
                       <hr class="transition hr-grey">
                       <p class="transition text-center">Edit Your Bio<br>Max Length: 150 Characters.</p>
                       <br>
-                      <form class="transition middlr" id="bio-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                      <form class="transition middlr" id="bio-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                         <textarea class="transition middlr" id="update-bio-content" name="bio" placeholder="Bio Message...">{% autoescape off %}{{ you.bio_desc }}{% endautoescape %}</textarea>
                         <input type="hidden" name="action" value="update bio"/>
                         <br>
@@ -141,7 +141,7 @@
                       <div class="transition col-md-12 box-s1">
                         <p class="transition text-center">Change Account Status<br>Current Status: {{ you.status }}</p><br>
                         <div class="transition col-md-12">
-                          <form id="chg-accountstatus-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                          <form id="chg-accountstatus-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                             <input type="hidden" name="action" value="update account status"/>
                             <select class="middlr" name="select" required>
                               <option name="status" value="public">Public</option>
@@ -158,7 +158,7 @@
                       <div class="transition col-md-12 box-s1">
                         <p class="transition text-center">Change DisplayName</p><br>
                         <div class="transition col-md-12">
-                          <form id="chg-dpn-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                          <form id="chg-dpn-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                             <input type="hidden" name="action" value="update displayname"/>
                             <input type="text" name="displayname" class="transition  middlr input-t-s1" value="{{ you.displayname }}" placeholder="Ender Displayname..."/><br>
                             <input title="Submit Form" class="transition btn btn-info  middlr" type="button" value="Edit" ng-click="editDisplayName()"/>
@@ -178,7 +178,7 @@
                         <div class="transition tab-content">
                           <div id="avi-link-pane" class="transition tab-pane in active fade">
                             <div class="transition col-md-12">
-                              <form id="chg-avi-link-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                              <form id="chg-avi-link-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update avi link"/>
                                 <input type="text" name="avi" class="transition middlr  block input-t-s1" placeholder="Link To Avatar Image..." required/><br>
                                 <input title="Submit Form" class="transition btn btn-info  middlr" type="submit" value="Edit" ng-click=""/>
@@ -187,7 +187,7 @@
                           </div>
                           <div id="avi-file-pane" class="transition tab-pane fade">
                             <div class="transition col-md-12">
-                              <form id="chg-avi-file-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                              <form id="chg-avi-file-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update avi file"/>
                                 <input type="file" name="imageFile" class="transition middlr  btn btn-default" accept="image/*" required/><br>
                                 <input title="Submit Form" class="transition btn btn-info  middlr" type="submit" value="Upload" ng-click="editAviFile()"/>
@@ -209,7 +209,7 @@
                         <div class="transition tab-content">
                           <div id="wp-link-pane" class="transition tab-pane in active fade">
                             <div class="transition col-md-12">
-                              <form id="chg-wp-link-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                              <form id="chg-wp-link-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update wp link"/>
                                 <input type="text" name="background" class="transition  middlr input-t-s1" placeholder="Link To Background Image..." required/><br>
                                 <input title="Submit Form" class="transition btn btn-info  middlr" type="submit" value="Edit" ng-click=""/>
@@ -218,7 +218,7 @@
                           </div>
                           <div id="wp-file-pane" class="transition tab-pane fade">
                             <div class="transition col-md-12">
-                              <form id="chg-wp-file-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                              <form id="chg-wp-file-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                                 <input type="hidden" name="action" value="update wp file"/>
                                 <input type="file" name="imageFile" class="transition middlr  btn btn-default" accept="image/*" required/><br>
                                 <input title="Submit Form" class="transition btn btn-info  middlr" type="submit" value="Upload" ng-click="editWpFile()"/>
@@ -258,7 +258,7 @@
                               </div>
                             </li>
                           </ul>
-                          <form class="transition middlr" id="delete-group-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                          <form class="transition middlr" id="delete-group-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                             <input type="hidden" name="action" value="delete group"/>
                             <input type="hidden" name="gid" value=""/>
                           </form>
@@ -270,7 +270,7 @@
                           <h3 class="transition text-center no-marg"><strong>Edit - {[ editGroup.uname ]}</strong></h3><br>
                           <input title="Cancel Editor" class="transition  middlr btn btn-default" type="button" value="Cancel" ng-click="cancelGroupEditor()"/>
                           <hr>
-                          <form class="transition middlr" id="edit-group-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                          <form class="transition middlr" id="edit-group-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                             <input type="hidden" name="action" value="update group"/>
                             <h3 class="transition text-center no-marg">Info</h3>
                             <br>
@@ -350,7 +350,7 @@
                     <hr class="transition hr-grey">
                     <p>Delete Account?</p>
                     <span class="transition btn btn-danger " ng-click="deleteAccount()">Delete <i class="transition fa fa-trash" aria-hidden="true"></i></span>
-                    <form class="transition " id="deleteaccount-form" enctype="multipart/form-data" action="/user/settingsaction/" method="POST">{% csrf_token %}
+                    <form class="transition " id="deleteaccount-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
                       <input type="hidden" name="action" value="delete account"/>
                     </form>
                   </div>

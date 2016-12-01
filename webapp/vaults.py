@@ -36,7 +36,7 @@ def allowed_audio(filename):
 
 def allowed_media(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_AUDIO
+           filename.rsplit('.', 1)[1] in ALLOWED_MEDIA
 
 # Dictionary of all pages/views for easy and dynamic rendering.
 pages = {
