@@ -19,6 +19,11 @@ class WpModel(models.Model):
 
 # ---
 
+class mediaModel(models.Model):
+    docfile = models.FileField(upload_to='media/', default='')
+
+# ---
+
 class DocumentForm(forms.Form):
     docfile = forms.FileField(label='Select a file')
     docname = models.CharField(max_length = 100, default = '')
@@ -38,9 +43,7 @@ class Accounts(models.Model):
     provider = models.CharField(max_length = 20, default = '')
     provider_id = models.CharField(max_length = 100, default = '')
     avi = models.CharField(max_length = 500, default = '/static/hotspot/img/anon2.png')
-    # avi = models.ImageField(upload_to=localPaths['avatars_rel'], max_length = 500, default = '/static/hotspot/img/anon2.png')
     background = models.CharField(max_length = 500, default = '')
-    # background = models.ImageField(upload_to=localPaths['backgrounds_rel'], max_length = 500, default = '/static/img/grafitti-1.jpg')
     gender = models.CharField(max_length = 25, default = '')
     phone = models.CharField(max_length = 25, default = '')
 
@@ -198,8 +201,57 @@ class Comments(models.Model):
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
 
+    @property
+    def serialize(self):
+        return {
+            'comment_id': self.id,
+
+            'ownerid': self.ownerid,
+            'owner': self.owner.serialize,
+            'post_id': self.post_id,
+            'post_rel': self.post_rel.serialize,
+            'contents': self.contents,
+            'attachment': self.attachment,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
+
     class Meta:
         db_table = "comments"
+
+# ---
+
+class Replies(models.Model):
+
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "reply_owner", on_delete = models.CASCADE, blank = False)
+    ownerid = models.IntegerField(blank = False, default = 0)
+
+    comment_id = models.IntegerField(blank = False, default = 0)
+    comment_rel = models.ForeignKey(Comments, default = 0, on_delete = models.CASCADE, blank = False)
+
+    contents = models.CharField(max_length = 500, default = '')
+    attachment = models.CharField(max_length = 500, default = '')
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            'reply_id': self.id,
+
+            'ownerid': self.ownerid,
+            'owner': self.owner.serialize,
+            'comment_id': self.comment_id,
+            'comment_rel': self.comment_rel.serialize,
+            'contents': self.contents,
+            'attachment': self.attachment,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
+
+    class Meta:
+        db_table = "replies"
 
 # ---
 
@@ -208,11 +260,24 @@ class Likes(models.Model):
     owner = models.ForeignKey(Accounts, default = 0, related_name = "like_owner", on_delete = models.CASCADE)
     ownerid = models.IntegerField(blank = False, default = 0)
 
-    post_id = models.IntegerField(blank = False, default = 0)
-    post_rel = models.ForeignKey(Posts, default = 0, on_delete = models.CASCADE, blank = False)
+    item_type = models.CharField(blank = False, default = '', max_length = 50)
+    item_id = models.IntegerField(blank = False, default = 0)
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            'like_id': self.id,
+
+            'ownerid': self.ownerid,
+            'owner': self.owner.serialize,
+            'item_type': self.item_type,
+            'item_id': self.item_id,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
 
     class Meta:
         db_table = "likes"
@@ -379,8 +444,6 @@ class GroupInvitations(models.Model):
     userid = models.IntegerField(blank = False, default = 0)
     user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user", on_delete = models.CASCADE)
 
-    # status = models.CharField(max_length = 1725, default = '')
-
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
 
@@ -412,7 +475,6 @@ class GroupMembers(models.Model):
     userid = models.IntegerField(blank = False, default = 0)
     user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user_rel", on_delete = models.CASCADE)
 
-
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
 
@@ -435,3 +497,69 @@ class GroupMembers(models.Model):
         db_table = "group_members"
 
 # ---
+
+class Messages(models.Model):
+
+    userA_id = models.IntegerField(blank = False, default = 0)
+    userA_rel = models.ForeignKey(Accounts, default = 0, related_name = "message_user_a_rel", on_delete = models.CASCADE)
+
+    userB_id = models.IntegerField(blank = False, default = 0)
+    userB_rel = models.ForeignKey(Accounts, default = 0, related_name = "message_user_b_rel", on_delete = models.CASCADE)
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'mid': self.id,
+
+            'userA_id': self.userA_id,
+            'userA_rel': self.userA_rel.serialize,
+            'userB_id': self.userB_id,
+            'userB_rel': self.userB_rel.serialize,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+            #'linkName': self.bio_link_name,
+        }
+
+    class Meta:
+        db_table = "messages"
+
+
+# ---
+
+class MessageReply(models.Model):
+
+    message_id = models.IntegerField(blank = False, default = 0)
+    message_rel = models.ForeignKey(Messages, default = 0, related_name = "messagereply_user_rel", on_delete = models.CASCADE)
+
+    userid = models.IntegerField(blank = False, default = 0)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "messagereply_user_rel", on_delete = models.CASCADE)
+
+    contents = models.CharField(max_length = 500, default = '')
+    attachment = models.CharField(max_length = 500, default = '')
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'mr_id': self.id,
+
+            'message_id': self.message_id,
+            'message_rel': self.message_rel.serialize,
+            'userid': self.userid,
+            'user_rel': self.user_rel.serialize,
+            'contents': self.contents,
+            'attachment': self.attachment,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+            #'linkName': self.bio_link_name,
+        }
+
+    class Meta:
+        db_table = "messagereplies"

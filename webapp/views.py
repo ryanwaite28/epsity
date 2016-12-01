@@ -239,6 +239,28 @@ def searchEngine(request):
 # ---
 
 @csrf_protect
+def messagesView(request):
+    if request.method == 'POST':
+        return redirect('/')
+
+    if request.method == 'GET':
+        if 'username' not in request.session:
+            return redirect('/')
+
+        try:
+            you = Accounts.objects.get(uname = request.session['username'])
+            return render(request, pages['messagesView'],
+                            {'you': you,
+                            'message': ''},
+                            context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
+
+# ---
+
+@csrf_protect
 def mySettings(request):
     if request.method == 'POST':
         return redirect('/')
@@ -248,10 +270,10 @@ def mySettings(request):
             return redirect('/')
 
         try:
-            # print os.path.dirname(webapp.__file__)
             you = Accounts.objects.get(uname = request.session['username'])
             return render(request, pages['mySettings'],
-                            {'you': you, 'message': ''},
+                            {'you': you,
+                            'message': ''},
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -332,9 +354,8 @@ def settingsAction(request):
         return redirect('/mysettings')
 
     if request.method == 'POST':
-
         # Form-Data Request
-        if not request.is_ajax():
+        if not request.is_ajax:
 
             if request.POST['action'] == None:
                 return render(request, pages['mySettings'],
@@ -380,7 +401,7 @@ def settingsAction(request):
         # ------------ #  # ------------ #  # ------------ #
 
         # AJAX Request
-        if request.is_ajax():
+        if request.is_ajax:
             try:
                 data = json.loads(request.body)
 
@@ -447,59 +468,81 @@ def userAction(request):
         return redirect('/')
 
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
+        if not request.is_ajax:
 
-            # ----- #
+            if request.POST['action'] == '' or request.POST['action'] == None:
+                msg = 'Unknown Action...'
+                return errorPage(request, msg)
 
-            if data['action'] == None:
-                return JsonResponse({'msg': 'Action Message Is Missing...'})
+            # --- #
 
-            if data['action'] == '':
-                return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
+            if request.POST['action'] == 'send message':
+                return routines.sendMessage(request)
 
-            # ----- #
+            else:
+                msg = 'Unknown Action...'
+                return errorPage(request, msg)
 
-            if data['action'] == 'followUser':
-                return routines.followUser(request, data)
 
-            if data['action'] == 'unfollowUser':
-                return routines.unfollowUser(request, data)
+        if request.is_ajax:
+            try:
+                data = json.loads(request.body)
 
-            if data['action'] == 'cancelPendingFollow':
-                return routines.cancelPendingFollow(request, data)
+                # ----- #
 
-            if data['action'] == 'accept follow':
-                return routines.acceptFollow(request, data)
+                if data['action'] == None:
+                    return JsonResponse({'msg': 'Action Message Is Missing...'})
 
-            if data['action'] == 'decline follow':
-                return routines.declineFollow(request, data)
+                if data['action'] == '':
+                    return JsonResponse({'msg': 'Action Message Is Empty/Unidentifiable...'})
 
-            # ---
+                # ----- #
 
-            if data['action'] == 'sendGroupInvitation':
-                return routines.sendGroupInvitation(request, data)
+                if data['action'] == 'followUser':
+                    return routines.followUser(request, data)
 
-            if data['action'] == 'cancelPendingGroupInvite':
-                return routines.cancelPendingGroupInvite(request, data)
+                if data['action'] == 'unfollowUser':
+                    return routines.unfollowUser(request, data)
 
-            if data['action'] == 'accept group invite':
-                return routines.acceptGroupInvitation(request, data)
+                if data['action'] == 'cancelPendingFollow':
+                    return routines.cancelPendingFollow(request, data)
 
-            if data['action'] == 'decline group invite':
-                return routines.declineGroupInvitation(request, data)
+                if data['action'] == 'accept follow':
+                    return routines.acceptFollow(request, data)
 
-            if data['action'] == 'removeMember':
-                return routines.removeGroupMember(request, data)
+                if data['action'] == 'decline follow':
+                    return routines.declineFollow(request, data)
 
-            # ---
+                # ---
 
-            if data['action'] == 'load notes all':
-                return routines.loadNotesAll(request, data)
+                if data['action'] == 'sendGroupInvitation':
+                    return routines.sendGroupInvitation(request, data)
 
-        except ObjectDoesNotExist:
-            msg = 'User Account Not Found.'
-            return errorPage(request, msg)
+                if data['action'] == 'cancelPendingGroupInvite':
+                    return routines.cancelPendingGroupInvite(request, data)
+
+                if data['action'] == 'accept group invite':
+                    return routines.acceptGroupInvitation(request, data)
+
+                if data['action'] == 'decline group invite':
+                    return routines.declineGroupInvitation(request, data)
+
+                if data['action'] == 'removeMember':
+                    return routines.removeGroupMember(request, data)
+
+                # ---
+
+                if data['action'] == 'load notes all':
+                    return routines.loadNotesAll(request, data)
+
+                # ---
+
+                if data['action'] == 'load messages':
+                    return routines.loadMessages(request, data)
+
+            except ObjectDoesNotExist:
+                msg = 'User Account Not Found.'
+                return errorPage(request, msg)
 
 # ---
 

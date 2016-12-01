@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Epsity | Welcome!</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load staticfiles %}
+
+  {% include 'dependencies-1.html' %}
+
+  <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/welcome.css">
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+
+  <script src="/static/js/grand.js"></script>
+  <script src="/static/js/welcome.js"></script>
+</head>
+
+  <body style="background: #fbfbfb;" ng-app="epsityApp" ng-controller="welcomeCtrl" class="transition">
+
+    <!-- <img style="margin-top: 20px;" class="middlr transition" src="/static/img/logo-2.png"/>
+    <h3 class="text-center"><strong>Epsity</strong></h3>
+    <p class="text-center"></p>
+    <hr style="border-color: grey;">
+    <br> -->
+
+    {% include 'topbar-2.html' %}
+
+    <h2 class="text-center no-marg" style="padding-top: 45vh;"><strong>{{ message }}</strong></h2>
+    <br>
+    <p class="text-center">Page Will Redirect Shortly...</p>
+
+    <br>
+
+    <ul class="ul-raw text-center">
+      <li><a title="Home Page" href="/"></a></li>
+      <li><a title="Login Page" href="/login"></a></li>
+      <li><a title="Signup Page" href="/signup"></a></li>
+    </ul>
+
+    <script>
+      $(document).ready(function(){
+        location.href += '#{{ value }}';
+
+        setTimeout(function(){
+          location.href = '{{ redirect }}';
+        } , 3725);
+      });
+    </script>
+
+  </body>
+
+  <!--
+
+    wp = Welcome Page
+
+  -->
+
+</html>

@@ -20,6 +20,7 @@ webapp_dir = os.path.dirname(os.path.abspath(__file__))
 ALLOWED_PHOTOS = set(['png', 'jpg', 'jpeg', 'gif'])
 ALLOWED_VIDEOS = set(['mp4', 'avi', 'mov'])
 ALLOWED_AUDIO = set(['mp3', 'wav'])
+ALLOWED_MEDIA = set(['png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mov', 'mp3', 'wav'])
 
 def allowed_photo(filename):
     return '.' in filename and \
@@ -33,15 +34,21 @@ def allowed_audio(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_AUDIO
 
+def allowed_media(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_AUDIO
+
 # Dictionary of all pages/views for easy and dynamic rendering.
 pages = {
     'welcome': 'welcome.html',
     'error': 'error.html',
+    'generic': 'generic-1.html',
     'login': 'login.html',
     'signup': 'signup.html',
     'createview': 'create-1.html',
     'notificationsView': 'notifications-1.html',
     'mySettings': 'user-settings.html',
+    'messagesView': 'messages-1.html',
     'searchEngine': 'search-1.html',
     'profileMain': 'profile-main.html',
     'profileHome': 'profile-home.html',
@@ -76,6 +83,17 @@ def errorPage(request, msg = None):
     return render(request,
                     pages['error'],
                     {'errorMessage': msg,
+                    'value': string})
+
+# ---
+
+def genericPage(request, msg, redirect):
+
+    string = randomVal()
+    return render(request,
+                    pages['generic'],
+                    {'message': msg,
+                    'redirect': redirect,
                     'value': string})
 
 # ---

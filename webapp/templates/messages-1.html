@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Epsity | Messages</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load staticfiles %}
+
+  {% include 'dependencies-1.html' %}
+
+  <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+  <script src="/static/js/grand.js"></script>
+  <script src="/static/js/profile.js"></script>
+  <script src="/static/js/controllers/messages-ctrl.js"></script>
+  <!-- <script src="/static/js/controllers/follow-ctrl.js"></script> -->
+</head>
+
+  <body ng-app="epsityApp" ng-controller="messagesCtrl" class="transition">
+
+    {% include 'topbar-1.html' %}
+
+    <!--  -->
+
+    <div id="main-container">
+      <div id="mc-inner" class="">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12" style="height: 25px;"></div>
+
+            <div class="col-md-3">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <img id="" class="middlr polaroid-2" title="Profile Image" alt="Profile Image" src="{{ you.avi }}"/>
+                <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
+                <p class="text-center">{{ you.displayname }}</p>
+              </div>
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <p class="text-center"><strong>Conversations</strong></p>
+                <hr class="hr-grey">
+                <ul id="messages-list" class="ul-raw text-center">
+                  <li class="transition" ng-repeat="m in messages">
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <p class="no-marg">{[ m.userA_rel.uname ]} - {[ m.userB_rel.uname ]}</p>
+                        <br>
+                        <a title="See Messages" class="btn btn-info transition" ng-click="openMessages(this.m)">Open</a>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- ng-controller="followCtrl" -->
+
+            <div class="col-md-9">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
+                <p class="text-center p-emp-1"><strong>Messages</strong></p>
+                <hr class="hr-grey">
+                <ul class="ul-raw">
+                  <li ng-repeat="r in currentMessages.replies">
+                    <div class="row" style="padding: 0px 15px;">
+                      <div class="message-box-1 sbm-1" style="float: {[ r.pos ]}; background: {[ r.color ]};">
+                        <div class="">
+                          <a title="See Profile" href="/users/{[ r.user_rel.uname ]}"><img width="75px" style="float: {[ r.pos ]};" src="{[ r.user_rel.avi ]}"/></a>
+                        </div>
+                        <br>
+                        <div class="">
+                          <!-- <p class="text-{[ r.pos ]}">
+                            <a title="See Profile" href="/users/{[ r.user_rel.uname ]}">
+                              <strong>{[ r.user_rel.uname ]}</strong>
+                            </a>
+                          <p> -->
+                          <p class="text-{[ r.pos ]}">{[ r.contents ]}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <hr class="hr-grey">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+  <!--
+
+    wp = Welcome Page
+
+  -->
+
+</html>

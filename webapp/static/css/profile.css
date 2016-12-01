@@ -354,7 +354,37 @@ body {
 }
 
 .sr-members-img {
-  
+
+}
+
+#send-msg-1 {
+  display: block;
+  margin: auto;
+  width: 375px;
+  max-width: 95%;
+  min-height: 150px;
+}
+
+#messages-list li {
+  background: lightgrey;
+  border: 1px solid black;
+  padding: 10px;
+  cursor: pointer;
+}
+#messages-list li:hover {
+  background: #fbfbfb;
+}
+
+.message-box-1 {
+  width: 250px;
+  max-width: 95%;
+  margin-bottom: 20px;
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid black;
+}
+.message-box-1 div {
+  overflow: hidden;
 }
 
 /* --- */

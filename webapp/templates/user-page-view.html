@@ -19,15 +19,16 @@
   {% if you != None %}
     <script src="/static/js/controllers/profile-home-ctrl.js"></script>
   {% else %}
-    <script src="/static/js/controllers/user-search-ctrl.js"></script>
+    <script src="/static/js/controllers/user-page-ctrl.js"></script>
   {% endif %}
+  <script src="/static/js/controllers/messages-ctrl.js"></script>
 </head>
 
 
     {% if you != None %}
       <body ng-app="epsityApp" ng-controller="profileHomeCtrl" class="transition">
     {% else %}
-      <body ng-app="epsityApp" ng-controller="userSearchCtrl" class="transition">
+      <body ng-app="epsityApp" ng-controller="userPageCtrl" class="transition">
     {% endif %}
 
     {% if you != None %}
@@ -57,6 +58,8 @@
                     <li id="prof-stats-ctrl" class="switch-div-ctrl"><strong>Stats</strong></li>
                     <li id="prof-bio-ctrl" class="switch-div-ctrl"><strong>Bio</strong></li>
                     <li id="prof-info-ctrl" class="switch-div-ctrl"><strong>Info</strong></li>
+                    <br>
+                    <li id="prof-sendmsg-ctrl" class="switch-div-ctrl"><strong>Send Message</strong></li>
                   </ul>
                 </div>
               </div>
@@ -109,6 +112,30 @@
                   <p class="text-lightgrey"><strong>Seeking</strong></p>
                   <p id="seeking" class="text-lightgrey">{{ user.seeking }}</p>
                 </div>
+              </div>
+            </div>
+
+            <div class="col-sm-4 switch-div" id="prof-sendmsg-div" ng-controller="messagesCtrl">
+              <div class="dim-3"></div>
+              <div class="padd-1 mk-rel">
+                <i class="switch-div-x fa fa-times-circle-o" aria-hidden="true"></i>
+                <h3 class="text-center text-lightgrey"><strong>Send Message</strong></h3>
+                <hr>
+                <form class="middlr text-center" id="sendmsg-form" enctype="multipart/form-data" action="/action/" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="send message"/>
+
+                  <input type="hidden" name="origin" value=""/>
+                  <input type="hidden" name="senderid" value=""/>
+                  <input type="hidden" name="recipientid" value=""/>
+
+                  <textarea id="send-msg-1" name="contents" placeholder="Send Message..." ng-model="messageContents"></textarea>
+                  <br>
+                  <input type="file" name="media" class="middlr transition btn btn-default"/>
+                  <br>
+                  <a title="Send Message To {{ user.uname }}" class="btn btn-info transition" ng-click="sendMessage({{ you.id }} , {{ user.id }})">Send Message</a>
+                  <p class="text-center">{[ msgResp ]}</p>
+                </form>
               </div>
             </div>
           </div>

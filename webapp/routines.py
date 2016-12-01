@@ -17,12 +17,13 @@ from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 
 from WebTools import randomVal, processImage, saveImageLocal
-from models import Accounts, AviModel, WpModel, Groups, GroupMembers
+from models import Accounts, AviModel, WpModel, mediaModel, Groups, GroupMembers
 from models import Follows, FollowRequests, GroupInvitations
+from models import Messages, MessageReply
 
-from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
-from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
-from vaults import allowed_audio, allowed_photo, allowed_audio
+from vaults import webapp_dir, pages, errorPage, genericPage, localPaths
+from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
+from vaults import allowed_audio, allowed_photo, allowed_audio, allowed_media
 
 
 # --- -------- --- #
@@ -996,6 +997,118 @@ def removeGroupMember(request, data):
             checkMembership.delete()
             return JsonResponse({'msg': 'Group Invite Created!',
                                 'status': 'not a member'})
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def loadMessages(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        messages = Messages.objects \
+        .filter( Q(userA_id = you.id) | Q(userB_id = you.id) )
+
+        messages = [m.serialize for m in messages]
+        for m in messages:
+            messageReplies = MessageReply.objects \
+            .filter( message_id = m['mid'] )
+
+            messagesReplies = [mr.serialize for mr in messageReplies]
+            for mr in messagesReplies:
+                if mr['userid'] == you.id:
+                    mr['pos'] = 'right'
+                    mr['color'] = 'lightgrey'
+                else:
+                    mr['pos'] = 'left'
+                    mr['color'] = '#fbfbfb'
+
+            m['replies'] = messagesReplies
+
+        resp = {
+            'msg': 'loaded messaged',
+            'you': you.serialize,
+            'messages': messages
+        }
+
+        # print resp
+
+        return JsonResponse(resp)
+
+    except ObjectDoesNotExist:
+        msg = 'Server Side Error Occured.'
+        return errorPage(request, msg)
+
+
+def sendMessage(request):
+    try:
+        sender = Accounts.objects \
+        .filter(id = request.POST['senderid']).first() # You
+
+        recipient = Accounts.objects \
+        .filter(id = request.POST['recipientid']).first() # Recipient
+
+        if sender == None or recipient == None:
+            msg = 'Error - A User Account Could Not Be Found.'
+            return errorPage(request, msg)
+
+        # ---
+
+        existingMessages = Messages.objects \
+        .filter( Q(userA_id = sender.id) | Q(userB_id = sender.id) ) \
+        .filter( Q(userA_id = recipient.id) | Q(userB_id = recipient.id) ) \
+        .first()
+
+        # ---
+
+        newdoc = None # Default For Message Media
+        if request.FILES:
+            media = request.FILES['media']
+
+            if not media or media.name == '' or \
+            not allowed_media(media.name):
+                return genericPage(request = request,
+                                    msg = 'Error - Bad Media File Input.',
+                                    redirect=request.POST['origin'])
+
+            if media and media.name != '' and \
+            allowed_media(media.name):
+                newdoc = mediaModel(docfile = request.FILES['media'])
+                newdoc.save()
+
+        # ---
+
+        if existingMessages != None:
+            newMessageReply = MessageReply(message_id=existingMessages.id,
+                                            message_rel=existingMessages,
+                                            userid=sender.id,
+                                            user_rel=sender,
+                                            contents=cgi.escape(request.POST['contents']))
+
+        if existingMessages == None:
+            newMessages = Messages(userA_id=sender.id,
+                                    userA_rel=sender,
+                                    userB_id=recipient.id,
+                                    userB_rel=recipient)
+
+            newMessages.save()
+
+            newMessageReply = MessageReply(message_id=newMessages.id,
+                                            message_rel=newMessages,
+                                            userid=sender.id,
+                                            user_rel=sender,
+                                            contents=cgi.escape(request.POST['contents']))
+        # ---
+
+        if newdoc != None:
+            newMessageReply.attachment = newdoc.docfile.url
+
+        newMessageReply.save()
+
+        return genericPage(request = request,
+                            msg = 'Message Sent!',
+                            redirect=request.POST['origin'])
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

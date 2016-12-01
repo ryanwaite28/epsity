@@ -222,7 +222,7 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
       return;
     }
 
-    var regex =/^[A-Za-z0-9]{3,25}$/;
+    var regex =/^[A-Za-z0-9\-\_]{3,25}$/;
     var uname = $('#signup-form > input[name="uname"]').val();
 
     if( !regex.test(uname) ) {

@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^main/$', views.profileMain, name='profilemain'),
     url(r'^home/$', views.profileHome, name='profilehome'),
     url(r'^search/$', views.searchEngine, name='search'),
+    url(r'^messages/$', views.messagesView, name='messagesview'), 
     url(r'^create/$', views.createView, name='createview'),
     url(r'^mysettings/$', views.mySettings, name='mysettings'),
     url(r'^notifications/$', views.notificationsView, name='notifications'),

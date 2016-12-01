@@ -12,11 +12,12 @@ $(document).ready(function(){
 	});
 
   $('.switch-div-ctrl').click(function(){
-    var id = '#prof-' + $(this).text().toLowerCase() + '-div';
-    //console.log( id );
+    var id = '#' + $(this).attr('id').replace('ctrl', 'div')
+    // console.log( id );
     $('.switch-div').hide();
     $(id).show();
   });
+
   $('.switch-div-x').click(function(){
     $(this).parent().parent().hide();
   });
