@@ -18,7 +18,7 @@ from WebTools import randomVal, processImage
 webapp_dir = os.path.dirname(os.path.abspath(__file__))
 
 ALLOWED_PHOTOS = set(['png', 'jpg', 'jpeg', 'gif'])
-ALLOWED_VIDEOS = set(['mp4', 'avi', 'mov'])
+ALLOWED_VIDEOS = set(['mp4', 'avi', 'mov', 'webm', 'oog'])
 ALLOWED_AUDIO = set(['mp3', 'wav'])
 ALLOWED_MEDIA = set(['png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mov', 'mp3', 'wav'])
 

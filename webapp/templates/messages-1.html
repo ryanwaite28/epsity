@@ -37,46 +37,48 @@
                 <p class="text-center">{{ you.displayname }}</p>
               </div>
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <p class="text-center"><strong>Conversations</strong></p>
+                <p class="text-center"><strong>Messages</strong></p>
                 <hr class="hr-grey">
                 <ul id="messages-list" class="ul-raw text-center">
                   <li class="transition" ng-repeat="m in messages">
                     <div class="row">
                       <div class="col-xs-12">
-                        <p class="no-marg">{[ m.userA_rel.uname ]} &amp; {[ m.userB_rel.uname ]}</p>
+                        <img width="100px" class="img-left middlr polaroid-3" src="{[ you.userid == m.userA_rel.userid ? m.userB_rel.avi : m.userA_rel.avi ]}"/>
+                        <p class="no-marg text-left">
+                          <a title="See Profile" href="/users/{[ you.userid == m.userA_rel.userid ? m.userB_rel.uname : m.userA_rel.uname ]}">
+                            <strong>{[ you.userid == m.userA_rel.userid ? m.userB_rel.uname : m.userA_rel.uname ]}</strong>
+                          </a>
+                        </p>
                         <br>
-                        <a title="See Messages" class="btn btn-info transition" ng-click="openMessages(this.m)">Open</a>
+                        <a title="See Messages" class="btn btn-info transition float-left" ng-click="openMessages(this.m)">Open</a>
                       </div>
                     </div>
                   </li>
                 </ul>
               </div>
+
+              <!-- <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <p class="text-center"><strong>Conversation</strong></p>
+                <hr class="hr-grey">
+
+              </div> -->
             </div>
 
             <!-- ng-controller="followCtrl" -->
 
             <div class="col-md-9">
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
-                <p class="text-center p-emp-1"><strong>Messages</strong><br>
-                <a class="btn btn-sm btn-primary transition" data-toggle="modal" data-target="#attachmentModal">Show Attachment</a></p>
+                <p class="text-center p-emp-1"><strong>{[ currentlyChattingWith ]}</strong></p>
+                <p class="text-center"><a class="btn btn-sm btn-primary transition" data-toggle="modal" data-target="#attachmentModal">Show Attachment</a></p>
                 <hr class="hr-grey">
                 <ul class="ul-raw">
                   <li ng-repeat="r in currentMessages.replies">
                     <div class="row" style="padding: 0px 15px;">
                       <div class="message-box-1 sbm-1" style="float: {[ r.pos ]}; background: {[ r.color ]};">
                         <div class="">
-                          <a title="See Profile" href="/users/{[ r.user_rel.uname ]}"><img width="75px" style="float: {[ r.pos ]};" src="{[ r.user_rel.avi ]}"/></a>
-                        </div>
-                        <br>
-                        <div class="">
-                          <!-- <p class="text-{[ r.pos ]}">
-                            <a title="See Profile" href="/users/{[ r.user_rel.uname ]}">
-                              <strong>{[ r.user_rel.uname ]}</strong>
-                            </a>
-                          <p> -->
                           <p class="text-{[ r.pos ]}">{[ r.contents ]}<br>
                           <a class="{[ r.class ]}" title="See attachment" ng-click="showMsgAttachment(this.r)">{[ r.attachment_type ]}</a></p><br>
-                          <p class="text-{[ r.pos ]}">{[ r.date_created | date : "MM/dd/y" ]}</p>
+                          <p style="font-size: 11px;" class="text-{[ r.pos ]}"><em><strong>{[ r.date_created | date : "MM/dd/y" ]}</strong></em></p>
                         </div>
                       </div>
                     </div>
@@ -95,9 +97,9 @@
                   <br>
                   <input type="file" name="media" class="middlr transition btn btn-default"/>
                   <br>
-                  <a title="Send Message To {{ user.uname }}" class="btn btn-info transition" ng-click="sendMessageTwo()">Send Message</a>
+                  <a title="Send Message To {{ user.uname }}" class="btn btn-success transition" ng-click="sendMessageTwo()">Send Message</a>
                   <p class="text-center">{[ msgResp ]}</p>
-                </form> 
+                </form>
 
               </div>
             </div>

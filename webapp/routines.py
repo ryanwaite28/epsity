@@ -319,10 +319,10 @@ def searchEngine(request):
         return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
 
     users = Accounts.objects.exclude(id = you.id) \
-    .filter(uname__contains = data['query'])[:10]
+    .filter(uname__contains = data['query'])[:25]
     groups = Groups.objects \
     .exclude(ownerid = you.id) \
-    .filter(uname__contains = data['query'])[:10]
+    .filter(uname__contains = data['query'])[:25]
 
     users = [u.serialize for u in users]
     groups = [g.serialize for g in groups]

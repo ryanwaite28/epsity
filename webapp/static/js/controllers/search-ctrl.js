@@ -93,4 +93,58 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
 
   //
 
+  $scope.groupAction = function(group) {
+    // console.log(group);
+
+    if( group.status == 'Pending Invite' ){
+      alert('You Have A Pending Invite From This Group.  \
+      \nGo To Your Requests Page To Accept/Decline It.');
+      return;
+    }
+
+    var req = {
+      method: 'POST',
+      url: '/action/ajax/',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      data: {
+        action: group.action,
+        group: group,
+        csrfmiddlewaretoken: Cookies.get('csrftoken'),
+      }
+    }
+
+    $http(req).then(function(resp){
+      // Success Callback
+      console.log(resp);
+      if(resp.data.status == 'pending') {
+        user.status = 'Pending Invite';
+        user.btn = 'default';
+        user.msg = 'Pending';
+        user.action = 'cancelPendingGroupInvite';
+        user.title = 'Cancel Pending Group Invite';
+      }
+      else if(resp.data.status == 'not a member') {
+        user.status = 'not a member';
+        user.btn = 'success';
+        user.msg = 'Send Group Invite';
+        user.action = 'sendGroupInvitation';
+        user.title = 'Send Group Invite';
+      }
+      else if(resp.data.status == 'currently a member') {
+        user.status = 'currently a member';
+        user.btn = 'danger';
+        user.msg = 'Remove Member';
+        user.action = 'removeMember';
+        user.title = 'Remove From Group';
+      }
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
+  }
+
 }])

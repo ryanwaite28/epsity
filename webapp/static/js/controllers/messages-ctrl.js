@@ -7,6 +7,8 @@ App.controller('messagesCtrl', ['$scope', '$http', function($scope, $http) {
 
   //
 
+  $scope.currentlyChattingWith = '';
+
   $scope.loadMessages = function() {
     var req = {
       method: 'POST',
@@ -41,6 +43,13 @@ App.controller('messagesCtrl', ['$scope', '$http', function($scope, $http) {
   $scope.openMessages = function(msg) {
     $scope.sendmsgForm = false;
     $scope.currentMessages = msg;
+    if( $scope.you.userid == msg.userA_id ) {
+      $scope.currentlyChattingWith = msg.userB_rel.uname;
+    }
+    else {
+      $scope.currentlyChattingWith = msg.userA_rel.uname;
+    }
+    // $('#modal-body').html('');
   }
 
   //
@@ -103,33 +112,41 @@ App.controller('messagesCtrl', ['$scope', '$http', function($scope, $http) {
 
     // console.log(obj);
     var modalBody = $('#modal-body');
-    var extension = obj.attachment.split('.')[1]
-    modalBody.html('');
+    var splitter = obj.attachment.split('.');
+    var extension = splitter[ splitter.length - 1 ].toLowerCase();
+
+    // modalBody.html('');
 
     if( obj.attachment[0] == '' ) {
       obj.attachment
     }
+
     if( obj.attachment_type == 'photo' ) {
-      modalBody.append(" \
+      modalBody.html(" \
       <img class=\"middlr max-w\" src=\"" + obj.attachment + "\"/> \
       ");
-    }
-    if( obj.attachment_type == 'video' ) {
-      modalBody.append(" \
-      <video id=\"video-1\"  class=\"middlr max-w\" controls> \
-        <source src=\" " + obj.attachment + " \" type=\" video/" + extension + " \"> \
-      </audio> \
-      ");
-    }
-    if( obj.attachment_type == 'audio' ) {
-      modalBody.append(" \
-      <audio id=\"audio-1\" class=\"middlr max-w\" controls> \
-        <source src=\" " + obj.attachment + " \" type=\" audio/" + extension + " \"> \
-      </audio> \
-      ");
+      $('#attachmentModal').modal('show');
     }
 
-    $('#attachmentModal').modal('show');
+    if( obj.attachment_type == 'video' ) {
+      modalBody.html(" \
+      <video id=\"video-1\"  class=\"middlr max-w\" controls> \
+        <source src=\" " + obj.attachment + " \" type=\"video/" + extension + "\"> \
+      </audio> \
+      ");
+      $('#attachmentModal').modal('show');
+      // document.getElementById('video-1').play();
+    }
+
+    if( obj.attachment_type == 'audio' ) {
+      modalBody.html(" \
+      <audio id=\"audio-1\" class=\"middlr max-w\" controls> \
+        <source src=\" " + obj.attachment + " \" type=\"audio/" + extension + "\"> \
+      </audio> \
+      ");
+      $('#attachmentModal').modal('show');
+      // document.getElementById('audio-1').play();
+    }
 
   }
 
