@@ -1,3 +1,9 @@
+# --- ------ --- #
+# --- Models --- #
+# --- ------ --- #
+
+# on_delete = models.CASCADE
+
 from __future__ import unicode_literals
 
 from django import forms
@@ -115,10 +121,10 @@ class Accounts(models.Model):
 class Follows(models.Model):
 
     userid = models.IntegerField(blank = False, default = 0)
-    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "user_rel", on_delete = models.CASCADE)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "user_rel")
 
     follow_id = models.IntegerField(blank = False, default = 0)
-    follow_rel = models.ForeignKey(Accounts, default = 0, related_name = "follow_rel", on_delete = models.CASCADE)
+    follow_rel = models.ForeignKey(Accounts, default = 0, related_name = "follow_rel")
 
     date_created = models.DateField(auto_now_add=True)
 
@@ -144,10 +150,10 @@ class Follows(models.Model):
 class FollowRequests(models.Model):
 
     sender_id = models.IntegerField(blank = False, default = 0)
-    sender_rel = models.ForeignKey(Accounts, default = 0, related_name = "f_sender_rel", on_delete = models.CASCADE)
+    sender_rel = models.ForeignKey(Accounts, default = 0, related_name = "f_sender_rel")
 
     recipient_id = models.IntegerField(blank = False, default = 0)
-    recipient_rel = models.ForeignKey(Accounts, default = 0, related_name = "f_recipient_rel", on_delete = models.CASCADE)
+    recipient_rel = models.ForeignKey(Accounts, default = 0, related_name = "f_recipient_rel")
 
     msg = models.CharField(max_length = 500, default = '')
 
@@ -182,7 +188,7 @@ class Posts(models.Model):
         ('Audio', 'Audio'),
     )
 
-    owner = models.ForeignKey(Accounts, default = 0, related_name = "post_owner", on_delete = models.CASCADE)
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "post_owner")
     ownerid = models.IntegerField(blank = False, default = 0)
 
     contents = models.CharField(max_length = 500, default = '')
@@ -220,11 +226,11 @@ class Posts(models.Model):
 
 class Comments(models.Model):
 
-    owner = models.ForeignKey(Accounts, default = 0, related_name = "comment_owner", on_delete = models.CASCADE, blank = False)
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "comment_owner", blank = False)
     ownerid = models.IntegerField(blank = False, default = 0)
 
     post_id = models.IntegerField(blank = False, default = 0)
-    post_rel = models.ForeignKey(Posts, default = 0, on_delete = models.CASCADE, blank = False)
+    post_rel = models.ForeignKey(Posts, default = 0, blank = False)
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
@@ -256,11 +262,11 @@ class Comments(models.Model):
 
 class Replies(models.Model):
 
-    owner = models.ForeignKey(Accounts, default = 0, related_name = "reply_owner", on_delete = models.CASCADE, blank = False)
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "reply_owner", blank = False)
     ownerid = models.IntegerField(blank = False, default = 0)
 
     comment_id = models.IntegerField(blank = False, default = 0)
-    comment_rel = models.ForeignKey(Comments, default = 0, on_delete = models.CASCADE, blank = False)
+    comment_rel = models.ForeignKey(Comments, default = 0, blank = False)
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
@@ -292,7 +298,7 @@ class Replies(models.Model):
 
 class Likes(models.Model):
 
-    owner = models.ForeignKey(Accounts, default = 0, related_name = "like_owner", on_delete = models.CASCADE)
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "like_owner")
     ownerid = models.IntegerField(blank = False, default = 0)
 
     item_type = models.CharField(blank = False, default = '', max_length = 50)
@@ -321,7 +327,7 @@ class Likes(models.Model):
 
 class Conversations(models.Model):
 
-    owner = models.ForeignKey(Accounts, default = 0, related_name = "convo_owner", on_delete = models.CASCADE)
+    owner = models.ForeignKey(Accounts, default = 0, related_name = "convo_owner")
     ownerid = models.IntegerField(blank = False, default = 0)
 
     date_created = models.DateField(auto_now_add=True)
@@ -343,11 +349,11 @@ class Conversations(models.Model):
 
 class ConvoMembers(models.Model):
 
-    user = models.ForeignKey(Accounts, default = 0, related_name = "convo_user", on_delete = models.CASCADE)
+    user = models.ForeignKey(Accounts, default = 0, related_name = "convo_user")
     userid = models.IntegerField(blank = False, default = 0)
 
     convo_id = models.IntegerField(blank = False, default = 0)
-    convo_rel = models.ForeignKey(Conversations, default = 0, related_name = "convo_member_rel", on_delete = models.CASCADE)
+    convo_rel = models.ForeignKey(Conversations, default = 0, related_name = "convo_member_rel")
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -371,11 +377,11 @@ class ConvoMembers(models.Model):
 
 class ConvoMessages(models.Model):
 
-    user = models.ForeignKey(Accounts, default = 0, related_name = "convo_user_msg", on_delete = models.CASCADE)
+    user = models.ForeignKey(Accounts, default = 0, related_name = "convo_user_msg")
     userid = models.IntegerField(blank = False, default = 0)
 
     convo_id = models.IntegerField(blank = False, default = 0)
-    convo_rel = models.ForeignKey(Conversations, default = 0, related_name = "convo_msg_rel", on_delete = models.CASCADE)
+    convo_rel = models.ForeignKey(Conversations, default = 0, related_name = "convo_msg_rel")
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
@@ -409,10 +415,10 @@ class Notifications(models.Model):
     type = models.CharField(max_length = 1725, default = '')
 
     sender_id = models.IntegerField(blank = False, default = 0)
-    sender_rel = models.ForeignKey(Accounts, default = 0, related_name = "notif_sender_owner", on_delete = models.CASCADE)
+    sender_rel = models.ForeignKey(Accounts, default = 0, related_name = "notif_sender_owner")
 
     recipient_id = models.IntegerField(blank = False, default = 0)
-    recipient_rel = models.ForeignKey(Accounts, default = 0, related_name = "notif_recipient_owner", on_delete = models.CASCADE)
+    recipient_rel = models.ForeignKey(Accounts, default = 0, related_name = "notif_recipient_owner")
 
     text = models.CharField(max_length = 1725, default = '')
     link = models.CharField(max_length = 1725, default = '')
@@ -476,10 +482,10 @@ class Groups(models.Model):
 class GroupInvitations(models.Model):
 
     group_id = models.IntegerField(blank = False, default = 0)
-    group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_rel", on_delete = models.CASCADE)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "i_group_rel")
 
     userid = models.IntegerField(blank = False, default = 0)
-    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user", on_delete = models.CASCADE)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "i_group_user")
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -488,7 +494,7 @@ class GroupInvitations(models.Model):
     def serialize(self):
          # Returns Data Object In Proper Format
         return {
-            'gmid': self.id,
+            'gid': self.id,
 
             'group_id': self.group_id,
             'group_rel': self.group_rel.serialize,
@@ -504,13 +510,44 @@ class GroupInvitations(models.Model):
 
 # ---
 
+class GroupRequests(models.Model):
+
+    group_id = models.IntegerField(blank = False, default = 0)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "r_group_rel")
+
+    userid = models.IntegerField(blank = False, default = 0)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "r_group_user")
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'gid': self.id,
+
+            'group_id': self.group_id,
+            'group_rel': self.group_rel.serialize,
+            'userid': self.userid,
+            'user_rel': self.user_rel.serialize,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+            #'linkName': self.bio_link_name,
+        }
+
+    class Meta:
+        db_table = "group_requests"
+
+# ---
+
 class GroupMembers(models.Model):
 
     group_id = models.IntegerField(blank = False, default = 0)
-    group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_member_rel", on_delete = models.CASCADE)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_member_rel")
 
     userid = models.IntegerField(blank = False, default = 0)
-    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user_rel", on_delete = models.CASCADE)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user_rel")
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -538,10 +575,10 @@ class GroupMembers(models.Model):
 class Messages(models.Model):
 
     userA_id = models.IntegerField(blank = False, default = 0)
-    userA_rel = models.ForeignKey(Accounts, default = 0, related_name = "message_user_a_rel", on_delete = models.CASCADE)
+    userA_rel = models.ForeignKey(Accounts, default = 0, related_name = "message_user_a_rel")
 
     userB_id = models.IntegerField(blank = False, default = 0)
-    userB_rel = models.ForeignKey(Accounts, default = 0, related_name = "message_user_b_rel", on_delete = models.CASCADE)
+    userB_rel = models.ForeignKey(Accounts, default = 0, related_name = "message_user_b_rel")
 
     date_created = models.DateField(auto_now_add=True)
     last_active = models.DateField(auto_now=True)
@@ -570,10 +607,10 @@ class Messages(models.Model):
 class MessageReply(models.Model):
 
     message_id = models.IntegerField(blank = False, default = 0)
-    message_rel = models.ForeignKey(Messages, default = 0, related_name = "messagereply_user_rel", on_delete = models.CASCADE)
+    message_rel = models.ForeignKey(Messages, default = 0, related_name = "messagereply_user_rel")
 
     userid = models.IntegerField(blank = False, default = 0)
-    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "messagereply_user_rel", on_delete = models.CASCADE)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "messagereply_user_rel")
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')

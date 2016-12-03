@@ -20,7 +20,8 @@ webapp_dir = os.path.dirname(os.path.abspath(__file__))
 ALLOWED_PHOTOS = set(['png', 'jpg', 'jpeg', 'gif'])
 ALLOWED_VIDEOS = set(['mp4', 'avi', 'mov', 'webm', 'oog'])
 ALLOWED_AUDIO = set(['mp3', 'wav'])
-ALLOWED_MEDIA = set(['png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mov', 'mp3', 'wav'])
+
+ALLOWED_MEDIA = set(['png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mov', 'webm', 'oog' 'mp3', 'wav'])
 
 def allowed_photo(filename):
     return '.' in filename and \
@@ -33,6 +34,8 @@ def allowed_video(filename):
 def allowed_audio(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_AUDIO
+
+
 
 def allowed_media(filename):
     return '.' in filename and \
@@ -72,6 +75,88 @@ serverPaths = {
 
 }
 
+followStates = {
+    'pending': {
+        'status': 'Pending Follow',
+        'btn': 'default',
+        'msg': 'Pending',
+        'action': 'cancelPendingFollow',
+        'title': 'Cancel Pending'
+    },
+    'following': {
+        'status': 'Currently Following',
+        'btn': 'warning',
+        'msg': 'Unfollow',
+        'action': 'unfollowUser',
+        'title': 'Unfollow User'
+    },
+    'not_following': {
+        'status': 'Not Following',
+        'btn': 'success',
+        'msg': 'Follow',
+        'action': 'followUser',
+        'title': 'Follow User'
+    }
+}
+
+groupStates = {
+    'owner': {
+        'pending': {
+            'status': 'pending invite',
+            'btn': 'default',
+            'msg': 'Pending',
+            'action': 'cancelPendingGroupInvite',
+            'title': 'Cancel Pending Group Invite'
+        },
+        'member': {
+            'status': 'currently a member',
+            'btn': 'warning',
+            'msg': 'Remove Member',
+            'action': 'removeMember',
+            'title': 'Remove From Group'
+        },
+        'not_member': {
+            'status': 'not a member',
+            'btn': 'success',
+            'msg': 'Send Group Invite',
+            'action': 'sendGroupInvitation',
+            'title': 'Send Group Invite'
+        },
+        'options': {
+            'accept': 'acceptGroupRequest',
+            'decline': 'declineGroupRequest'
+        }
+    },
+
+    'user': {
+        'pending': {
+            'status': 'Pending Invite',
+            'btn': 'default',
+            'msg': 'Pending',
+            'action': 'cancelPendingGroupRequest',
+            'title': 'Cancel Pending Group Invite'
+        },
+        'member': {
+            'status': 'Currently A Member',
+            'btn': 'warning',
+            'msg': 'Leave Group',
+            'action': 'leaveGroup',
+            'title': 'Leave Group'
+        },
+        'not_member': {
+            'status': 'Not A Member',
+            'btn': 'success',
+            'msg': 'Request Invite',
+            'action': 'requestGroupInvite',
+            'title': 'Request Group Invite'
+        },
+        'options': {
+            'accept': 'acceptGroupInvite',
+            'decline': 'declineGroupInvite'
+        }
+    }
+}
+
 # --- #
 
 def errorPage(request, msg = None):
@@ -85,7 +170,6 @@ def errorPage(request, msg = None):
                     {'errorMessage': msg,
                     'value': string})
 
-# ---
 
 def genericPage(request, msg, redirect):
 
@@ -95,5 +179,3 @@ def genericPage(request, msg, redirect):
                     {'message': msg,
                     'redirect': redirect,
                     'value': string})
-
-# ---

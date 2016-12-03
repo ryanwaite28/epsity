@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_protect
 
 from WebTools import randomVal, processImage
 from models import Accounts, Groups, GroupMembers, Follows, FollowRequests
+from models import GroupRequests, GroupInvitations
 
 import routines
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
@@ -528,14 +529,34 @@ def userActionAJAX(request):
             if data['action'] == 'cancelPendingGroupInvite':
                 return routines.cancelPendingGroupInvite(request, data)
 
-            if data['action'] == 'accept group invite':
-                return routines.acceptGroupInvitation(request, data)
-
-            if data['action'] == 'decline group invite':
-                return routines.declineGroupInvitation(request, data)
-
             if data['action'] == 'removeMember':
                 return routines.removeGroupMember(request, data)
+
+
+            if data['action'] == 'acceptGroupInvite':
+                return routines.acceptGroupInvite(request, data)
+
+            if data['action'] == 'declineGroupInvite':
+                return routines.declineGroupInvite(request, data)
+
+
+            if data['action'] == 'acceptGroupRequest':
+                return routines.acceptGroupRequest(request, data)
+
+            if data['action'] == 'declineGroupRequest':
+                return routines.declineGroupRequest(request, data)
+
+
+            if data['action'] == 'leaveGroup':
+                return routines.leaveGroup(request, data)
+
+            if data['action'] == 'requestGroupInvite':
+                return routines.requestGroupInvite(request, data)
+
+            if data['action'] == 'cancelPendingGroupRequest':
+                return routines.cancelPendingGroupRequest(request, data)
+
+
 
             # ---
 

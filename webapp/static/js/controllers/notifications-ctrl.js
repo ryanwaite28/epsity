@@ -24,7 +24,8 @@ App.controller('notificationsCtrl', ['$scope', '$http', function($scope, $http) 
       // Success Callback
       console.log(resp);
       $scope.pendingFollows = resp.data.pendingFollows;
-      $scope.pendingInvites = resp.data.pendingInvites;
+      $scope.pendingGroupInvites = resp.data.pendingGroupInvites;
+      $scope.pendingGroupRequests = resp.data.pendingGroupRequests;
     },
     function(resp){
       // Error Callback
@@ -118,8 +119,8 @@ App.controller('notificationsCtrl', ['$scope', '$http', function($scope, $http) 
     $http(req).then(function(resp){
       // Success Callback
       console.log(resp);
-      var index = $scope.pendingInvites.indexOf(pi);
-      $scope.pendingInvites.splice(index, 1);
+      var index = $scope.pendingGroupInvites.indexOf(pi);
+      $scope.pendingGroupInvites.splice(index, 1);
     },
     function(resp){
       // Error Callback
@@ -148,8 +149,70 @@ App.controller('notificationsCtrl', ['$scope', '$http', function($scope, $http) 
     $http(req).then(function(resp){
       // Success Callback
       console.log(resp);
-      var index = $scope.pendingInvites.indexOf(pi);
-      $scope.pendingInvites.splice(index, 1);
+      var index = $scope.pendingGroupInvites.indexOf(pi);
+      $scope.pendingGroupInvites.splice(index, 1);
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
+
+  }
+
+  //
+
+  $scope.acceptGroupRequest = function(pr) {
+    console.log(pr);
+    //return;
+
+    var req = {
+      method: 'POST',
+      url: '/action/ajax/',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      data: {
+        action: pr.options.accept,
+        pr: pr,
+        csrfmiddlewaretoken: Cookies.get('csrftoken'),
+      }
+    }
+    $http(req).then(function(resp){
+      // Success Callback
+      console.log(resp);
+      var index = $scope.pendingGroupRequests.indexOf(pr);
+      $scope.pendingGroupRequests.splice(index, 1);
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
+
+  }
+
+  $scope.declineGroupRequest = function(pr) {
+    console.log(pr);
+    //return;
+
+    var req = {
+      method: 'POST',
+      url: '/action/ajax/',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      data: {
+        action: pr.options.decline,
+        pr: pr,
+        csrfmiddlewaretoken: Cookies.get('csrftoken'),
+      }
+    }
+    $http(req).then(function(resp){
+      // Success Callback
+      console.log(resp);
+      var index = $scope.pendingGroupRequests.indexOf(pr);
+      $scope.pendingGroupRequests.splice(index, 1);
     },
     function(resp){
       // Error Callback

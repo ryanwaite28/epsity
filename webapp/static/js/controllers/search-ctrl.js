@@ -31,6 +31,7 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
     $http(req).then(function(resp){
       // Success Callback
       console.log(resp);
+
       $scope.srUsers = resp.data.users;
       $scope.srGroups = resp.data.groups;
     },
@@ -44,8 +45,6 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
   //
 
   $scope.followAction = function(user) {
-
-    // console.log(user);
 
     var req = {
       method: 'POST',
@@ -63,44 +62,32 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
     $http(req).then(function(resp){
       // Success Callback
       // console.log(resp);
-      if( resp.data.status == 'following' ) {
-        user.status = 'Currently Following';
-        user.btn = 'warning';
-        user.msg = 'Unfollow';
-        user.action = 'unfollowUser';
-        user.title = 'Unfollow User';
-      }
-      else if( resp.data.status == 'not following' ) {
-        user.status = 'Not Following';
-        user.btn = 'success';
-        user.msg = 'Follow';
-        user.action = 'followUser';
-        user.title = 'Follow User';
-      }
-      else if( resp.data.status == 'pending' ) {
-        user.status = 'Pending Follow';
-        user.btn = 'default';
-        user.msg = 'Pending';
-        user.action = 'cancelPendingFollow';
-        user.title = 'Cancel Pending Follow Request';
-      }
+
+      user.status = resp.data.state.status;
+      user.btn = resp.data.state.btn;
+      user.msg = resp.data.state.msg;
+      user.action = resp.data.state.action;
+      user.title = resp.data.state.title;
+
     },
     function(resp){
       // Error Callback
       console.log(resp);
+
+
     });
   }
 
   //
 
-  $scope.groupAction = function(group) {
+  $scope.groupActionTwo = function(group) {
     // console.log(group);
 
-    if( group.status == 'Pending Invite' ){
-      alert('You Have A Pending Invite From This Group.  \
-      \nGo To Your Requests Page To Accept/Decline It.');
-      return;
-    }
+    // if( group.status == 'Pending Invite' ){
+    //   alert('You Have A Pending Invite From This Group.  \
+    //   \nGo To Your Requests Page To Accept/Decline It.');
+    //   return;
+    // }
 
     var req = {
       method: 'POST',
@@ -119,27 +106,13 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
     $http(req).then(function(resp){
       // Success Callback
       console.log(resp);
-      if(resp.data.status == 'pending') {
-        user.status = 'Pending Invite';
-        user.btn = 'default';
-        user.msg = 'Pending';
-        user.action = 'cancelPendingGroupInvite';
-        user.title = 'Cancel Pending Group Invite';
-      }
-      else if(resp.data.status == 'not a member') {
-        user.status = 'not a member';
-        user.btn = 'success';
-        user.msg = 'Send Group Invite';
-        user.action = 'sendGroupInvitation';
-        user.title = 'Send Group Invite';
-      }
-      else if(resp.data.status == 'currently a member') {
-        user.status = 'currently a member';
-        user.btn = 'danger';
-        user.msg = 'Remove Member';
-        user.action = 'removeMember';
-        user.title = 'Remove From Group';
-      }
+
+      group.status = resp.data.state.status;
+      group.btn = resp.data.state.btn;
+      group.msg = resp.data.state.msg;
+      group.action = resp.data.state.action;
+      group.title = resp.data.state.title;
+
     },
     function(resp){
       // Error Callback
