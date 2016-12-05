@@ -31,6 +31,11 @@ $(document).ready(function(){
     $(this).toggleClass('rotate');
   });
 
+	$('.inverter').click(function(){
+    //console.log(this);
+    $(this).toggleClass('invert');
+  });
+
   $('.nav li a').click(function(e) {
 			e.preventDefault()
 			$(this).tab('show')

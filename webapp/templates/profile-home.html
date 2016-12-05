@@ -15,6 +15,7 @@
   <script src="/static/js/grand.js"></script>
   <script src="/static/js/profile.js"></script>
   <script src="/static/js/controllers/profile-home-ctrl.js"></script>
+  <script src="/static/js/controllers/posts-ctrl.js"></script>
 </head>
 
   <body ng-app="epsityApp" ng-controller="profileHomeCtrl" class="transition">
@@ -29,7 +30,7 @@
 
           <div style="min-height: 75vh;" class="row fill transition" data-parallax="scroll" data-image-src="{{ you.background }}">
             <div class="dim-4"></div>
-            <div class="col-sm-3 sdw-2 brd-lg">
+            <div class="col-sm-3 sdw-2 sbm-1 brd-lg">
               <div class="dim-3"></div>
               <div class="padd-1 mk-rel">
                 <img id="prof-img" class="middlr img-polaroid img-shadow" title="Profile Image" alt="Profile Image" src="{{ you.avi }}"/>
@@ -102,24 +103,34 @@
           <br>
 
           <div style="min-height: 100vh;" class="row no-padd">
-            <div class="col-md-3" id="prof-sidebar">
+            <div class="col-md-3" id="prof-sidebar1">
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <h4 class="text-center">Recent</h4>
                 <hr>
 
               </div>
             </div>
-            <div class="col-md-9" id="prof-mainbar">
+
+            <div class="col-md-3 float-right" id="prof-sidebar2">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <h4 class="text-center">Suggestions</h4>
+                <hr>
+
+              </div>
+            </div>
+
+            <div ng-controller="postsCtrl" class="col-md-6" id="prof-mainbar">
               <div class="padd-1 mk-rel sdw-1 bg-white">
                 <h4 class="text-center">Create Post</h4>
-                <p class="no-marg text-center p-emp-1"><i data-toggle="collapse" data-target="#new-post-div" class="fa fa-chevron-circle-down transition" aria-hidden="true"></i></p>
-                <hr>
+                <p class="no-marg text-center p-emp-1"><i data-toggle="collapse" data-target="#new-post-div" class="rotator fa fa-chevron-circle-down transition" aria-hidden="true"></i></p>
+
                 <div id="new-post-div" class="mk-rel collapse">
+                  <hr>
                   <form class="middlr" id="new-post-form" enctype="multipart/form-data" action="/action/form/" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="create post"/>
 
-                    <p class="text-center">Post Type</p>
+                    <p class="text-center">Choose A Post Type</p>
                     <select class="middlr" id="newpost-type" name="post_type" required>
                       <option value="Text">Text</option>
                       <option value="Audio">Audio</option>
@@ -130,7 +141,7 @@
 
                     <input class="middlr input-t-s1" type="text" name="title" placeholder="Title..."/><br>
                     <textarea style="min-height: 100px;" class="middlr input-t-s1" type="middlr" name="contents" placeholder="Contents..."></textarea><br>
-                    <input class="middlr input-t-s1" type="text" name="link"  placeholder="Add a Link..."/><br>
+                    <input class="middlr input-t-s1" type="text" name="link"  placeholder="Add a Link If You Want..."/><br>
                     <input class="middlr btn btn-default transition" type="file" name="media"/><br>
                     <input type="hidden" name="owner_type" value="Account"/>
                     <input type="hidden" name="origin" value=""/>
@@ -144,7 +155,7 @@
               <div class="padd-1 mk-rel sdw-1 bg-white">
                 <div class="row">
                   <div class="col-sm-3">
-                    <img width="100px"  class="middlr" src="{{ p.owner.avi }}"/><br>
+                    <img width="100px"  class="middlr brd-bl" src="{{ p.owner.avi }}"/><br>
                     <p class="text-center">{{ p.owner.uname }}</p>
                   </div>
                   <div class="col-sm-9">
@@ -152,25 +163,41 @@
                     <p>{{ p.contents }}</p>
                     <br>
 
-                    {% if p.attachment_type == 'Audio' %}
-                    <audio class="smb-1 max-w" controls>
-                      <source src="{{ p.attachment }}" type="">
-                    </audio>
-                    {% elif p.attachment_type == 'Video' %}
-                    <video class="smb-1 max-w2" width="320" height="240" controls>
-                      <source src="{{ p.attachment }}" type="">
-                    </video>
-                    {% elif p.attachment_type == 'Photo' %}
-                    <img class="smb-1 max-w2" src="{{ p.attachment }}"/>
-                    {% endif %}
+                    <div class="polaroid-3 brd-bl">
+                      {% if p.attachment_type == 'Audio' %}
+                      <audio class="smb-1 max-w" controls>
+                        <source src="{{ p.attachment }}" type="">
+                      </audio>
+                      {% elif p.attachment_type == 'Video' %}
+                      <video class="smb-1 max-w" width="320" height="240" controls>
+                        <source src="{{ p.attachment }}" type="">
+                      </video>
+                      {% elif p.attachment_type == 'Photo' %}
+                      <img class="smb-1 max-w" src="{{ p.attachment }}"/>
+                      {% endif %}
+                    </div>
 
                     <p>&nbsp;</p>
                     <p class="text-grey"><em>{{ p.date_created }}</em></p>
+                    <p class="">
+                      <span class="transition btn-s1 like-btn-o btn-action" data-like-status="{{ p.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
+                        <i class="fa fa-heart" aria-hidden="true"></i> Like
+                      </span>
+                      <span class="transition btn-s1 comment-btn-1 btn-action" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-status="{{ p.status }}">
+                        <i class="fa fa-comments" aria-hidden="true"></i> Comment
+                      </span>
+                    </p>
+                  </div>
+                  <div class="col-sm-12">
+
                   </div>
                 </div>
               </div>
               {% endfor %}
+
             </div>
+
+
           </div>
 
           <br>
@@ -182,9 +209,11 @@
     {% autoescape off %}
     <script>
       (function(){
-        window.interests = '{{ info.interests }}'.split('; ');
-        window.seeking = '{{ info.seeking }}'.split('; ');
-        console.log(interests, seeking);
+        window.interests = '{{ info.interests }}'.split(';').join('; ');
+        window.seeking = '{{ info.seeking }}'.split(';').join('; ');
+
+        $('#interests').text( interests );
+        $('#seeking').text( seeking );
       })()
     </script>
     {% endautoescape %}

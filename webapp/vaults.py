@@ -180,6 +180,17 @@ mediaTypes = {
     'video': 'Video'
 }
 
+contentTypes = {
+    'post': 'Post',
+    'event': 'Event',
+}
+
+statuses = {
+    'like': {
+        'liked': 'liked',
+        'not_liked': 'not_liked'
+    }
+}
 
 # Master Dictionary
 masterDICT = {
@@ -191,6 +202,8 @@ masterDICT = {
     'postTypes': postTypes,
     'ownerTypes': ownerTypes,
     'mediaTypes': mediaTypes,
+    'contentTypes': contentTypes,
+    'statuses': statuses
 }
 
 # --- #

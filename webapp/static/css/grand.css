@@ -275,6 +275,9 @@
 .brd-lg {
   border: 1px solid lightgrey;
 }
+.brd-bl {
+  border: 1px solid black;
+}
 
 .max-w {
   width: 100%;

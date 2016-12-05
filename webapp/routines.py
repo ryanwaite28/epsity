@@ -3,6 +3,7 @@
 # --- --- --- --- #
 
 import os, sys, cgi, random, string, hashlib, json
+import datetime
 import webapp
 
 from django import forms
@@ -22,7 +23,7 @@ from models import Accounts, AviModel, WpModel, Groups, GroupMembers
 from models import Follows, FollowRequests
 from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
-from models import Posts, Comments, Replies
+from models import Posts, Comments, Replies, Likes
 
 
 
@@ -52,6 +53,9 @@ def loginAccount(request):
 
         request.session['username'] = you.uname
         request.session['email'] = you.email
+
+        you.last_active = datetime.datetime.now()
+        you.save( update_fields=['last_active'] )
 
         return redirect('/home/')
 

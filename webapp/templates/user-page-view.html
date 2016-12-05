@@ -163,6 +163,18 @@
       </div>
     </div>
 
+    {% autoescape off %}
+    <script>
+      (function(){
+        window.interests = '{{ info.interests }}'.split(';').join('; ');
+        window.seeking = '{{ info.seeking }}'.split(';').join('; ');
+
+        $('#interests').text( interests );
+        $('#seeking').text( seeking );
+      })()
+    </script>
+    {% endautoescape %}
+
   </body>
 
   <!--

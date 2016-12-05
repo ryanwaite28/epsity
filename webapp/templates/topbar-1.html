@@ -6,11 +6,11 @@
     </div>
 
     <div id="tb-collapse" class="transition collapse in">
-      <div id="p-sd">
+      <div ng-controller="topbarSearchCtrl" id="p-sd">
         <div class="input-group" id="p-sb2">
-          <input type="text" class="form-control transition" placeholder="Search for...">
+          <input type="text" class="form-control transition" placeholder="Search for..." ng-model="searchquery">
           <span class="input-group-btn transition">
-            <button class="btn btn-default transition" type="button">Go!</button>
+            <button class="btn btn-default transition" type="button" ng-click="topbarSearch()">Go!</button>
           </span>
         </div>
       </div>
@@ -73,3 +73,21 @@
 
   </div>
 </div>
+
+<!-- Search Script -->
+
+<script>
+
+  App.controller('topbarSearchCtrl', ['$scope', '$http', function($scope, $http) {
+
+    $scope.topbarSearch = function() {
+      if($scope.searchquery == undefined) {
+        $scope.searchquery = '';
+      }
+
+      location.href = '/search/results/' + $scope.searchquery;
+    }
+
+  }])
+
+</script>

@@ -216,6 +216,10 @@ body {
   color: green;
 }
 
+#prof-sidebar2 {
+  float: right;
+}
+
 .switch-div {
   display: none;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
@@ -323,6 +327,16 @@ body {
   height: 325px;
 }
 
+.sample-li-s1 {
+  padding: 5px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  background: #fbfbfb;
+}
+.sample-li-s1:hover {
+  background: lightgrey;
+}
+
 #groups-list {
   padding: 0px;
   margin: 0px;
@@ -392,9 +406,56 @@ body {
   overflow: hidden;
 }
 
+.btn-s1 {
+  margin: 5px;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.like-btn-o {
+  border: 1px solid #d9534f;
+  color: #d9534f;
+}
+.like-btn-o:hover {
+  background: black;
+}
+
+.like-btn-f {
+  border: 1px solid #d9534f;
+  background: #d9534f;
+  color: #fff;
+}
+.like-btn-f:hover {
+  background: black;
+  color: #d9534f;
+}
+
+.comment-btn-1 {
+  border: 1px solid #337ab7;
+  color: #337ab7;
+}
+.comment-btn-1:hover {
+  background: black;
+}
+
+.reply-btn-1 {
+  border: 1px solid #d9534f;
+  color: #d9534f;
+}
+
 /* --- */
 /* --- */
 /* --- */
+
+@media (max-width: 992px) {
+
+  #prof-sidebar2 {
+    float: none;
+  }
+
+}
+
 
 @media (max-width: 625px) {
 

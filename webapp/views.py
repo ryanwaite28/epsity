@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_protect
 from WebTools import randomVal, processImage
 from models import Accounts, Groups, GroupMembers, Follows, FollowRequests
 from models import GroupRequests, GroupInvitations
-from models import Posts, Comments, Replies
+from models import Posts, Comments, Replies, Likes
 
 # from forms import PostForm
 
@@ -101,17 +101,33 @@ def profileMain(request):
 
             for f in following:
                 posts = Posts.objects \
-                .filter(ownerid = f.follow_id)
+                .filter(ownerid = f.follow_id) \
+                .order_by('-date_created')[:15]
+
                 for p in posts:
                     feed.append( p )
 
             feed = [f.serialize for f in feed]
 
-            print feed
+            suggestedGroups = []
+
+            seeking = you.seeking.split(';')
+            for s in seeking:
+                groups = Groups.objects \
+                .exclude(ownerid = you.id) \
+                .filter(categories__contains = s)
+
+                for g in groups:
+                    suggestedGroups.append( g )
+
+            suggestedGroups = [s.serialize for s in suggestedGroups]
+
+            # print suggestedGroups
 
             return render(request, masterDICT['pages']['profileMain'],
                             {'you': you,
-                            'posts': feed
+                            'posts': feed,
+                            'suggestedGroups': suggestedGroups
                             },
                             context_instance = RequestContext(request))
 
@@ -136,9 +152,24 @@ def profileHome(request):
             followers = Follows.objects.filter(follow_id=you.id)
             following = Follows.objects.filter(userid=you.id)
             groups = GroupMembers.objects.filter(userid=you.id)
+
             posts = Posts.objects \
-            .filter(ownerid = you.id)
+            .filter(ownerid = you.id) \
+            .order_by('-date_created')[:15]
+
             posts = [p.serialize for p in posts]
+            for p in posts:
+                checkLike = Likes.objects \
+                .filter(item_type=masterDICT['contentTypes']['post'],
+                        item_id=p['p_id'],
+                        owner_type=masterDICT['ownerTypes']['account'],
+                        ownerid=p['ownerid']).first()
+
+                if checkLike != None:
+                    p['like_status'] = masterDICT['statuses']['like']['liked']
+
+                else:
+                    p['like_status'] = masterDICT['statuses']['like']['not_liked']
 
             # print [p.serialize for p in posts]
             # print posts
