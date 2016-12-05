@@ -20,14 +20,16 @@ from WebTools import randomVal, processImage, saveImageLocal
 
 from models import Accounts, AviModel, WpModel, Groups, GroupMembers
 from models import Follows, FollowRequests
-from models import GroupRequests, GroupInvitations
-from models import Messages, MessageReply
+from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
+from models import Posts, Comments, Replies
 
-from vaults import webapp_dir, pages, errorPage, genericPage, localPaths
+
+
+from vaults import webapp_dir, errorPage, genericPage
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
 from vaults import allowed_audio, allowed_photo, allowed_video, allowed_media
-from vaults import groupStates, followStates
+from vaults import masterDICT
 
 
 # --- -------- --- #
@@ -44,7 +46,7 @@ def loginAccount(request):
         you = Accounts.objects.filter( email=email ).first()
         if you == None:
             return render(request,
-                            pages['login'],
+                            masterDICT['pages']['login'],
                             {'error': 'Incorrect Info.'},
                             context_instance=RequestContext(request))
 
@@ -55,7 +57,7 @@ def loginAccount(request):
 
     except ObjectDoesNotExist:
         return render(request,
-                        pages['login'],
+                        masterDICT['pages']['login'],
                         {'error': 'Incorrect Info.'},
                         context_instance=RequestContext(request))
 
@@ -74,14 +76,14 @@ def createAccount(request):
         checkEmail = Accounts.objects.filter(email=email).first()
         if checkEmail != None:
             return render(request,
-                            pages['signup'],
+                            masterDICT['pages']['signup'],
                             {'error': "That Email Is Already In Use."},
                             context_instance=RequestContext(request))
 
         checkUsername = Accounts.objects.filter(uname=uname).first()
         if checkUsername != None:
             return render(request,
-                            pages['signup'],
+                            masterDICT['pages']['signup'],
                             {'error': "That Username Is Already In Use."},
                             context_instance=RequestContext(request))
 
@@ -102,7 +104,7 @@ def createAccount(request):
 
     except MultipleObjectsReturned:
         return render(request,
-                        pages['signup'],
+                        masterDICT['pages']['signup'],
                         {'error': "There Was An Error. Please Try Again."},
                         context_instance=RequestContext(request))
 
@@ -192,7 +194,7 @@ def updateDisplayName(request):
         you.save( update_fields=['displayname'] )
 
         return render(request,
-                    pages['mySettings'],
+                    masterDICT['pages']['mySettings'],
                     {'you': you,
                     'message': "Displayname Updated Successfully!"},
                     context_instance=RequestContext(request))
@@ -211,7 +213,7 @@ def editAccountStatus(request):
         # print you.status
 
         return render(request,
-                    pages['mySettings'],
+                    masterDICT['pages']['mySettings'],
                     {'you': you,
                     'message': "Status Updated Successfully!"},
                     context_instance=RequestContext(request))
@@ -228,7 +230,7 @@ def updateAviLink(request):
         you.save( update_fields=['avi'] )
 
         return render(request,
-                    pages['mySettings'],
+                    masterDICT['pages']['mySettings'],
                     {'you': you, 'message': "Avatar Updated Successfully!"},
                     context_instance=RequestContext(request))
 
@@ -244,7 +246,7 @@ def updateWpLink(request):
         you.save( update_fields=['background'] )
 
         return render(request,
-                    pages['mySettings'],
+                    masterDICT['pages']['mySettings'],
                     {'you': you, 'message': "Wallpaper Updated Successfully!"},
                     context_instance=RequestContext(request))
 
@@ -265,14 +267,14 @@ def updateAviFile(request):
             you.save( update_fields=['avi'] )
 
             return render(request,
-                        pages['mySettings'],
+                        masterDICT['pages']['mySettings'],
                         {'you': you,
                         'message': "Avatar Updated Successfully!"},
                         context_instance=RequestContext(request))
 
         else:
             return render(request,
-                        pages['mySettings'],
+                        masterDICT['pages']['mySettings'],
                         {'you': you,
                         'message': "Error - That Was Not An Image File."},
                         context_instance=RequestContext(request))
@@ -293,14 +295,14 @@ def updateWpFile(request):
             you.save( update_fields=['background'] )
 
             return render(request,
-                        pages['mySettings'],
+                        masterDICT['pages']['mySettings'],
                         {'you': you,
                         'message': "Wallpaper Updated Successfully!"},
                         context_instance=RequestContext(request))
 
         else:
             return render(request,
-                        pages['mySettings'],
+                        masterDICT['pages']['mySettings'],
                         {'you': you,
                         'message': "Error - That Was Not An Image File."},
                         context_instance=RequestContext(request))
@@ -339,25 +341,25 @@ def searchEngine(request):
             .filter(sender_id=you.id , recipient_id=u['userid']).first()
 
             if checkFollowRequest != None:
-                u['status'] = followStates['pending']['status']
-                u['btn'] = followStates['pending']['btn']
-                u['msg'] = followStates['pending']['msg']
-                u['action'] = followStates['pending']['action']
-                u['title'] = followStates['pending']['title']
+                u['status'] = masterDICT['followStates']['pending']['status']
+                u['btn'] = masterDICT['followStates']['pending']['btn']
+                u['msg'] = masterDICT['followStates']['pending']['msg']
+                u['action'] = masterDICT['followStates']['pending']['action']
+                u['title'] = masterDICT['followStates']['pending']['title']
 
             else:
-                u['status'] = followStates['not_following']['status']
-                u['btn'] = followStates['not_following']['btn']
-                u['msg'] = followStates['not_following']['msg']
-                u['action'] = followStates['not_following']['action']
-                u['title'] = followStates['not_following']['title']
+                u['status'] = masterDICT['followStates']['not_following']['status']
+                u['btn'] = masterDICT['followStates']['not_following']['btn']
+                u['msg'] = masterDICT['followStates']['not_following']['msg']
+                u['action'] = masterDICT['followStates']['not_following']['action']
+                u['title'] = masterDICT['followStates']['not_following']['title']
 
         if checkFollow != None:
-            u['status'] = followStates['following']['status']
-            u['btn'] = followStates['following']['btn']
-            u['msg'] = followStates['following']['msg']
-            u['action'] = followStates['following']['action']
-            u['title'] = followStates['following']['title']
+            u['status'] = masterDICT['followStates']['following']['status']
+            u['btn'] = masterDICT['followStates']['following']['btn']
+            u['msg'] = masterDICT['followStates']['following']['msg']
+            u['action'] = masterDICT['followStates']['following']['action']
+            u['title'] = masterDICT['followStates']['following']['title']
 
     # print users
 
@@ -370,25 +372,25 @@ def searchEngine(request):
             .filter(group_id=g['gid'], userid=you.id).first()
 
             if checkGroupRequests != None:
-                g['status'] = groupStates['user']['pending']['status']
-                g['btn'] = groupStates['user']['pending']['btn']
-                g['msg'] = groupStates['user']['pending']['msg']
-                g['action'] = groupStates['user']['pending']['action']
-                g['title'] = groupStates['user']['pending']['title']
+                g['status'] = masterDICT['groupStates']['user']['pending']['status']
+                g['btn'] = masterDICT['groupStates']['user']['pending']['btn']
+                g['msg'] = masterDICT['groupStates']['user']['pending']['msg']
+                g['action'] = masterDICT['groupStates']['user']['pending']['action']
+                g['title'] = masterDICT['groupStates']['user']['pending']['title']
 
             else:
-                g['status'] = groupStates['user']['not_member']['status']
-                g['btn'] = groupStates['user']['not_member']['btn']
-                g['msg'] = groupStates['user']['not_member']['msg']
-                g['action'] = groupStates['user']['not_member']['action']
-                g['title'] = groupStates['user']['not_member']['title']
+                g['status'] = masterDICT['groupStates']['user']['not_member']['status']
+                g['btn'] = masterDICT['groupStates']['user']['not_member']['btn']
+                g['msg'] = masterDICT['groupStates']['user']['not_member']['msg']
+                g['action'] = masterDICT['groupStates']['user']['not_member']['action']
+                g['title'] = masterDICT['groupStates']['user']['not_member']['title']
 
         else:
-            g['status'] = groupStates['user']['member']['status']
-            g['btn'] = groupStates['user']['member']['btn']
-            g['msg'] = groupStates['user']['member']['msg']
-            g['action'] = groupStates['user']['member']['action']
-            g['title'] = groupStates['user']['member']['title']
+            g['status'] = masterDICT['groupStates']['user']['member']['status']
+            g['btn'] = masterDICT['groupStates']['user']['member']['btn']
+            g['msg'] = masterDICT['groupStates']['user']['member']['msg']
+            g['action'] = masterDICT['groupStates']['user']['member']['action']
+            g['title'] = masterDICT['groupStates']['user']['member']['title']
 
     # print groups
 
@@ -434,25 +436,25 @@ def searchForMembers(request):
             .filter(group_id=data['gid'], userid=u['userid']).first()
 
             if checkGroupInvite != None:
-                u['status'] = groupStates['owner']['pending']['status']
-                u['btn'] = groupStates['owner']['pending']['btn']
-                u['msg'] = groupStates['owner']['pending']['msg']
-                u['action'] = groupStates['owner']['pending']['action']
-                u['title'] = groupStates['owner']['pending']['title']
+                u['status'] = masterDICT['groupStates']['owner']['pending']['status']
+                u['btn'] = masterDICT['groupStates']['owner']['pending']['btn']
+                u['msg'] = masterDICT['groupStates']['owner']['pending']['msg']
+                u['action'] = masterDICT['groupStates']['owner']['pending']['action']
+                u['title'] = masterDICT['groupStates']['owner']['pending']['title']
 
             else:
-                u['status'] = groupStates['owner']['not_member']['status']
-                u['btn'] = groupStates['owner']['not_member']['btn']
-                u['msg'] = groupStates['owner']['not_member']['msg']
-                u['action'] = groupStates['owner']['not_member']['action']
-                u['title'] = groupStates['owner']['not_member']['title']
+                u['status'] = masterDICT['groupStates']['owner']['not_member']['status']
+                u['btn'] = masterDICT['groupStates']['owner']['not_member']['btn']
+                u['msg'] = masterDICT['groupStates']['owner']['not_member']['msg']
+                u['action'] = masterDICT['groupStates']['owner']['not_member']['action']
+                u['title'] = masterDICT['groupStates']['owner']['not_member']['title']
 
         else:
-            u['status'] = groupStates['owner']['member']['status']
-            u['btn'] = groupStates['owner']['member']['btn']
-            u['msg'] = groupStates['owner']['member']['msg']
-            u['action'] = groupStates['owner']['member']['action']
-            u['title'] = groupStates['owner']['member']['title']
+            u['status'] = masterDICT['groupStates']['owner']['member']['status']
+            u['btn'] = masterDICT['groupStates']['owner']['member']['btn']
+            u['msg'] = masterDICT['groupStates']['owner']['member']['msg']
+            u['action'] = masterDICT['groupStates']['owner']['member']['action']
+            u['title'] = masterDICT['groupStates']['owner']['member']['title']
 
     # print users
 
@@ -486,7 +488,7 @@ def createGroup(request):
         .filter(uname = request.POST['uname']).first()
         if checkGroup != None:
             return render(request,
-                        pages['createview'],
+                        masterDICT['pages']['createview'],
                         {'you': you,
                         'message': "That Group Name Is Already In Use!"},
                         context_instance=RequestContext(request))
@@ -511,7 +513,7 @@ def createGroup(request):
             aviFile.name == '' or \
             not allowed_photo(aviFile.name):
                 return render(request,
-                            pages['createview'],
+                            masterDICT['pages']['createview'],
                             {'you': you,
                             'message': 'Error - Bad Avatar File Input...'},
                             context_instance=RequestContext(request))
@@ -520,7 +522,7 @@ def createGroup(request):
             wpFile.name == '' or \
             not allowed_photo(wpFile.name):
                 return render(request,
-                            pages['createview'],
+                            masterDICT['pages']['createview'],
                             {'you': you,
                             'message': 'Error - Bad Wallpaper File Input...'},
                             context_instance=RequestContext(request))
@@ -541,7 +543,7 @@ def createGroup(request):
             # print group.serialize
 
         return render(request,
-                    pages['createview'],
+                    masterDICT['pages']['createview'],
                     {'you': you, 'message': "New Group Created!"},
                     context_instance=RequestContext(request))
 
@@ -559,7 +561,7 @@ def updateGroup(request):
         group = Groups.objects.filter(id = request.POST['gid']).first()
         if group == None:
             return render(request,
-                        pages['mySettings'],
+                        masterDICT['pages']['mySettings'],
                         {'you': you,
                         'message': "Error - The Group Could Not Be Edited."},
                         context_instance=RequestContext(request))
@@ -581,7 +583,7 @@ def updateGroup(request):
             aviFile.name == '' or \
             not allowed_photo(aviFile.name):
                 return render(request,
-                            pages['mySettings'],
+                            masterDICT['pages']['mySettings'],
                             {'you': you,
                             'message': 'Error - Bad Avatar File Input...'},
                             context_instance=RequestContext(request))
@@ -590,7 +592,7 @@ def updateGroup(request):
             wpFile.name == '' or \
             not allowed_photo(wpFile.name):
                 return render(request,
-                            pages['mySettings'],
+                            masterDICT['pages']['mySettings'],
                             {'you': you,
                             'message': 'Error - Bad Wallpaper File Input...'},
                             context_instance=RequestContext(request))
@@ -611,7 +613,7 @@ def updateGroup(request):
             # print group.serialize
 
         return render(request,
-                    pages['mySettings'],
+                    masterDICT['pages']['mySettings'],
                     {'you': you, 'message': "Group Updated Successfully!"},
                     context_instance=RequestContext(request))
 
@@ -628,14 +630,14 @@ def deleteGroup(request):
         if group != None:
             group.delete()
             return render(request,
-                        pages['mySettings'],
+                        masterDICT['pages']['mySettings'],
                         {'you': you,
                         'message': "Group Deleted Successfully!"},
                         context_instance=RequestContext(request))
 
         else:
             return render(request,
-                        pages['mySettings'],
+                        masterDICT['pages']['mySettings'],
                         {'you': you,
                         'message': "Error - Unable To Delete Group"},
                         context_instance=RequestContext(request))
@@ -674,7 +676,7 @@ def followUser(request, data):
 
             return JsonResponse({'msg': 'Now Following!',
                                     'status': 'following',
-                                    'state': followStates['following']})
+                                    'state': masterDICT['followStates']['following']})
 
         if user.status == 'private':
             checkFollowRequest = FollowRequests.objects \
@@ -692,7 +694,7 @@ def followUser(request, data):
 
                 return JsonResponse({'msg': 'Follow Request Sent!',
                                         'status': 'pending',
-                                        'state': followStates['pending']})
+                                        'state': masterDICT['followStates']['pending']})
 
 
 
@@ -722,7 +724,7 @@ def unfollowUser(request, data):
             checkFollow.delete()
             return JsonResponse({'msg': 'Unfollowed!',
                                 'status': 'not following',
-                                'state': followStates['not_following']})
+                                'state': masterDICT['followStates']['not_following']})
 
 
 
@@ -737,7 +739,7 @@ def cancelPendingFollow(request, data):
             return JsonResponse({'msg': 'Error - Bad Action msg.'})
 
         you = Accounts.objects.get(uname = request.session['username'])
-        user = Accounts.objects.get(uname = data['user']['uname'])
+        user = Accounts.objects.filter(uname = data['user']['uname']).first()
 
         if user == None:
             return JsonResponse({'msg': 'Error - User Could Not Be Loaded.'})
@@ -749,7 +751,7 @@ def cancelPendingFollow(request, data):
             checkFollowRequest.delete()
             return JsonResponse({'msg': 'Follow Request Canceled!',
                                 'status': 'not following',
-                                'state': followStates['pending']})
+                                'state': masterDICT['followStates']['not_following']})
 
         elif checkFollowRequest == None:
             return JsonResponse({'msg': 'Cannot Cancel Follow Request.'})
@@ -769,22 +771,23 @@ def loadNotesAll(request, data):
         pendingFollows = FollowRequests.objects.filter(recipient_id = you.id)
         pendingFollows = [pf.serialize for pf in pendingFollows]
         for pf in pendingFollows:
-            pf['status'] = followStates['pending']['status']
-            pf['btn'] = followStates['pending']['btn']
-            pf['msg'] = followStates['pending']['msg']
-            pf['action'] = followStates['pending']['action']
-            pf['title'] = followStates['pending']['title']
+            # pf['status'] = masterDICT['followStates']['pending']['status']
+            # pf['btn'] = masterDICT['followStates']['pending']['btn']
+            # pf['msg'] = masterDICT['followStates']['pending']['msg']
+            # pf['action'] = masterDICT['followStates']['pending']['action']
+            # pf['title'] = masterDICT['followStates']['pending']['title']
+            pf['options'] = masterDICT['followStates']['options']
 
 
         pendingGroupInvites = GroupInvitations.objects.filter(userid = you.id)
         pendingGroupInvites = [pi.serialize for pi in pendingGroupInvites]
         for pi in pendingGroupInvites:
-            # pi['status'] = groupStates['user']['pending']['status']
-            # pi['btn'] = groupStates['user']['pending']['btn']
-            # pi['msg'] = groupStates['user']['pending']['msg']
-            # pi['action'] = groupStates['user']['pending']['action']
-            # pi['title'] = groupStates['user']['pending']['title']
-            pi['options'] = groupStates['user']['options']
+            # pi['status'] = masterDICT['groupStates']['user']['pending']['status']
+            # pi['btn'] = masterDICT['groupStates']['user']['pending']['btn']
+            # pi['msg'] = masterDICT['groupStates']['user']['pending']['msg']
+            # pi['action'] = masterDICT['groupStates']['user']['pending']['action']
+            # pi['title'] = masterDICT['groupStates']['user']['pending']['title']
+            pi['options'] = masterDICT['groupStates']['user']['options']
 
 
         pendingGroupRequests = []
@@ -795,12 +798,12 @@ def loadNotesAll(request, data):
             pendingRequests = GroupRequests.objects.filter(group_id = g['gid'])
             pendingRequests = [pr.serialize for pr in pendingRequests]
             for pr in pendingRequests:
-                # pr['status'] = groupStates['owner']['pending']['status']
-                # pr['btn'] = groupStates['owner']['pending']['btn']
-                # pr['msg'] = groupStates['owner']['pending']['msg']
-                # pr['action'] = groupStates['owner']['pending']['action']
-                # pr['title'] = groupStates['owner']['pending']['title']
-                pr['options'] = groupStates['owner']['options']
+                # pr['status'] = masterDICT['groupStates']['owner']['pending']['status']
+                # pr['btn'] = masterDICT['groupStates']['owner']['pending']['btn']
+                # pr['msg'] = masterDICT['groupStates']['owner']['pending']['msg']
+                # pr['action'] = masterDICT['groupStates']['owner']['pending']['action']
+                # pr['title'] = masterDICT['groupStates']['owner']['pending']['title']
+                pr['options'] = masterDICT['groupStates']['owner']['options']
 
                 pendingGroupRequests.append(pr)
 
@@ -909,7 +912,7 @@ def sendGroupInvitation(request, data):
 
                 return JsonResponse({'msg': 'Group Invite Created!',
                                     'status': 'pending',
-                                    'state': groupStates['user']['pending']})
+                                    'state': masterDICT['groupStates']['user']['pending']})
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
@@ -947,7 +950,7 @@ def requestGroupInvite(request, data):
 
                 return JsonResponse({'msg': 'Group Invite Created!',
                                     'status': 'pending',
-                                    'state': groupStates['user']['pending']})
+                                    'state': masterDICT['groupStates']['user']['pending']})
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
@@ -973,7 +976,7 @@ def acceptGroupInvite(request, data):
 
             newGroupMember = GroupMembers \
             (group_id = group.id, group_rel = group,
-            userid = you.id, user_rel = you)
+            userid = user.id, user_rel = user)
 
             newGroupMember.save()
             checkGroupInvite.delete()
@@ -1030,7 +1033,7 @@ def acceptGroupRequest(request, data):
 
             newGroupMember = GroupMembers \
             (group_id = group.id, group_rel = group,
-            userid = you.id, user_rel = you)
+            userid = user.id, user_rel = user)
 
             newGroupMember.save()
             checkGroupRequest.delete()
@@ -1087,7 +1090,7 @@ def cancelPendingGroupInvite(request, data):
 
             return JsonResponse({'msg': 'Group Invite Canceled!',
                                 'status': 'not a member',
-                                'state': groupStates['owner']['not_member']})
+                                'state': masterDICT['groupStates']['owner']['not_member']})
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
@@ -1114,7 +1117,7 @@ def cancelPendingGroupRequest(request, data):
 
             return JsonResponse({'msg': 'Group Request Canceled!',
                                 'status': 'not a member',
-                                'state': groupStates['user']['not_member']})
+                                'state': masterDICT['groupStates']['user']['not_member']})
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
@@ -1163,7 +1166,7 @@ def leaveGroup(request, data):
             checkMembership.delete()
             return JsonResponse({'msg': 'left group',
                                 'status': 'not a member',
-                                'state': groupStates['user']['not_member']})
+                                'state': masterDICT['groupStates']['user']['not_member']})
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
@@ -1245,15 +1248,15 @@ def sendMessage(request):
             if media and media.name != '':
                 if allowed_audio(media.name):
                     newdoc = mediaAudioModel(docfile = request.FILES['media'])
-                    doctype = 'audio'
+                    doctype = 'Audio'
 
                 elif allowed_video(media.name):
                     newdoc = mediaVideoModel(docfile = request.FILES['media'])
-                    doctype = 'video'
+                    doctype = 'Video'
 
                 elif allowed_photo(media.name):
                     newdoc = mediaPhotoModel(docfile = request.FILES['media'])
-                    doctype = 'photo'
+                    doctype = 'Photo'
 
                 else:
                     return genericPage(request = request,
@@ -1303,6 +1306,71 @@ def sendMessage(request):
         return genericPage(request = request,
                             msg = 'Message Sent!',
                             redirect=request.POST['origin'])
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+
+def createUserPost(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        # ----- #
+
+        newdoc = None # Default For Message Media
+        doctype = ''
+        if request.FILES:
+            media = request.FILES['media']
+
+            if media and media.name != '':
+                if allowed_audio(media.name):
+                    newdoc = mediaAudioModel(docfile = request.FILES['media'])
+                    doctype = 'Audio'
+
+                elif allowed_video(media.name):
+                    newdoc = mediaVideoModel(docfile = request.FILES['media'])
+                    doctype = 'Video'
+
+                elif allowed_photo(media.name):
+                    newdoc = mediaPhotoModel(docfile = request.FILES['media'])
+                    doctype = 'Photo'
+
+                else:
+                    return genericPage(request = request,
+                                        msg = 'Error - Bad Media File Input.',
+                                        redirect=request.POST['origin'])
+
+
+                newdoc.save()
+
+            else:
+                return genericPage(request = request,
+                                    msg = 'Error - Bad Media File Input.',
+                                    redirect=request.POST['origin'])
+
+            # ----- #
+
+            newPost = Posts(ownerid = you.id,
+                            owner_type = masterDICT['ownerTypes']['account'],
+                            title = cgi.escape(request.POST['title']),
+                            contents = cgi.escape(request.POST['contents']),
+                            link = request.POST['link'],
+                            post_type = request.POST['post_type'])
+
+            if newdoc != None:
+                newPost.attachment = newdoc.docfile.url
+
+            if doctype != '':
+                newPost.attachment_type = doctype
+
+            newPost.save()
+
+            return genericPage(request = request,
+                                msg = 'Post Created!',
+                                redirect=request.POST['origin'])
+
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

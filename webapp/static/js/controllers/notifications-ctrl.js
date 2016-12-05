@@ -49,7 +49,7 @@ App.controller('notificationsCtrl', ['$scope', '$http', function($scope, $http) 
         'X-CSRFToken': Cookies.get('csrftoken')
       },
       data: {
-        action: 'accept follow',
+        action: pf.options.accept,
         pf: pf,
         csrfmiddlewaretoken: Cookies.get('csrftoken'),
       }
@@ -79,7 +79,7 @@ App.controller('notificationsCtrl', ['$scope', '$http', function($scope, $http) 
         'X-CSRFToken': Cookies.get('csrftoken')
       },
       data: {
-        action: 'decline follow',
+        action: pf.options.decline,
         pf: pf,
         csrfmiddlewaretoken: Cookies.get('csrftoken'),
       }
@@ -111,7 +111,7 @@ App.controller('notificationsCtrl', ['$scope', '$http', function($scope, $http) 
         'X-CSRFToken': Cookies.get('csrftoken')
       },
       data: {
-        action: 'accept group invite',
+        action: pi.options.accept,
         pi: pi,
         csrfmiddlewaretoken: Cookies.get('csrftoken'),
       }
@@ -141,7 +141,7 @@ App.controller('notificationsCtrl', ['$scope', '$http', function($scope, $http) 
         'X-CSRFToken': Cookies.get('csrftoken')
       },
       data: {
-        action: 'decline group invite',
+        action: pi.options.decline,
         pi: pi,
         csrfmiddlewaretoken: Cookies.get('csrftoken'),
       }

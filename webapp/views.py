@@ -17,9 +17,14 @@ from django.views.decorators.csrf import csrf_protect
 from WebTools import randomVal, processImage
 from models import Accounts, Groups, GroupMembers, Follows, FollowRequests
 from models import GroupRequests, GroupInvitations
+from models import Posts, Comments, Replies
+
+# from forms import PostForm
 
 import routines
-from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
+
+from vaults import masterDICT
+from vaults import webapp_dir, errorPage, localPaths, serverPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
 
 # --- ----- --- #
@@ -31,7 +36,7 @@ def welcome(request):
         if 'username' in request.session:
             return redirect('/main/')
         else:
-            return render(request, pages['welcome'])
+            return render(request, masterDICT['pages']['welcome'])
 
 
 # ---
@@ -42,7 +47,7 @@ def login(request):
         if 'username' in request.session:
             return redirect('/home/')
 
-        return render(request, pages['login'], {'error': ''},
+        return render(request, masterDICT['pages']['login'], {'error': ''},
                         context_instance = RequestContext(request))
 
     if request.method == 'POST':
@@ -74,7 +79,7 @@ def signup(request):
         if 'username' in request.session:
             return redirect('/home/')
 
-        return render(request, pages['signup'], {'error': ""},
+        return render(request, masterDICT['pages']['signup'], {'error': ""},
                         context_instance = RequestContext(request))
 
     if request.method == 'POST':
@@ -90,7 +95,24 @@ def profileMain(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            return render(request, pages['profileMain'], {'you': you},
+
+            following = Follows.objects.filter(userid=you.id)
+            feed = []
+
+            for f in following:
+                posts = Posts.objects \
+                .filter(ownerid = f.follow_id)
+                for p in posts:
+                    feed.append( p )
+
+            feed = [f.serialize for f in feed]
+
+            print feed
+
+            return render(request, masterDICT['pages']['profileMain'],
+                            {'you': you,
+                            'posts': feed
+                            },
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -110,16 +132,25 @@ def profileHome(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
+
             followers = Follows.objects.filter(follow_id=you.id)
             following = Follows.objects.filter(userid=you.id)
             groups = GroupMembers.objects.filter(userid=you.id)
+            posts = Posts.objects \
+            .filter(ownerid = you.id)
+            posts = [p.serialize for p in posts]
 
-            return render(request, pages['profileHome'],
+            # print [p.serialize for p in posts]
+            # print posts
+
+            return render(request, masterDICT['pages']['profileHome'],
                             {'you': you,
                             'info': you.get_info,
                             'followers': len(followers),
                             'following': len(following),
-                            'groups': len(groups)},
+                            'groups': len(groups),
+                            'posts': posts
+                            },
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -156,7 +187,7 @@ def userPage(request, query):
 
                     else:
                         return render(request,
-                                        pages['UserPage'],
+                                        masterDICT['pages']['UserPage'],
                                         {'you': you,
                                         'user': user,
                                         'info': user.get_info,
@@ -166,7 +197,7 @@ def userPage(request, query):
                                         context_instance = RequestContext(request))
                 else:
                     return render(request,
-                                    pages['UserPage'],
+                                    masterDICT['pages']['UserPage'],
                                     {'you': you,
                                     'user': user,
                                     'info': user.get_info,
@@ -200,7 +231,7 @@ def groupPage(request, query):
 
             else:
                 return render(request,
-                                pages['GroupPage'],
+                                masterDICT['pages']['GroupPage'],
                                 {'you': you,
                                 'group': group},
                                 context_instance = RequestContext(request))
@@ -219,7 +250,7 @@ def searchEngine(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            return render(request, pages['searchEngine'],
+            return render(request, masterDICT['pages']['searchEngine'],
                             {'you': you},
                             context_instance = RequestContext(request))
 
@@ -250,7 +281,7 @@ def messagesView(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            return render(request, pages['messagesView'],
+            return render(request, masterDICT['pages']['messagesView'],
                             {'you': you,
                             'message': ''},
                             context_instance = RequestContext(request))
@@ -272,7 +303,7 @@ def mySettings(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            return render(request, pages['mySettings'],
+            return render(request, masterDICT['pages']['mySettings'],
                             {'you': you,
                             'message': ''},
                             context_instance = RequestContext(request))
@@ -292,8 +323,12 @@ def createView(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            return render(request, pages['createview'],
-                            {'you': you, 'message': ''},
+            # post_form = PostForm()
+            return render(request, masterDICT['pages']['createview'],
+                            {'you': you,
+                            'message': '',
+                            # 'post_form': post_form
+                            },
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -303,46 +338,8 @@ def createView(request):
     # --- #
 
     if request.method == 'POST':
-
-        # Form-Data Request
-        if not request.is_ajax():
-
-            if request.POST['action'] == None:
-                return render(request, pages['createview'],
-                                {'you': you, 'message': 'Action Is Missing...'},
-                                context_instance = RequestContext(request))
-
-            if request.POST['action'] == '':
-                return render(request, pages['createview'],
-                                {'you': you, 'message': 'Action Is Unknown...'},
-                                context_instance = RequestContext(request))
-
-            if request.POST['action'] == 'create group':
-                return routines.createGroup(request)
-
-            else:
-                msg = 'Unknown Action...'
-                return errorPage(request, msg)
-
-        # ------------ #  # ------------ #  # ------------ #
-
-        # AJAX Request
-        if request.is_ajax():
-            try:
-                data = json.loads(request.body)
-
-                if data['action'] == None:
-                    msg = {'msg': 'Action Message Is Missing...'}
-                    return JsonResponse(msg)
-
-                if data['action'] == '':
-                    msg = {'msg': 'Action Message Is Empty/Unidentifiable...'}
-                    return JsonResponse(msg)
-
-
-
-            except KeyError, AttributeError:
-                return JsonResponse({'msg': 'Failed To Load JSON Data...'})
+        msg = 'Unapproved Request Occurred...'
+        return errorPage(request, msg)
 
 
 # ---
@@ -356,7 +353,7 @@ def settingsActionFORM(request):
 
     if request.method == 'POST':
         if request.POST['action'] == None or request.POST['action'] == '':
-            return render(request, pages['mySettings'],
+            return render(request, masterDICT['pages']['mySettings'],
                             {'you': you, 'message': 'Action Message Missing...'},
                             context_instance = RequestContext(request))
 
@@ -478,6 +475,11 @@ def userActionFORM(request):
         if request.POST['action'] == 'send message':
             return routines.sendMessage(request)
 
+        if request.POST['action'] == 'create group':
+            return routines.createGroup(request)
+
+        if request.POST['action'] == 'create post':
+            return routines.createUserPost(request)
 
 
         else:
@@ -496,6 +498,7 @@ def userActionAJAX(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            # print data
             # ----- #
 
             if data['action'] == None:
@@ -515,10 +518,10 @@ def userActionAJAX(request):
             if data['action'] == 'cancelPendingFollow':
                 return routines.cancelPendingFollow(request, data)
 
-            if data['action'] == 'accept follow':
+            if data['action'] == 'acceptFollow':
                 return routines.acceptFollow(request, data)
 
-            if data['action'] == 'decline follow':
+            if data['action'] == 'declineFollow':
                 return routines.declineFollow(request, data)
 
             # ---
@@ -581,7 +584,7 @@ def notificationsView(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-            return render(request, pages['notificationsView'],
+            return render(request, masterDICT['pages']['notificationsView'],
                             {'you': you, 'message': ''},
                             context_instance = RequestContext(request))
 

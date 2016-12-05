@@ -45,6 +45,7 @@
                   <li role="presentation" class="active"><a data-toggle="tab" href="#new-group-pane">Group</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#new-convo-pane">Conversation</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#new-event-pane">Event</a></li>
+                  <li role="presentation"><a data-toggle="tab" href="#new-post-pane">Post</a></li>
                 </ul>
               </div>
             </div>
@@ -55,7 +56,7 @@
                   <div>
                     <p class="text-center">Create A Group!</p>
                     <br>
-                    <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/create/" method="POST">{% csrf_token %}
+                    <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/action/form/" method="POST">{% csrf_token %}
                       <input type="hidden" name="action" value="create group"/>
 
                       <input class="input-t-s1 middlr" type="text" name="displayname" placeholder="Group Display Name..." ng-model="newGroupName" required/><br>
@@ -85,6 +86,15 @@
                     <br>
                     <div class="">
 
+                    </div>
+                  </div>
+                </div>
+                <div id="new-post-pane" class="tab-pane fade">
+                  <div>
+                    <p class="text-center">Create A Post!</p>
+                    <br>
+                    <div class="">
+                      {{ post_form }}
                     </div>
                   </div>
                 </div>

@@ -61,7 +61,7 @@ App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
     }
     $http(req).then(function(resp){
       // Success Callback
-      // console.log(resp);
+      console.log(resp);
 
       user.status = resp.data.state.status;
       user.btn = resp.data.state.btn;

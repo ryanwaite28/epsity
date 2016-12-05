@@ -237,6 +237,10 @@ body {
   visibility: hidden;
 }
 
+#prof-mainbar div {
+  margin-bottom: 15px;
+}
+
 #menu-c {
   float: right;
   display: none;

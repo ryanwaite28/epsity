@@ -1,6 +1,6 @@
-# --- ------ --- #
-# --- Models --- #
-# --- ------ --- #
+# --- --- --- --- #
+# --- Imports --- #
+# --- --- --- --- #
 
 # on_delete = models.CASCADE
 
@@ -13,8 +13,41 @@ from django.utils import timezone
 import hashlib
 
 from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
+from vaults import ownerTypes
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
-# ---
+
+# --- --- --- --- --- #
+# --- Helper Code --- #
+# --- --- --- --- --- #
+
+
+def returnModelSerialized(type, id):
+    if id == None:
+        return 'error --- Missing id'
+
+    elif type == '' or type == None:
+        return 'error --- invalid type'
+
+    elif type == 'Account':
+        obj = Accounts.objects.get(id = id)
+        return obj.serialize
+
+    elif type == 'Group':
+        obj = Groups.objects.get(id = id)
+        return obj.serialize
+
+
+
+    else:
+        return 'error --- unknown type'
+
+
+# --- ------ --- #
+# --- Models --- #
+# --- ------ --- #
+
 
 class AviModel(models.Model):
     docfile = models.FileField(upload_to='avatars/', default='')
@@ -24,8 +57,6 @@ class WpModel(models.Model):
     docfile = models.FileField(upload_to='backgrounds/', default='')
 
 # ---
-
-
 
 class mediaPhotoModel(models.Model):
     docfile = models.FileField(upload_to='media/photo/', default='')
@@ -51,11 +82,6 @@ class DocumentForm(forms.Form):
 
 class Accounts(models.Model):
 
-    ACCOUNT_TYPES = (
-        ('Personal', 'Personal'),
-        ('Group', 'Group'),
-    )
-
     uname = models.CharField(max_length = 20, default = '')
     displayname = models.CharField(max_length = 30, default = '')
     email = models.CharField(max_length = 50, default = '')
@@ -67,9 +93,12 @@ class Accounts(models.Model):
     gender = models.CharField(max_length = 25, default = '')
     phone = models.CharField(max_length = 25, default = '')
 
-    type = models.CharField(max_length = 20, choices = ACCOUNT_TYPES, default = '')
-    status = models.CharField(max_length = 9, default = 'public') # either public, private or deleted
-    official = models.IntegerField(default = 0) # 1 = True | 0 = False
+    type = models.CharField(max_length = 20, default = '')
+    status = models.CharField(max_length = 9, default = 'public')
+    # status: either public, private or deleted
+
+    official = models.IntegerField(default = 0)
+    # official: 1 = True | 0 = False
 
     interests = models.CharField(max_length = 1725, default = '')
     seeking = models.CharField(max_length = 1725, default = '')
@@ -115,6 +144,167 @@ class Accounts(models.Model):
         db_table = "accounts"
 
 # --- #
+# --- #
+
+
+class Groups(models.Model):
+
+    owner_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_owner")
+    ownerid = models.IntegerField(blank = False, default = 0)
+
+    displayname = models.CharField(max_length = 1725, default = '')
+    desc = models.CharField(max_length = 1725, default = '')
+    uname = models.CharField(max_length = 1725, default = '')
+    categories = models.CharField(max_length = 1725, default = '')
+
+    avi = models.CharField(max_length = 1725, default = '')
+    background = models.CharField(max_length = 1725, default = '')
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'gid': self.id,
+            'displayname': self.displayname,
+            'uname': self.uname,
+            'desc': self.desc,
+            'avi': self.avi,
+            'background': self.background,
+            'categories': self.categories.split(';'),
+            'owner': self.owner_rel.serialize
+        }
+
+    class Meta:
+        db_table = "groups"
+
+# ---
+
+class GroupInvitations(models.Model):
+
+    group_id = models.IntegerField(blank = False, default = 0)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "i_group_rel")
+
+    userid = models.IntegerField(blank = False, default = 0)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "i_group_user")
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'gid': self.id,
+
+            'group_id': self.group_id,
+            'group_rel': self.group_rel.serialize,
+            'userid': self.userid,
+            'user_rel': self.user_rel.serialize,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+            #'linkName': self.bio_link_name,
+        }
+
+    class Meta:
+        db_table = "group_invitations"
+
+# ---
+
+class GroupRequests(models.Model):
+
+    group_id = models.IntegerField(blank = False, default = 0)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "r_group_rel")
+
+    userid = models.IntegerField(blank = False, default = 0)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "r_group_user")
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'gid': self.id,
+
+            'group_id': self.group_id,
+            'group_rel': self.group_rel.serialize,
+            'userid': self.userid,
+            'user_rel': self.user_rel.serialize,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+            #'linkName': self.bio_link_name,
+        }
+
+    class Meta:
+        db_table = "group_requests"
+
+# ---
+
+class GroupMembers(models.Model):
+
+    group_id = models.IntegerField(blank = False, default = 0)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_member_rel")
+
+    userid = models.IntegerField(blank = False, default = 0)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user_rel")
+    status = models.CharField(max_length = 500, default = '') # Admin, user, etc...
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'gmid': self.id,
+
+            'group_id': self.group_id,
+            'group_rel': self.group_rel.serialize,
+            'userid': self.userid,
+            'user_rel': self.user_rel.serialize,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+            #'linkName': self.bio_link_name,
+        }
+
+    class Meta:
+        db_table = "group_members"
+
+
+# ---
+
+
+class GroupFavorites(models.Model):
+
+    userid = models.IntegerField(blank = False, default = 0)
+    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "fav_user_rel")
+
+    group_id = models.IntegerField(blank = False, default = 0)
+    group_rel = models.ForeignKey(Groups, default = 0, related_name = "fav_group_rel")
+
+    date_created = models.DateField(auto_now_add=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'fid': self.id,
+
+            'userid': self.userid,
+            'user': self.user_rel.serialize,
+            'groupid': self.group_id,
+            'group_rel': self.group_rel.serialize,
+            'date_created': self.date_created
+        }
+
+    class Meta:
+        db_table = "favorite_groups"
+
+
 # --- #
 # --- #
 
@@ -177,26 +367,35 @@ class FollowRequests(models.Model):
     class Meta:
         db_table = "follow_requests"
 
-# ---
+# ------- #
+# ------- #
+
 
 class Posts(models.Model):
 
-    POST_TYPES = (
-        ('Text', 'Text'),
-        ('Photo', 'Photo'),
-        ('Video', 'Video'),
-        ('Audio', 'Audio'),
+    OwnerType = (
+        ('Account', 'Account'),
+        ('Group', 'Group'),
     )
 
-    owner = models.ForeignKey(Accounts, default = 0, related_name = "post_owner")
-    ownerid = models.IntegerField(blank = False, default = 0)
+    PostTypes = (
+        ('Text', 'Text'),
+        ('Photo', 'Photo'),
+        ('Audio', 'Audio'),
+        ('Video', 'Video'),
+    )
 
+    ownerid = models.IntegerField(blank = False, default = 0)
+    owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+
+    title = models.CharField(max_length = 500, default = '')
     contents = models.CharField(max_length = 500, default = '')
-    attachment = models.CharField(max_length = 500, default = '')
-    attachment_type = models.CharField(max_length = 500, default = '')
     link = models.CharField(max_length = 500, default = '')
 
-    type = models.CharField(max_length = 20, choices = POST_TYPES, default = '')
+    attachment = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(max_length = 500, default = '')
+
+    post_type = models.CharField(max_length = 20, choices = PostTypes, default = '')
     status = models.CharField(max_length = 20, default = 'public') # either public, private, or deleted
 
     date_created = models.DateField(auto_now_add=True)
@@ -208,12 +407,14 @@ class Posts(models.Model):
             'p_id': self.id,
 
             'ownerid': self.ownerid,
-            'owner': self.owner.serialize,
+            'owner': returnModelSerialized( self.owner_type , self.ownerid ),
+            'owner_type': self.owner_type,
+            'title': self.title,
             'contents': self.contents,
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,
             'link': self.link,
-            'type': self.type,
+            'post_type': self.post_type,
             'status': self.status,
             'date_created': self.date_created,
             'last_active': self.last_active
@@ -226,11 +427,16 @@ class Posts(models.Model):
 
 class Comments(models.Model):
 
-    owner = models.ForeignKey(Accounts, default = 0, related_name = "comment_owner", blank = False)
+    OwnerType = (
+        ('Account', 'Account'),
+        ('Group', 'Group'),
+    )
+
     ownerid = models.IntegerField(blank = False, default = 0)
+    owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
 
     post_id = models.IntegerField(blank = False, default = 0)
-    post_rel = models.ForeignKey(Posts, default = 0, blank = False)
+    post_rel = models.ForeignKey(Posts, default = 0, on_delete = models.CASCADE, blank = False)
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
@@ -245,7 +451,8 @@ class Comments(models.Model):
             'comment_id': self.id,
 
             'ownerid': self.ownerid,
-            'owner': self.owner.serialize,
+            'owner': returnModelSerialized( self.owner_type , self.ownerid ),
+            'owner_type': self.owner_type,
             'post_id': self.post_id,
             'post_rel': self.post_rel.serialize,
             'contents': self.contents,
@@ -262,11 +469,16 @@ class Comments(models.Model):
 
 class Replies(models.Model):
 
-    owner = models.ForeignKey(Accounts, default = 0, related_name = "reply_owner", blank = False)
+    OwnerType = (
+        ('Account', 'Account'),
+        ('Group', 'Group'),
+    )
+
     ownerid = models.IntegerField(blank = False, default = 0)
+    owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
 
     comment_id = models.IntegerField(blank = False, default = 0)
-    comment_rel = models.ForeignKey(Comments, default = 0, blank = False)
+    comment_rel = models.ForeignKey(Comments, default = 0, on_delete = models.CASCADE, blank = False)
 
     contents = models.CharField(max_length = 500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
@@ -281,7 +493,8 @@ class Replies(models.Model):
             'reply_id': self.id,
 
             'ownerid': self.ownerid,
-            'owner': self.owner.serialize,
+            'owner': returnModelSerialized( self.owner_type , self.ownerid ),
+            'owner_type': self.owner_type,
             'comment_id': self.comment_id,
             'comment_rel': self.comment_rel.serialize,
             'contents': self.contents,
@@ -298,10 +511,23 @@ class Replies(models.Model):
 
 class Likes(models.Model):
 
-    owner = models.ForeignKey(Accounts, default = 0, related_name = "like_owner")
-    ownerid = models.IntegerField(blank = False, default = 0)
+    OwnerType = (
+        ('Account', 'Account'),
+        ('Group', 'Group'),
+    )
 
-    item_type = models.CharField(blank = False, default = '', max_length = 50)
+    ContentType = (
+        ('Post', 'Post'),
+        ('Comment', 'Comment'),
+        ('Reply', 'Reply'),
+        ('Group', 'Group'),
+        ('Event', 'Event'),
+    )
+
+    ownerid = models.IntegerField(blank = False, default = 0)
+    owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+
+    item_type = models.CharField(choices = ContentType, blank = False, default = '', max_length = 50)
     item_id = models.IntegerField(blank = False, default = 0)
 
     date_created = models.DateField(auto_now_add=True)
@@ -313,8 +539,9 @@ class Likes(models.Model):
             'like_id': self.id,
 
             'ownerid': self.ownerid,
-            'owner': self.owner.serialize,
-            'item_type': self.item_type,
+            'owner': returnModelSerialized( self.owner_type , self.ownerid ),
+            'owner_type': self.owner_type,
+            'item_type': self.item_type.serialize,
             'item_id': self.item_id,
             'date_created': self.date_created,
             'last_active': self.last_active
@@ -324,6 +551,97 @@ class Likes(models.Model):
         db_table = "likes"
 
 # ---
+
+class Events(models.Model):
+
+    OwnerType = (
+        ('Account', 'Account'),
+        ('Group', 'Group'),
+    )
+
+    ownerid = models.IntegerField(blank = False, default = 0)
+    owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+
+    title = models.CharField(max_length = 500, default = '')
+    desc = models.CharField(max_length = 500, default = '')
+    attachment = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(max_length = 500, default = '')
+    link = models.CharField(max_length = 500, default = '')
+
+    categories = models.CharField(max_length = 500, default = '')
+
+    start_datetime = models.DateField(blank = False, default = 0)
+    end_datetime = models.DateField(blank = False, default = 0)
+
+    status = models.CharField(max_length = 20, default = 'upcoming')
+    # either upcoming, live, or ended
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            'eid': self.id,
+
+            'ownerid': self.ownerid,
+            'owner': returnModelSerialized( self.owner_type , self.ownerid ),
+            'owner_type': self.owner_type,
+            'tilte': self.title,
+            'desc': self.desc,
+            'attachment': self.attachment,
+            'attachment_type': self.attachment_type,
+            'link': self.link,
+            'categories': self.categories,
+            'start_datetime': self.start_datetime,
+            'end_datetime': self.end_datetime,
+            'status': self.status,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
+
+    class Meta:
+        db_table = "events"
+
+# ---
+
+
+class EventAttendees(models.Model):
+
+    OwnerType = (
+        ('Account', 'Account'),
+        ('Group', 'Group'),
+    )
+
+    event_id = models.IntegerField(blank = False, default = 0)
+    event_rel = models.ForeignKey(Events, default = 0, related_name = "event_rel")
+
+    attendee_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+    attendee_id = models.IntegerField(blank = False, default = 0)
+
+    date_created = models.DateField(auto_now_add=True)
+    last_active = models.DateField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            'aid': self.id,
+
+            'evenr_rel': self.event_rel.serialize,
+            'event_id': self.event_id,
+            'attendee': returnModelSerialized( self.attendee_type, self.attendee_id ),
+            'attendee_id': self.attendee_id,
+            'attendee_type': self.attendee_type,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
+
+    class Meta:
+        db_table = "event_attendees"
+
+
+# ------- #
+# ------- #
 
 class Conversations(models.Model):
 
@@ -441,134 +759,6 @@ class Notifications(models.Model):
 
     class Meta:
         db_table = "notifications"
-
-# ---
-
-class Groups(models.Model):
-
-    owner_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_owner") # on_delete = models.CASCADE
-    ownerid = models.IntegerField(blank = False, default = 0)
-
-    displayname = models.CharField(max_length = 1725, default = '')
-    desc = models.CharField(max_length = 1725, default = '')
-    uname = models.CharField(max_length = 1725, default = '')
-    categories = models.CharField(max_length = 1725, default = '')
-
-    avi = models.CharField(max_length = 1725, default = '')
-    background = models.CharField(max_length = 1725, default = '')
-
-    date_created = models.DateField(auto_now_add=True)
-    last_active = models.DateField(auto_now=True)
-
-    @property
-    def serialize(self):
-         # Returns Data Object In Proper Format
-        return {
-            'gid': self.id,
-            'displayname': self.displayname,
-            'uname': self.uname,
-            'desc': self.desc,
-            'avi': self.avi,
-            'background': self.background,
-            'categories': self.categories.split(';'),
-            'owner': self.owner_rel.serialize
-        }
-
-    class Meta:
-        db_table = "groups"
-
-# ---
-
-class GroupInvitations(models.Model):
-
-    group_id = models.IntegerField(blank = False, default = 0)
-    group_rel = models.ForeignKey(Groups, default = 0, related_name = "i_group_rel")
-
-    userid = models.IntegerField(blank = False, default = 0)
-    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "i_group_user")
-
-    date_created = models.DateField(auto_now_add=True)
-    last_active = models.DateField(auto_now=True)
-
-    @property
-    def serialize(self):
-         # Returns Data Object In Proper Format
-        return {
-            'gid': self.id,
-
-            'group_id': self.group_id,
-            'group_rel': self.group_rel.serialize,
-            'userid': self.userid,
-            'user_rel': self.user_rel.serialize,
-            'date_created': self.date_created,
-            'last_active': self.last_active
-            #'linkName': self.bio_link_name,
-        }
-
-    class Meta:
-        db_table = "group_invitations"
-
-# ---
-
-class GroupRequests(models.Model):
-
-    group_id = models.IntegerField(blank = False, default = 0)
-    group_rel = models.ForeignKey(Groups, default = 0, related_name = "r_group_rel")
-
-    userid = models.IntegerField(blank = False, default = 0)
-    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "r_group_user")
-
-    date_created = models.DateField(auto_now_add=True)
-    last_active = models.DateField(auto_now=True)
-
-    @property
-    def serialize(self):
-         # Returns Data Object In Proper Format
-        return {
-            'gid': self.id,
-
-            'group_id': self.group_id,
-            'group_rel': self.group_rel.serialize,
-            'userid': self.userid,
-            'user_rel': self.user_rel.serialize,
-            'date_created': self.date_created,
-            'last_active': self.last_active
-            #'linkName': self.bio_link_name,
-        }
-
-    class Meta:
-        db_table = "group_requests"
-
-# ---
-
-class GroupMembers(models.Model):
-
-    group_id = models.IntegerField(blank = False, default = 0)
-    group_rel = models.ForeignKey(Groups, default = 0, related_name = "group_member_rel")
-
-    userid = models.IntegerField(blank = False, default = 0)
-    user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user_rel")
-
-    date_created = models.DateField(auto_now_add=True)
-    last_active = models.DateField(auto_now=True)
-
-    @property
-    def serialize(self):
-         # Returns Data Object In Proper Format
-        return {
-            'gmid': self.id,
-
-            'group_id': self.group_id,
-            'group_rel': self.group_rel.serialize,
-            'userid': self.userid,
-            'user_rel': self.user_rel.serialize,
-            'date_created': self.date_created,
-            'last_active': self.last_active
-            #'linkName': self.bio_link_name,
-        }
-
-    class Meta:
-        db_table = "group_members"
 
 # ---
 

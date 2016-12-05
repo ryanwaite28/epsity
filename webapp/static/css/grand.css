@@ -283,6 +283,13 @@
   height: 100%;
 }
 
+.max-w2 {
+  max-width: 100%;
+}
+.max-h2 {
+  max-height: 100%;
+}
+
 .float-left {
   float: left;
 }
@@ -291,4 +298,11 @@
 }
 .float-none {
   float: none;
+}
+
+.spacr-1 {
+  width: 725px;
+  max-width: 95%;
+  display: block;
+  margin: auto;
 }

@@ -96,6 +96,10 @@ followStates = {
         'msg': 'Follow',
         'action': 'followUser',
         'title': 'Follow User'
+    },
+    'options': {
+        'accept': 'acceptFollow',
+        'decline': 'declineFollow'
     }
 }
 
@@ -157,7 +161,42 @@ groupStates = {
     }
 }
 
+postTypes = {
+    'text': 'Text',
+    'photo': 'Photo',
+    'audio': 'Audio',
+    'video': 'Video',
+    'link': 'Link'
+}
+
+ownerTypes = {
+    'account': 'Account',
+    'group': 'Group'
+}
+
+mediaTypes = {
+    'photo': 'Photo',
+    'audio': 'Audio',
+    'video': 'Video'
+}
+
+
+# Master Dictionary
+masterDICT = {
+    'pages': pages,
+    'localPaths': localPaths,
+    'serverPaths': serverPaths,
+    'followStates': followStates,
+    'groupStates': groupStates,
+    'postTypes': postTypes,
+    'ownerTypes': ownerTypes,
+    'mediaTypes': mediaTypes,
+}
+
 # --- #
+
+def processFileUpload(file):
+    '''  '''
 
 def errorPage(request, msg = None):
     if msg == None or msg == '' or request.method == 'POST':
