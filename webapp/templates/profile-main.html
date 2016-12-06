@@ -154,16 +154,26 @@
                     <p>&nbsp;</p>
                     <p class="text-grey"><em>{{ p.date_created }}</em></p>
                     <p class="">
-                      <span class="transition btn-s1 like-btn-o btn-action" data-like-status="{{ p.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
+                      <span class="transition btn-s1 like-btn-o like-btn" data-like-status="{{ p.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
                         <i class="fa fa-heart" aria-hidden="true"></i> Like
                       </span>
-                      <span class="transition btn-s1 comment-btn-1 btn-action" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-status="{{ p.status }}">
-                        <i class="fa fa-comments" aria-hidden="true"></i> Comment
+                      <span data-toggle="collapse" data-target="#cmdv-{{ p.p_id }}" class="transition btn-s1 comment-btn-1 like-btn" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
+                        <i class="fa fa-comments" aria-hidden="true"></i> Comments
                       </span>
                     </p>
-                  </div>
-                  <div class="col-sm-12">
+                    <hr>
+                    <p class="">
+                      <span>{{ p.likes }} Likes</span> |
+                      <span>{{ p.comments }} Comments</span>
+                    </p>
+                    <hr>
+                    <div class="collapse" id="cmdv-{{ p.p_id }}">
 
+                    </div>
+                    <hr>
+                    <div>
+                      <textarea class="max-w input-t-s1 transition" data-elm-kind="add-comment-box" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}" class="btn btn-default transition" placeholder="Add Comment..."></textarea>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -31,6 +31,14 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
           console.log(resp);
           $scope.interestsList = resp.interests;
           $scope.seekingList = resp.seeking;
+
+          if( $scope.interestsList[0] == '' ) {
+            $scope.interestsList = [];
+          }
+          if(  $scope.seekingList[0] == '' ) {
+            $scope.seekingList = [];
+          }
+
           $scope.groupsList = resp.groups;
 
           $scope.$apply();

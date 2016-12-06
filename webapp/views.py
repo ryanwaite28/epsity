@@ -5,6 +5,7 @@
 import os, sys, cgi, random, string, hashlib, json
 import webapp
 
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.http import JsonResponse
@@ -97,6 +98,9 @@ def profileMain(request):
             you = Accounts.objects.get(uname = request.session['username'])
 
             following = Follows.objects.filter(userid=you.id)
+
+            #POSTS = Posts.objects.filter(ownerid = [f.follow_id for f in following])
+
             feed = []
 
             for f in following:
@@ -105,9 +109,19 @@ def profileMain(request):
                 .order_by('-date_created')[:15]
 
                 for p in posts:
+                    p = p.serialize
+
+                    likes = len( Likes.objects \
+                    .filter(item_type=p['post_type'], item_id=p['p_id']) )
+
+                    comments = len( Comments.objects.filter(post_id=p['p_id']) )
+
+                    p['likes'] = likes
+                    p['comments'] = comments
+
                     feed.append( p )
 
-            feed = [f.serialize for f in feed]
+            # feed = [f.serialize for f in feed]
 
             suggestedGroups = []
 
@@ -173,6 +187,14 @@ def profileHome(request):
 
             posts = [p.serialize for p in posts]
             for p in posts:
+                likes = len( Likes.objects \
+                .filter(item_type=p['post_type'], item_id=p['p_id']) )
+
+                comments = len( Comments.objects.filter(post_id=p['p_id']) )
+
+                p['likes'] = likes
+                p['comments'] = comments
+
                 checkLike = Likes.objects \
                 .filter(item_type=masterDICT['contentTypes']['post'],
                         item_id=p['p_id'],
