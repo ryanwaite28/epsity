@@ -15,7 +15,7 @@
   <script src="/static/js/grand.js"></script>
   <script src="/static/js/profile.js"></script>
   <script src="/static/js/controllers/profile-home-ctrl.js"></script>
-  <script src="/static/js/controllers/posts-ctrl.js"></script>
+
 </head>
 
   <body ng-app="epsityApp" ng-controller="profileHomeCtrl" class="transition">
@@ -119,7 +119,7 @@
               </div>
             </div>
 
-            <div ng-controller="postsCtrl" class="col-md-6" id="prof-mainbar">
+            <div class="col-md-6" id="prof-mainbar">
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <h4 class="text-center">Create Post</h4>
                 <p class="no-marg text-center p-emp-1"><i data-toggle="collapse" data-target="#new-post-div" class="rotator fa fa-chevron-circle-down transition" aria-hidden="true"></i></p>
@@ -142,7 +142,7 @@
                     <input class="middlr input-t-s1" type="text" name="title" placeholder="Title..."/><br>
                     <textarea style="min-height: 100px;" class="middlr input-t-s1" type="middlr" name="contents" placeholder="Contents..."></textarea><br>
                     <input class="middlr input-t-s1" type="text" name="link"  placeholder="Add a Link If You Want..."/><br>
-                    <input class="middlr btn btn-default transition" type="file" name="media"/><br>
+                    <input style="display: none;" class="middlr btn btn-default transition" type="file" name="media"/><br>
                     <input type="hidden" name="owner_type" value="Account"/>
                     <input type="hidden" name="origin" value=""/>
                     <input class="btn btn-success transition middlr" type="button" value="Create Post" ng-click="createUserPost()"/>
@@ -151,63 +151,7 @@
 
               </div>
 
-              {% for p in posts %}
-              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <div class="row">
-                  <div class="col-sm-3">
-                    <img width="100px"  class="middlr brd-bl" src="{{ p.owner.avi }}"/><br>
-                    <p class="text-center">{{ p.owner.uname }}</p>
-                  </div>
-                  <div class="col-sm-9">
-                    <h3><strong>{{ p.title }}</strong></h3>
-                    <p>{{ p.contents }}</p>
-                    <br>
-
-                      {% if p.attachment_type == 'Audio' %}
-                      <div class="polaroid-3 brd-bl">
-                        <audio class="smb-1 max-w" controls>
-                          <source src="{{ p.attachment }}" type="">
-                        </audio>
-                      </div>
-                      {% elif p.attachment_type == 'Video' %}
-                      <div class="polaroid-3 brd-bl">
-                        <video class="smb-1 max-w" width="320" height="240" controls>
-                          <source src="{{ p.attachment }}" type="">
-                        </video>
-                      </div>
-                      {% elif p.attachment_type == 'Photo' %}
-                      <div class="polaroid-3 brd-bl">
-                        <img class="smb-1 max-w" src="{{ p.attachment }}"/>
-                      </div>
-                      {% endif %}
-
-                    <p>&nbsp;</p>
-                    <p class="text-grey"><em>{{ p.date_created }}</em></p>
-                    <p class="">
-                      <span class="transition btn-s1 like-btn-o like-btn" data-like-status="{{ p.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
-                        <i class="fa fa-heart" aria-hidden="true"></i> Like
-                      </span>
-                      <span data-toggle="collapse" data-target="#cmdv-{{ p.p_id }}" class="transition btn-s1 comment-btn-1 like-btn" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
-                        <i class="fa fa-comments" aria-hidden="true"></i> Comments
-                      </span>
-                    </p>
-                    <hr>
-                    <p class="">
-                      <span>{{ p.likes }} Likes</span> |
-                      <span>{{ p.comments }} Comments</span>
-                    </p>
-                    <hr>
-                    <div class="collapse" id="cmdv-{{ p.p_id }}">
-
-                    </div>
-                    <hr>
-                    <div>
-                      <textarea class="max-w input-t-s1 transition" data-elm-kind="add-comment-box" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}" class="btn btn-default transition" placeholder="Add Comment..."></textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {% endfor %}
+              {% include 'posts-1.html' %}
 
             </div>
 

@@ -21,6 +21,7 @@
   {% else %}
     <script src="/static/js/controllers/user-page-ctrl.js"></script>
   {% endif %}
+
   <script src="/static/js/controllers/messages-ctrl.js"></script>
 </head>
 
@@ -145,15 +146,8 @@
           <br>
 
           <div style="min-height: 100vh;" class="row no-padd">
-            <div class="col-md-3" id="prof-sidebar">
-
-            </div>
-            <div class="col-md-9" id="prof-mainbar">
-              <div class="padd-1 mk-rel sdw-1 bg-white">
-                <p class="text-center">Post Feed</p>
-                <hr>
-
-              </div>
+            <div class="col-md-8 col-md-offset-2" id="prof-mainbar">
+              {% include 'posts-1.html' %}
             </div>
           </div>
 

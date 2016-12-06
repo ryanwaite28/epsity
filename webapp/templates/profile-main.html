@@ -15,7 +15,7 @@
   <script src="/static/js/grand.js"></script>
   <script src="/static/js/profile.js"></script>
   <script src="/static/js/controllers/profile-main-ctrl.js"></script>
-  <script src="/static/js/controllers/posts-ctrl.js"></script>
+
 </head>
 
   <body ng-app="epsityApp" ng-controller="profileMainCtrl" class="transition">
@@ -39,50 +39,12 @@
                   <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
                   <p class="text-center">{{ you.displayname }}</p>
                 </div>
-                <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                  <p class="text-center"><strong>Similar Interests</strong></p>
-                  <hr class="hr-grey">
-                  <ul class="ul-raw">
-                    {% for u in similar %}
-                    <li class="sample-li-s1">
-                      <div class="row">
-                        <div class="col-xs-4">
-                          <img class="max-w" src="{{ u.avi }}"/>
-                        </div>
-                        <div class="col-xs-8">
-                          <p><strong>
-                            <a title="See {{ u.uname }} Page" href="/users/{{ u.uname }}">{{ u.uname }}</a>
-                          </strong></p>
-                          <a class="btn btn-sm btn-info">_action_</a>
-                        </div>
-                      </div>
-                      <br>
-                    </li>
-                    {% endfor %}
-                  </ul>
-                  <p><a title="" href="">See more</a></p>
-                </div>
 
                 <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                  <p class="text-center"><strong>Suggested Groups</strong></p>
+                  <p class="text-center"><strong>Latest Events</strong></p>
                   <hr class="hr-grey">
-                  <ul class="ul-raw">
-                    {% for g in suggestedGroups %}
-                    <li class="sample-li-s1">
-                      <div class="row">
-                        <div class="col-xs-4">
-                          <img class="max-w" src="{{ g.avi }}"/>
-                        </div>
-                        <div class="col-xs-8">
-                          <p><strong>
-                            <a title="See {{ g.uname }} Page" href="/groups/{{ g.uname }}">{{ g.uname }}</a>
-                          </strong></p>
-                          <a class="btn btn-sm btn-info">Request Invite</a>
-                        </div>
-                      </div>
-                      <br>
-                    </li>
-                    {% endfor %}
+                  <ul>
+
                   </ul>
                   <p><a title="" href="">See more</a></p>
                 </div>
@@ -94,90 +56,60 @@
 
             <div id="prof-sidebar2" class="col-md-3">
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <p class="text-center"><strong>Trending Topics</strong></p>
+                <p class="text-center"><strong>Similar Interests</strong></p>
                 <hr class="hr-grey">
-                <ul>
-
+                <ul class="ul-raw">
+                  {% for u in similar %}
+                  <li class="sample-li-s1">
+                    <div class="row">
+                      <div class="col-xs-4">
+                        <img class="max-w" src="{{ u.avi }}"/>
+                      </div>
+                      <div class="col-xs-8">
+                        <p><strong>
+                          <a title="See {{ u.uname }} Page" href="/users/{{ u.uname }}">{{ u.uname }}</a>
+                        </strong></p>
+                        <a class="btn btn-sm btn-info">_action_</a>
+                      </div>
+                    </div>
+                    <br>
+                  </li>
+                  {% endfor %}
                 </ul>
                 <p><a title="" href="">See more</a></p>
               </div>
 
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <p class="text-center"><strong>Latest Events</strong></p>
+                <p class="text-center"><strong>Suggested Groups</strong></p>
                 <hr class="hr-grey">
-                <ul>
-
+                <ul class="ul-raw">
+                  {% for g in suggestedGroups %}
+                  <li class="sample-li-s1">
+                    <div class="row">
+                      <div class="col-xs-4">
+                        <img class="max-w" src="{{ g.avi }}"/>
+                      </div>
+                      <div class="col-xs-8">
+                        <p><strong>
+                          <a title="See {{ g.uname }} Page" href="/groups/{{ g.uname }}">{{ g.uname }}</a>
+                        </strong></p>
+                        <a class="btn btn-sm btn-info">Request Invite</a>
+                      </div>
+                    </div>
+                    <br>
+                  </li>
+                  {% endfor %}
                 </ul>
                 <p><a title="" href="">See more</a></p>
               </div>
+
+
             </div>
 
             <!--  -->
 
-            <div ng-controller="postsCtrl" class="col-md-6">
-              {% if posts|length == 0 %}
-              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <p class="text-center"><strong>Follow Users/Groups To See Their Posts!</strong></p>
-              </div>
-              {% endif %}
-
-              {% for p in posts %}
-              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <div class="row">
-                  <div class="col-sm-3">
-                    <img width="100px"  class="middlr brd-bl" src="{{ p.owner.avi }}"/><br>
-                    <p class="text-center">{{ p.owner.uname }}</p>
-                  </div>
-                  <div class="col-sm-9">
-                    <h3><strong>{{ p.title }}</strong></h3>
-                    <p>{{ p.contents }}</p>
-                    <br>
-
-                      {% if p.attachment_type == 'Audio' %}
-                      <div class="polaroid-3 brd-bl">
-                        <audio class="smb-1 max-w" controls>
-                          <source src="{{ p.attachment }}" type="">
-                        </audio>
-                      </div>
-                      {% elif p.attachment_type == 'Video' %}
-                      <div class="polaroid-3 brd-bl">
-                        <video class="smb-1 max-w" width="320" height="240" controls>
-                          <source src="{{ p.attachment }}" type="">
-                        </video>
-                      </div>
-                      {% elif p.attachment_type == 'Photo' %}
-                      <div class="polaroid-3 brd-bl">
-                        <img class="smb-1 max-w" src="{{ p.attachment }}"/>
-                      </div>
-                      {% endif %}
-
-                    <p>&nbsp;</p>
-                    <p class="text-grey"><em>{{ p.date_created }}</em></p>
-                    <p class="">
-                      <span class="transition btn-s1 like-btn-o like-btn" data-like-status="{{ p.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
-                        <i class="fa fa-heart" aria-hidden="true"></i> Like
-                      </span>
-                      <span data-toggle="collapse" data-target="#cmdv-{{ p.p_id }}" class="transition btn-s1 comment-btn-1 like-btn" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
-                        <i class="fa fa-comments" aria-hidden="true"></i> Comments
-                      </span>
-                    </p>
-                    <hr>
-                    <p class="">
-                      <span>{{ p.likes }} Likes</span> |
-                      <span>{{ p.comments }} Comments</span>
-                    </p>
-                    <hr>
-                    <div class="collapse" id="cmdv-{{ p.p_id }}">
-
-                    </div>
-                    <hr>
-                    <div>
-                      <textarea class="max-w input-t-s1 transition" data-elm-kind="add-comment-box" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}" class="btn btn-default transition" placeholder="Add Comment..."></textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {% endfor %}
+            <div class="col-md-6">
+              {% include 'posts-1.html' %}
             </div>
           </div>
 

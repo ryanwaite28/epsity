@@ -96,64 +96,53 @@ def profileMain(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
-
             following = Follows.objects.filter(userid=you.id)
 
-            #POSTS = Posts.objects.filter(ownerid = [f.follow_id for f in following])
+            # --- #
 
-            feed = []
+            posts = Posts.objects \
+            .filter( Q( ownerid = you.id ) | Q(ownerid__in = [f.follow_id for f in following]) ) \
+            .order_by('-date_created')[:10]
+            posts = [p.serialize for p in posts]
+            for p in posts:
+                likes = len( Likes.objects \
+                .filter(item_type=p['post_type'], item_id=p['p_id']) )
+                comments = len( Comments.objects.filter(post_id=p['p_id']) )
+                p['likes'] = likes
+                p['comments'] = comments
+                print p['date_created']
 
-            for f in following:
-                posts = Posts.objects \
-                .filter(ownerid = f.follow_id) \
-                .order_by('-date_created')[:15]
-
-                for p in posts:
-                    p = p.serialize
-
-                    likes = len( Likes.objects \
-                    .filter(item_type=p['post_type'], item_id=p['p_id']) )
-
-                    comments = len( Comments.objects.filter(post_id=p['p_id']) )
-
-                    p['likes'] = likes
-                    p['comments'] = comments
-
-                    feed.append( p )
-
-            # feed = [f.serialize for f in feed]
+            # --- #
 
             suggestedGroups = []
-
             seeking = you.seeking.split(';')
+            if seeking == ['']:
+                seeking = []
             for s in seeking:
                 groups = Groups.objects \
                 .exclude(ownerid = you.id) \
                 .filter(categories__contains = s)[:1]
-
                 for g in groups:
-                    suggestedGroups.append( g )
+                    suggestedGroups.append( g.serialize )
+            suggestedGroups = suggestedGroups[:5]
 
-            suggestedGroups = [s.serialize for s in suggestedGroups]
-
-            # print suggestedGroups
+            # --- #
 
             su = []
-
             interests = you.interests.split(';')
+            if interests == ['']:
+                interests = []
             for i in interests:
                 users = Accounts.objects \
                 .exclude(id = you.id) \
                 .filter(interests__contains=i)[:1]
                 for u in users:
-                    su.append( u )
-
-            su = [s.serialize for s in su]
-            print su
+                    su.append( u.serialize )
+            su = su[:5]
 
             return render(request, masterDICT['pages']['profileMain'],
                             {'you': you,
-                            'posts': feed,
+                            'posts': posts,
                             'suggestedGroups': suggestedGroups,
                             'similar': su
                             },
@@ -199,7 +188,7 @@ def profileHome(request):
                 .filter(item_type=masterDICT['contentTypes']['post'],
                         item_id=p['p_id'],
                         owner_type=masterDICT['ownerTypes']['account'],
-                        ownerid=p['ownerid']).first()
+                        ownerid=you.id).first()
 
                 if checkLike != None:
                     p['like_status'] = masterDICT['statuses']['like']['liked']
@@ -243,6 +232,32 @@ def userPage(request, query):
             following = Follows.objects.filter(userid=user.id)
             groups = GroupMembers.objects.filter(userid=user.id)
 
+            posts = Posts.objects \
+            .filter(ownerid = user.id) \
+            .order_by('-date_created')[:15]
+
+            posts = [p.serialize for p in posts]
+            for p in posts:
+                likes = len( Likes.objects \
+                .filter(item_type=p['post_type'], item_id=p['p_id']) )
+
+                comments = len( Comments.objects.filter(post_id=p['p_id']) )
+
+                p['likes'] = likes
+                p['comments'] = comments
+
+                checkLike = Likes.objects \
+                .filter(item_type=masterDICT['contentTypes']['post'],
+                        item_id=p['p_id'],
+                        owner_type=masterDICT['ownerTypes']['account'],
+                        ownerid=you.id).first()
+
+                if checkLike != None:
+                    p['like_status'] = masterDICT['statuses']['like']['liked']
+
+                else:
+                    p['like_status'] = masterDICT['statuses']['like']['not_liked']
+
             if user == None:
                 msg = 'User Account Not Found.'
                 return errorPage(request, msg)
@@ -260,7 +275,9 @@ def userPage(request, query):
                                         'info': user.get_info,
                                         'followers': len(followers),
                                         'following': len(following),
-                                        'groups': len(groups)},
+                                        'groups': len(groups),
+                                        'posts': posts
+                                        },
                                         context_instance = RequestContext(request))
                 else:
                     return render(request,
