@@ -24,6 +24,7 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
     var ask = confirm('Are all fields corrects?');
     if( ask == true ) {
+      $('#create-group-form input[name="origin"]').val( location.pathname );
       $('#create-group-form').submit();
     }
 

@@ -115,7 +115,7 @@ def profileMain(request):
             for s in seeking:
                 groups = Groups.objects \
                 .exclude(ownerid = you.id) \
-                .filter(categories__contains = s)
+                .filter(categories__contains = s)[:1]
 
                 for g in groups:
                     suggestedGroups.append( g )
@@ -124,10 +124,24 @@ def profileMain(request):
 
             # print suggestedGroups
 
+            su = []
+
+            interests = you.interests.split(';')
+            for i in interests:
+                users = Accounts.objects \
+                .exclude(id = you.id) \
+                .filter(interests__contains=i)[:1]
+                for u in users:
+                    su.append( u )
+
+            su = [s.serialize for s in su]
+            print su
+
             return render(request, masterDICT['pages']['profileMain'],
                             {'you': you,
                             'posts': feed,
-                            'suggestedGroups': suggestedGroups
+                            'suggestedGroups': suggestedGroups,
+                            'similar': su
                             },
                             context_instance = RequestContext(request))
 
@@ -601,6 +615,10 @@ def userActionAJAX(request):
 
             if data['action'] == 'load messages':
                 return routines.loadMessages(request, data)
+
+
+            msg = 'Unknown Action...'
+            return errorPage(request, msg)
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'

@@ -163,19 +163,23 @@
                     <p>{{ p.contents }}</p>
                     <br>
 
-                    <div class="polaroid-3 brd-bl">
                       {% if p.attachment_type == 'Audio' %}
-                      <audio class="smb-1 max-w" controls>
-                        <source src="{{ p.attachment }}" type="">
-                      </audio>
+                      <div class="polaroid-3 brd-bl">
+                        <audio class="smb-1 max-w" controls>
+                          <source src="{{ p.attachment }}" type="">
+                        </audio>
+                      </div>
                       {% elif p.attachment_type == 'Video' %}
-                      <video class="smb-1 max-w" width="320" height="240" controls>
-                        <source src="{{ p.attachment }}" type="">
-                      </video>
+                      <div class="polaroid-3 brd-bl">
+                        <video class="smb-1 max-w" width="320" height="240" controls>
+                          <source src="{{ p.attachment }}" type="">
+                        </video>
+                      </div>
                       {% elif p.attachment_type == 'Photo' %}
-                      <img class="smb-1 max-w" src="{{ p.attachment }}"/>
+                      <div class="polaroid-3 brd-bl">
+                        <img class="smb-1 max-w" src="{{ p.attachment }}"/>
+                      </div>
                       {% endif %}
-                    </div>
 
                     <p>&nbsp;</p>
                     <p class="text-grey"><em>{{ p.date_created }}</em></p>

@@ -546,10 +546,14 @@ def createGroup(request):
             # print group
             # print group.serialize
 
-        return render(request,
-                    masterDICT['pages']['createview'],
-                    {'you': you, 'message': "New Group Created!"},
-                    context_instance=RequestContext(request))
+        # return render(request,
+        #             masterDICT['pages']['createview'],
+        #             {'you': you, 'message': "New Group Created!"},
+        #             context_instance=RequestContext(request))
+
+        return genericPage(request = request,
+                            msg = 'Group Created!',
+                            redirect=request.POST['origin'])
 
 
     except ObjectDoesNotExist:
@@ -1325,6 +1329,7 @@ def createUserPost(request):
 
         newdoc = None # Default For Message Media
         doctype = ''
+
         if request.FILES:
             media = request.FILES['media']
 
@@ -1346,7 +1351,6 @@ def createUserPost(request):
                                         msg = 'Error - Bad Media File Input.',
                                         redirect=request.POST['origin'])
 
-
                 newdoc.save()
 
             else:
@@ -1354,26 +1358,26 @@ def createUserPost(request):
                                     msg = 'Error - Bad Media File Input.',
                                     redirect=request.POST['origin'])
 
-            # ----- #
+        # ----- #
 
-            newPost = Posts(ownerid = you.id,
-                            owner_type = masterDICT['ownerTypes']['account'],
-                            title = cgi.escape(request.POST['title']),
-                            contents = cgi.escape(request.POST['contents']),
-                            link = request.POST['link'],
-                            post_type = request.POST['post_type'])
+        newPost = Posts(ownerid = you.id,
+                        owner_type = masterDICT['ownerTypes']['account'],
+                        title = cgi.escape(request.POST['title']),
+                        contents = cgi.escape(request.POST['contents']),
+                        link = request.POST['link'],
+                        post_type = request.POST['post_type'])
 
-            if newdoc != None:
-                newPost.attachment = newdoc.docfile.url
+        if newdoc != None:
+            newPost.attachment = newdoc.docfile.url
 
-            if doctype != '':
-                newPost.attachment_type = doctype
+        if doctype != '':
+            newPost.attachment_type = doctype
 
-            newPost.save()
+        newPost.save()
 
-            return genericPage(request = request,
-                                msg = 'Post Created!',
-                                redirect=request.POST['origin'])
+        return genericPage(request = request,
+                            msg = 'Post Created!',
+                            redirect=request.POST['origin'])
 
 
     except ObjectDoesNotExist:

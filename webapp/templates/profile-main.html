@@ -33,15 +33,32 @@
             <div id="prof-sidebar1" class="col-md-3">
               <div class="">
                 <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                  <img id="" class="middlr polaroid-2" title="Profile Image" alt="Profile Image" src="{{ you.avi }}"/>
+                  <a title="See Your Profile" href="/home/">
+                    <img id="" class="middlr polaroid-2" title="Profile Image" alt="Profile Image" src="{{ you.avi }}"/>
+                  </a>
                   <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
                   <p class="text-center">{{ you.displayname }}</p>
                 </div>
                 <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                   <p class="text-center"><strong>Similar Interests</strong></p>
                   <hr class="hr-grey">
-                  <ul>
-
+                  <ul class="ul-raw">
+                    {% for u in similar %}
+                    <li class="sample-li-s1">
+                      <div class="row">
+                        <div class="col-xs-4">
+                          <img class="max-w" src="{{ u.avi }}"/>
+                        </div>
+                        <div class="col-xs-8">
+                          <p><strong>
+                            <a title="See {{ u.uname }} Page" href="/users/{{ u.uname }}">{{ u.uname }}</a>
+                          </strong></p>
+                          <a class="btn btn-sm btn-info">_action_</a>
+                        </div>
+                      </div>
+                      <br>
+                    </li>
+                    {% endfor %}
                   </ul>
                   <p><a title="" href="">See more</a></p>
                 </div>
@@ -116,19 +133,23 @@
                     <p>{{ p.contents }}</p>
                     <br>
 
-                    <div class="polaroid-3 brd-bl">
                       {% if p.attachment_type == 'Audio' %}
-                      <audio class="smb-1 max-w" controls>
-                        <source src="{{ p.attachment }}" type="">
-                      </audio>
+                      <div class="polaroid-3 brd-bl">
+                        <audio class="smb-1 max-w" controls>
+                          <source src="{{ p.attachment }}" type="">
+                        </audio>
+                      </div>
                       {% elif p.attachment_type == 'Video' %}
-                      <video class="smb-1 max-w" width="320" height="240" controls>
-                        <source src="{{ p.attachment }}" type="">
-                      </video>
+                      <div class="polaroid-3 brd-bl">
+                        <video class="smb-1 max-w" width="320" height="240" controls>
+                          <source src="{{ p.attachment }}" type="">
+                        </video>
+                      </div>
                       {% elif p.attachment_type == 'Photo' %}
-                      <img class="smb-1 max-w" src="{{ p.attachment }}"/>
+                      <div class="polaroid-3 brd-bl">
+                        <img class="smb-1 max-w" src="{{ p.attachment }}"/>
+                      </div>
                       {% endif %}
-                    </div>
 
                     <p>&nbsp;</p>
                     <p class="text-grey"><em>{{ p.date_created }}</em></p>
