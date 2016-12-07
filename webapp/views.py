@@ -107,7 +107,17 @@ def profileMain(request):
             for p in posts:
                 likes = len( Likes.objects \
                 .filter(item_type=p['post_type'], item_id=p['p_id']) )
-                comments = len( Comments.objects.filter(post_id=p['p_id']) )
+
+                comments = Comments.objects \
+                .filter(post_id=p['p_id']) \
+                .order_by('-date_created')[:5]
+
+                comments = [c.serialize for c in comments]
+                for c in comments:
+                    replies = Replies.objects \
+                    .filter(comment_id=c['comment_id']) \
+                    .order_by('-date_created')[:5]
+
                 p['likes'] = likes
                 p['comments'] = comments
                 print p['date_created']
@@ -179,7 +189,12 @@ def profileHome(request):
                 likes = len( Likes.objects \
                 .filter(item_type=p['post_type'], item_id=p['p_id']) )
 
-                comments = len( Comments.objects.filter(post_id=p['p_id']) )
+                comments = Comments.objects.filter(post_id=p['p_id'])
+                comments = [c.serialize for c in comments]
+                for c in comments:
+                    replies = Replies.objects \
+                    .filter(comment_id=c['comment_id']) \
+                    .order_by('-date_created')[:5]
 
                 p['likes'] = likes
                 p['comments'] = comments
@@ -655,9 +670,13 @@ def userActionAJAX(request):
             if data['action'] == 'load messages':
                 return routines.loadMessages(request, data)
 
+            if data['action'] == 'addPostCommentUser':
+                return routines.addPostCommentUser(request, data)
 
-            msg = 'Unknown Action...'
-            return errorPage(request, msg)
+
+            else:
+                msg = 'Unknown Action...'
+                return errorPage(request, msg)
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'

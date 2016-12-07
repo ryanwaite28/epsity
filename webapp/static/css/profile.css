@@ -242,7 +242,7 @@ body {
 }
 
 #prof-mainbar div {
-  
+
 }
 
 #menu-c {
@@ -371,10 +371,6 @@ body {
   width: 100%;
 }
 
-.sr-members-img {
-
-}
-
 #send-msg-1 {
   display: block;
   margin: auto;
@@ -407,7 +403,7 @@ body {
 }
 
 .btn-s1 {
-  margin: 5px;
+  margin: 5px 10px 0px 0px;
   padding: 5px 10px;
   border-radius: 3px;
   cursor: pointer;
@@ -442,6 +438,14 @@ body {
 .reply-btn-1 {
   border: 1px solid #d9534f;
   color: #d9534f;
+}
+
+.text-sm-1 {
+  font-size: 11px;
+}
+
+.add-comment-box, .add-reply-box {
+  margin-bottom: 5px;
 }
 
 /* --- */

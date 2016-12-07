@@ -13,7 +13,7 @@
       <p class="text-center"><a title="See {{ p.owner.uname }} Page" href="/users/{{ p.owner.uname }}">{{ p.owner.uname }}</a></p>
     </div>
     <div class="col-sm-9">
-      <h3><strong>{{ p.title }}</strong></h3>
+      <h4><strong>{{ p.title }}</strong></h4>
       <p>{{ p.contents }}</p>
       <br>
 
@@ -36,7 +36,7 @@
         {% endif %}
 
       <p>&nbsp;</p>
-      <p class="text-grey"><em>{{ p.date_created }}</em></p>
+      <p class="text-grey text-sm-1"><em>{{ p.date_created }}</em></p>
       <p class="">
         <span class="transition btn-s1 like-btn-o like-btn" data-like-status="{{ p.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
           <i class="fa fa-heart" aria-hidden="true"></i> Like
@@ -47,17 +47,40 @@
       </p>
       <hr>
       <p class="">
-        <span>{{ p.likes }} Likes</span> |
-        <span>{{ p.comments }} Comments</span>
+        <span><strong>Likes:</strong> {{ p.likes }}</span> |
+        <span><strong>Comments:</strong> {{ p.comments|length }}</span>
       </p>
       <hr>
-      <div class="collapse" id="cmdv-{{ p.p_id }}">
+      <div class="collapse in" id="cmdv-{{ p.p_id }}">
+        <ul id="cmlst-{{ p.p_id }}" class="ul-raw">
+          {% for c in p.comments %}
+          <li class="">
+            <div class="row">
+              <div class="col-xs-2">
+                <img class="brd-bl max-w" src="{{ c.owner.avi }}"/>
+              </div>
+              <div class="col-xs-10">
+                <p><strong>
+                  <a title="See {{ c.owner.uname }} Page" href="/users/{{ c.owner.uname }}">{{ c.owner.uname }}</a>
+                </strong></p>
+                <p>{{ c.contents }}</p>
+                <p class="text-grey text-sm-1">{{ c.date_created }}</p>
+                <ul class="ul-raw">
 
+                </ul>
+                <input id="cmrly-{{ c.comment_id }}" class="add-reply-box block input-t-s1 transition dsp-n" data-elm-kind="add-reply-box" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}" class="btn btn-default transition" placeholder="Add Reply..."/>
+                <input class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}"/>
+              </div>
+            </div>
+            <br>
+          </li>
+          {% endfor %}
+        </ul>
       </div>
       <hr>
       <div>
-        <textarea class="add-comment-box max-w input-t-s1 transition" data-elm-kind="add-comment-box" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}" class="btn btn-default transition" placeholder="Add Comment..."></textarea>
-        <input class="add-comment-btn transition btn btn-sm btn-info" type="button" value="Add" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}"/>
+        <textarea id="cmbox-{{ p.p_id }}" class="add-comment-box block input-t-s1 transition dsp-n" data-elm-kind="add-comment-box" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}" placeholder="Add Comment..."></textarea>
+        <input class="add-comment-btn transition btn btn-sm btn-info" type="button" value="Add Comment" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}"/>
       </div>
     </div>
   </div>

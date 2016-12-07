@@ -313,3 +313,11 @@
 .dsp-n {
   display: none;
 }
+
+.fb-bgc {
+  background: #e9ebee;
+}
+
+.fb-bmc {
+  background: #3b5998;
+}

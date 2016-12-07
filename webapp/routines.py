@@ -1383,3 +1383,28 @@ def createUserPost(request):
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
         return errorPage(request, msg)
+
+
+
+def addPostCommentUser(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        post = Posts.objects.filter(id =  data['info']['post_id']).first()
+
+        if post == None:
+            return JsonResponse({'msg': 'Error - Post Cannot Be Loaded.'})
+
+        newComment = Comments(ownerid = you.id,
+                                owner_type = masterDICT['ownerTypes']['account'],
+                                post_id = post.id,
+                                post_rel = post,
+                                contents = cgi.escape(data['info']['comment']))
+
+        newComment.save()
+
+        return JsonResponse({'msg': 'comment added',
+                                'comment': newComment.serialize})
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
