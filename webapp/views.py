@@ -23,9 +23,10 @@ from models import Posts, Comments, Replies, Likes
 # from forms import PostForm
 
 import routines
+from routines import errorPage, genericPage
 
 from vaults import masterDICT
-from vaults import webapp_dir, errorPage, localPaths, serverPaths
+from vaults import webapp_dir, localPaths, serverPaths
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
 
 # --- ----- --- #
@@ -100,27 +101,8 @@ def profileMain(request):
 
             # --- #
 
-            posts = Posts.objects \
-            .filter( Q( ownerid = you.id ) | Q(ownerid__in = [f.follow_id for f in following]) ) \
-            .order_by('-date_created')[:10]
-            posts = [p.serialize for p in posts]
-            for p in posts:
-                likes = len( Likes.objects \
-                .filter(item_type=p['post_type'], item_id=p['p_id']) )
-
-                comments = Comments.objects \
-                .filter(post_id=p['p_id']) \
-                .order_by('-date_created')[:5]
-
-                comments = [c.serialize for c in comments]
-                for c in comments:
-                    replies = Replies.objects \
-                    .filter(comment_id=c['comment_id']) \
-                    .order_by('-date_created')[:5]
-
-                p['likes'] = likes
-                p['comments'] = comments
-                print p['date_created']
+            feed = routines.loadFeed_one(you.id, you)
+            # print posts
 
             # --- #
 
@@ -152,7 +134,7 @@ def profileMain(request):
 
             return render(request, masterDICT['pages']['profileMain'],
                             {'you': you,
-                            'posts': posts,
+                            'posts': feed,
                             'suggestedGroups': suggestedGroups,
                             'similar': su
                             },
@@ -184,35 +166,9 @@ def profileHome(request):
             .filter(ownerid = you.id) \
             .order_by('-date_created')[:15]
 
-            posts = [p.serialize for p in posts]
-            for p in posts:
-                likes = len( Likes.objects \
-                .filter(item_type=p['post_type'], item_id=p['p_id']) )
-
-                comments = Comments.objects.filter(post_id=p['p_id'])
-                comments = [c.serialize for c in comments]
-                for c in comments:
-                    replies = Replies.objects \
-                    .filter(comment_id=c['comment_id']) \
-                    .order_by('-date_created')[:5]
-
-                p['likes'] = likes
-                p['comments'] = comments
-
-                checkLike = Likes.objects \
-                .filter(item_type=masterDICT['contentTypes']['post'],
-                        item_id=p['p_id'],
-                        owner_type=masterDICT['ownerTypes']['account'],
-                        ownerid=you.id).first()
-
-                if checkLike != None:
-                    p['like_status'] = masterDICT['statuses']['like']['liked']
-
-                else:
-                    p['like_status'] = masterDICT['statuses']['like']['not_liked']
-
-            # print [p.serialize for p in posts]
+            posts = routines.loadUserPosts_one(you.id, you)
             # print posts
+
 
             return render(request, masterDICT['pages']['profileHome'],
                             {'you': you,
@@ -672,6 +628,9 @@ def userActionAJAX(request):
 
             if data['action'] == 'addPostCommentUser':
                 return routines.addPostCommentUser(request, data)
+
+            if data['action'] == 'addCommentReplyUser':
+                return routines.addCommentReplyUser(request, data)
 
 
             else:

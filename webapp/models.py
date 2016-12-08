@@ -14,7 +14,7 @@ from django.db.models import Model
 from django.utils import timezone
 import hashlib
 
-from vaults import webapp_dir, pages, errorPage, localPaths, serverPaths
+from vaults import webapp_dir, pages, localPaths, serverPaths
 from vaults import ownerTypes
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType

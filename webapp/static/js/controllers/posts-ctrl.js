@@ -19,14 +19,24 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       var id = "#cmbox-" + $(this).data('post-id');
       var input = $(id);
 
-      $(input).css('display', 'block');
+      if( $(input).css('display') == 'none' ) {
+        $(input).css('display', 'block');
+      }
+      else {
+        $(input).css('display', 'none');
+      }
     });
 
     $('.add-reply-btn').click(function(){
       var id = "#cmrly-" + $(this).data('comment-id');
       var input = $(id);
 
-      $(input).css('display', 'block');
+      if( $(input).css('display') == 'none' ) {
+        $(input).css('display', 'block');
+      }
+      else {
+        $(input).css('display', 'none');
+      }
     });
 
   });
@@ -39,7 +49,7 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
     }
 
     var input = $(this);
-    var comment = input.val();
+    var comment = trimTrailingSpaces( input.val() );
 
     var dataObj = {
       post_id: input.data('post-id'),
@@ -54,6 +64,7 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
         return;
       }
       else {
+        dataObj.comment = comment;
         $scope.addPostCommentUser(input , dataObj);
       }
     }
@@ -65,6 +76,8 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
     }
 
     var input = $(this);
+    var reply = trimTrailingSpaces( input.val() );
+
 
     var dataObj = {
       comment_id: input.data('comment-id'),
@@ -72,12 +85,13 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       commenttOwner_type: input.data('owner-type')
     }
 
-    if( comment.replace(/\s/g, '').length > 0 ) {
-      if( comment.length > 500 ) {
-        alert('The Max Length For A Comment Is 500 Characters.');
+    if( reply.replace(/\s/g, '').length > 0 ) {
+      if( reply.length > 500 ) {
+        alert('The Max Length For A Reply Is 500 Characters.');
         return;
       }
       else {
+        dataObj.reply = reply;
         $scope.addCommentReplyUser(input , dataObj);
       }
     }
@@ -96,7 +110,6 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       return;
     }
 
-    dataObj.comment = $(inputELM).val();
     console.log(dataObj);
     // return;
 
@@ -111,6 +124,42 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       },
       data: {
         action: 'addPostCommentUser',
+        info: dataObj,
+        csrfmiddlewaretoken: Cookies.get('csrftoken'),
+      }
+    }
+
+    $http(req).then(function(resp){
+      // Success Callback
+      console.log(resp);
+      $(inputELM).val('');
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
+  }
+
+  $scope.addCommentReplyUser = function(inputELM, dataObj) {
+    if( inputELM == undefined || dataObj == undefined ) {
+      console.log('Missing Inputs...');
+      return;
+    }
+
+    console.log(dataObj);
+    // return;
+
+    var req = {
+      method: 'POST',
+      url: '/action/ajax/',
+      headers: {
+        'Content-Type': 'application/json',
+        'responseType': 'json',
+        "Accept" : "application/json",
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      data: {
+        action: 'addCommentReplyUser',
         info: dataObj,
         csrfmiddlewaretoken: Cookies.get('csrftoken'),
       }

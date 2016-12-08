@@ -182,13 +182,23 @@ mediaTypes = {
 
 contentTypes = {
     'post': 'Post',
+    'comment': 'Comment',
+    'reply': 'Reply',
     'event': 'Event',
 }
 
 statuses = {
     'like': {
-        'liked': 'liked',
-        'not_liked': 'not_liked'
+        'liked': {
+            'msg': 'not_liked',
+            'text': 'Liked',
+            'action': 'unlike'
+        },
+        'not_liked': {
+            'msg': 'not_liked',
+            'text': 'Like',
+            'action': 'like'
+        }
     }
 }
 
@@ -207,27 +217,3 @@ masterDICT = {
 }
 
 # --- #
-
-def processFileUpload(file):
-    '''  '''
-
-def errorPage(request, msg = None):
-    if msg == None or msg == '' or request.method == 'POST':
-        # print '--- Error Page Redirecting...'
-        return redirect('/')
-
-    string = randomVal()
-    return render(request,
-                    pages['error'],
-                    {'errorMessage': msg,
-                    'value': string})
-
-
-def genericPage(request, msg, redirect):
-
-    string = randomVal()
-    return render(request,
-                    pages['generic'],
-                    {'message': msg,
-                    'redirect': redirect,
-                    'value': string})

@@ -88,3 +88,12 @@ $(document).ready(function(){
 	}
 
 });
+
+//
+
+
+function trimTrailingSpaces(str) {
+
+	return str.replace(/(\s+|\s+$)/g, " ").trim();
+
+}
