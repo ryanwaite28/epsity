@@ -192,13 +192,22 @@ statuses = {
         'liked': {
             'msg': 'not_liked',
             'text': 'Liked',
-            'action': 'unlike'
+            'action': 'unlike',
+            'class': 'like-btn-f'
         },
         'not_liked': {
             'msg': 'not_liked',
             'text': 'Like',
-            'action': 'like'
+            'action': 'like',
+            'class': 'like-btn-o'
         }
+    }
+}
+
+fetchType = {
+    'posts': {
+        'main': 'main',
+        'home': 'home'
     }
 }
 
@@ -213,7 +222,8 @@ masterDICT = {
     'ownerTypes': ownerTypes,
     'mediaTypes': mediaTypes,
     'contentTypes': contentTypes,
-    'statuses': statuses
+    'statuses': statuses,
+    'fetchType': fetchType
 }
 
 # --- #

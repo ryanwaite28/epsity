@@ -3,21 +3,17 @@
   <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
     <p class="text-center"><strong>No Content To Show, Yet!</strong></p>
   </div>
-  {% endif %}
-
-{% for p in posts %}
-<div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-  <div class="row">
-    <div class="col-sm-3">
-      <img width="100px" class="middlr brd-bl" src="{{ p.owner.avi }}"/><br>
-      <p class="text-center"><a title="See {{ p.owner.uname }} Page" href="/users/{{ p.owner.uname }}">{{ p.owner.uname }}</a></p>
-    </div>
-    <div class="col-sm-9">
-      <h4><strong>{{ p.title }}</strong></h4>
-      <p>{{ p.contents }}</p>
-      <br>
-
-        {% if p.attachment_type == 'Audio' %}
+  {% endif %} {% for p in posts %}
+  <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+    <div class="row">
+      <div class="col-sm-3">
+        <img width="100px" class="middlr brd-bl" src="{{ p.owner.avi }}" /><br>
+        <p class="text-center"><a title="See {{ p.owner.uname }} Page" href="/users/{{ p.owner.uname }}">{{ p.owner.uname }}</a></p>
+      </div>
+      <div class="col-sm-9">
+        <h4><strong>{{ p.title }}</strong></h4>
+        <p>{{ p.contents }}</p>
+        <br> {% if p.attachment_type == 'Audio' %}
         <div class="polaroid-3 brd-bl">
           <audio class="smb-1 max-w" controls>
             <source src="{{ p.attachment }}" type="">
@@ -31,112 +27,120 @@
         </div>
         {% elif p.attachment_type == 'Photo' %}
         <div class="polaroid-3 brd-bl">
-          <img class="smb-1 max-w" src="{{ p.attachment }}"/>
+          <img class="smb-1 max-w" src="{{ p.attachment }}" />
         </div>
         {% endif %}
 
-      <p>&nbsp;</p>
-      <p class="text-grey text-sm-1"><em>{{ p.date_created }}</em></p>
-      <p class="">
-        <span class="transition btn-s1 like-btn-o like-btn" data-like-status="{{ p.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
-          <i class="fa fa-heart" aria-hidden="true"></i> Like
-        </span>
-        <span data-toggle="collapse" data-target="#cmdv-{{ p.p_id }}" class="transition btn-s1 comment-btn-1 like-btn" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
+        <p>&nbsp;</p>
+        <p class="text-grey text-sm-1"><em>{{ p.date_created }}</em></p>
+        <p class="">
+          <span class="text-center transition btn-s1 {{ p.like_status.class }} like-btn" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-like-status="{{ p.like_status }}" data-like-status-json="{{ p.like_status_json }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
+          <i class="text-center fa fa-heart" aria-hidden="true"></i> {{ p.like_status.text }}
+          </span>
+          <span data-toggle="collapse" data-target="#cmdv-{{ p.p_id }}" class="transition btn-s1 comment-btn-1" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
           <i class="fa fa-comments" aria-hidden="true"></i> Comments
-        </span>
-      </p>
+          </span>
+        </p>
+      </div>
+
+      <div class="col-sm-12">
+        <hr>
+        <p class="">
+          <span><strong>Likes:</strong> <span id="post-likemeter-{{ p.p_id }}">{{ p.likes }}</span></span> |
+          <span><strong>Comments:</strong> <span id="post-commentmeter-{{ p.p_id }}">{{ p.comments_len }}</span></span>
+        </p>
+        <hr>
+      </div>
     </div>
 
-    <div class="col-sm-12">
-      <hr>
-      <p class="">
-        <span><strong>Likes:</strong> <span id="post-likemeter-{{ p.p_id }}">{{ p.likes }}</span></span> |
-        <span><strong>Comments:</strong> <span id="post-commentmeter-{{ p.p_id }}">{{ p.comments_len }}</span></span>
-      </p>
-      <hr>
-    </div>
-  </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="collapse in" id="cmdv-{{ p.p_id }}">
+          <ul id="cmlst-{{ p.p_id }}" class="ul-raw">
 
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="collapse in" id="cmdv-{{ p.p_id }}">
-        <ul id="cmlst-{{ p.p_id }}" class="ul-raw">
-          {% for c in p.comments %}
-          <li class="comment-box-1">
-            <div class="row">
-              <div class="col-sm-2">
-                <img width="100px" class="brd-bl max-w2" src="{{ c.owner.avi }}"/>
-              </div>
-              <div class="col-sm-10">
-                <p><strong>
+            {% for c in p.comments %}
+            <li class="comment-box-1">
+              <div class="row">
+                <div class="col-sm-2">
+                  <img width="100px" class="brd-bl max-w2" src="{{ c.owner.avi }}" />
+                </div>
+                <div class="col-sm-10">
+                  <p><strong>
                   <a title="See {{ c.owner.uname }} Page" href="/users/{{ c.owner.uname }}">{{ c.owner.uname }}</a>
                 </strong></p>
-                <p>{{ c.contents }}</p>
-                <p class="text-grey text-sm-1">{{ c.date_created }}</p>
-                <p class="text-sm-1">
-                  <span><strong>Likes:</strong> <span id="comment-likemeter-{{ c.comment_id }}">{{ c.likes }}</span></span> |
-                  <span><strong>Replies:</strong> <span id="comment-replymeter-{{ c.comment_id }}">{{ c.replies_len }}</span></span>
-                </p>
-                <p class="">
-                  <span class="transition btn-xs btn-s1 like-btn-o like-btn" data-like-status="{{ p.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
-                    <i class="fa fa-heart" aria-hidden="true"></i> Like
+                  <p>{{ c.contents }}</p>
+                  <p class="text-grey text-sm-1">{{ c.date_created }}</p>
+                  <p class="text-sm-1">
+                    <span><strong>Likes:</strong> <span id="comment-likemeter-{{ c.comment_id }}">{{ c.likes }}</span></span> |
+                    <span><strong>Replies:</strong> <span id="comment-replymeter-{{ c.comment_id }}">{{ c.replies_len }}</span></span>
+                  </p>
+                  <p class="">
+                    <span class="transition btn-xs btn-s1 {{ c.like_status.class }} like-btn" data-comment-id="{{ c.comment_id }}" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-like-status="{{ c.like_status }}" data-like-status-json="{{ c.like_status_json }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}">
+                    <i class="fa fa-heart" aria-hidden="true"></i> {{ c.like_status.text }}
                   </span>
-                  <span data-toggle="collapse" data-target="#rpdv-{{ c.comment_id }}" class="transition btn-xs btn-s1 comment-btn-1 like-btn" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
+                    <span data-toggle="collapse" data-target="#rpdv-{{ c.comment_id }}" data-comment-id="{{ c.comment_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-like-status="{{ c.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}">
                     <i class="fa fa-comments" aria-hidden="true"></i> Replies
                   </span>
-                </p>
-                <hr>
-                <div class="collapse in" id="rpdv-{{ c.comment_id }}">
-                  <ul class="ul-raw">
-                    {% for r in c.replies %}
-                    <li class="reply-box-1">
-                      <div class="row">
-                        <div class="col-sm-2">
-                          <img width="100px" class="brd-bl max-w2" src="{{ r.owner.avi }}"/>
-                        </div>
-                        <div class="col-sm-10">
-                          <p><strong>
+                  </p>
+                  <hr>
+                  <div class="collapse in" id="rpdv-{{ c.comment_id }}">
+                    <ul class="ul-raw">
+
+                      {% for r in c.replies %}
+                      <li class="reply-box-1">
+                        <div class="row">
+                          <div class="col-sm-2">
+                            <img width="100px" class="brd-bl max-w2" src="{{ r.owner.avi }}" />
+                          </div>
+                          <div class="col-sm-10">
+                            <p><strong>
                             <a title="See {{ r.owner.uname }} Page" href="/users/{{ r.owner.uname }}">{{ r.owner.uname }}</a>
                           </strong></p>
-                          <p>{{ r.contents }}</p>
-                          <p class="text-grey text-sm-1">{{ r.date_created }}</p>
-                          <p class="text-sm-1">
-                            <span><strong>Likes:</strong> <span id="reply-likemeter-{{ r.reply_id }}">{{ r.likes }}</span></span>
-                          </p>
-                          <span class="transition btn-xs btn-s1 like-btn-o like-btn" data-like-status="{{ r.like_status }}" data-post-id="{{ r.reply_id }}" data-owner-id="{{ r.ownerid }}" data-owner-type="{{ r.owner_type }}">
-                            <i class="fa fa-heart" aria-hidden="true"></i> Like
-                          </span>
+                            <p>{{ r.contents }}</p>
+                            <p class="text-grey text-sm-1">{{ r.date_created }}</p>
+                            <p class="text-sm-1">
+                              <span><strong>Likes:</strong> <span id="reply-likemeter-{{ r.reply_id }}">{{ r.likes }}</span></span>
+                            </p>
+                            <span class="transition btn-xs btn-s1 {{ r.like_status.class }} like-btn" data-comment-id="{{ c.comment_id }}" data-content-type="{{ r.content_type }}" data-content-id="{{ r.reply_id }}" data-like-status="{{ r.like_status }}" data-like-status-json="{{ r.like_status_json }}" data-reply-id="{{ r.reply_id }}" data-owner-id="{{ r.ownerid }}" data-owner-type="{{ r.owner_type }}">
+                              <i class="fa fa-heart" aria-hidden="true"></i> {{ r.like_status.text }}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <br>
-                    </li>
-                    {% endfor %}
-                  </ul>
+                        <br>
+                      </li>
+                      {% endfor %}
+
+                    </ul>
+                  </div>
+                  <input id="cmrly-{{ c.comment_id }}" class="add-reply-box block input-t-s1 transition dsp-n" data-elm-kind="add-reply-box" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}" class="btn btn-default transition"
+                      placeholder="Add Reply..." />
+                  <input class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}" />
                 </div>
-                <input id="cmrly-{{ c.comment_id }}" class="add-reply-box block input-t-s1 transition dsp-n" data-elm-kind="add-reply-box" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}" class="btn btn-default transition" placeholder="Add Reply..."/>
-                <input class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}"/>
               </div>
-            </div>
 
-            <div class="row">
-              <div class="col-sm-12">
+              <div class="row">
+                <div class="col-sm-12">
 
+                </div>
               </div>
-            </div>
-            <br>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-      <hr>
-      <div>
-        <textarea id="cmbox-{{ p.p_id }}" class="add-comment-box block max-w input-t-s1 transition dsp-n" data-elm-kind="add-comment-box" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}" placeholder="Add Comment..."></textarea>
-        <input class="add-comment-btn transition btn btn-sm btn-info" type="button" value="Add Comment" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}"/>
+              <br>
+            </li>
+            {% endfor %}
+
+          </ul>
+        </div>
+        <hr>
+        <div>
+          <textarea id="cmbox-{{ p.p_id }}" class="add-comment-box block max-w input-t-s1 transition dsp-n" data-elm-kind="add-comment-box" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}"
+              data-post-status="{{ p.status }}" placeholder="Add Comment..."></textarea>
+          <input class="add-comment-btn transition btn btn-sm btn-info" type="button" value="Add Comment" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}"
+          />
+        </div>
       </div>
     </div>
   </div>
-</div>
-{% endfor %}
+  {% endfor %}
+
 </div>
 
 <script src="/static/js/controllers/posts-ctrl.js"></script>

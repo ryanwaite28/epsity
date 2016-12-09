@@ -101,8 +101,8 @@ def profileMain(request):
 
             # --- #
 
-            feed = routines.loadFeed_one(you.id, you)
-            # print posts
+            feed = routines.loadPosts \
+            (you.id, you, masterDICT['fetchType']['posts']['main'])
 
             # --- #
 
@@ -162,12 +162,8 @@ def profileHome(request):
             following = Follows.objects.filter(userid=you.id)
             groups = GroupMembers.objects.filter(userid=you.id)
 
-            posts = Posts.objects \
-            .filter(ownerid = you.id) \
-            .order_by('-date_created')[:15]
-
-            posts = routines.loadUserPosts_one(you.id, you)
-            # print posts
+            posts = routines.loadPosts \
+            (you.id, you, masterDICT['fetchType']['posts']['home'])
 
 
             return render(request, masterDICT['pages']['profileHome'],
@@ -203,9 +199,8 @@ def userPage(request, query):
             following = Follows.objects.filter(userid=user.id)
             groups = GroupMembers.objects.filter(userid=user.id)
 
-            posts = Posts.objects \
-            .filter(ownerid = user.id) \
-            .order_by('-date_created')[:15]
+            posts = routines.loadPosts \
+            (user.id, you )
 
             posts = [p.serialize for p in posts]
             for p in posts:

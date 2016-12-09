@@ -39,65 +39,90 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       }
     });
 
-  });
+    $('.like-btn').click(function(){
 
-  //
+      var likeStatus = $(this).data('like-status-json');
+      var contentType = $(this).data('content-type');
+      var contentID = $(this).data('content-id');
+      var likeMeter_id = '#' + contentType.toLowerCase() + '-' + 'likemeter' + '-' + contentID;
+      var likeMeter_elm = $(likeMeter_id);
 
-  $('.add-comment-box').keyup(function(e){
-    if( e.keyCode != 13 ) {
-      return;
-    }
+      // console.log( likeStatus, contentType, $(likeMeter_elm) );
 
-    var input = $(this);
-    var comment = trimTrailingSpaces( input.val() );
+      var obj = {
+        likeStatus: likeStatus,
+        contentType: contentType,
+        contentID: contentID,
+        likeMeter_elm: likeMeter_elm,
+        likes: parseInt( $(likeMeter_elm).text() ),
+        og_elm: $(this)
+      }
 
-    var dataObj = {
-      post_id: input.data('post-id'),
-      post_type: input.data('post-type'),
-      postOwner_id: input.data('owner-id'),
-      postOwner_type: input.data('owner-type')
-    }
+      $scope.likeAction(obj);
 
-    if( comment.replace(/\s/g, '').length > 0 ) {
-      if( comment.length > 500 ) {
-        alert('The Max Length For A Comment Is 500 Characters.');
+    });
+
+    $('.add-comment-box').keyup(function(e){
+      if( e.keyCode != 13 ) {
         return;
       }
-      else {
-        dataObj.comment = comment;
-        $scope.addPostCommentUser(input , dataObj);
+
+      var input = $(this);
+      var comment = trimTrailingSpaces( input.val() );
+
+      var dataObj = {
+        post_id: input.data('post-id'),
+        post_type: input.data('post-type'),
+        postOwner_id: input.data('owner-id'),
+        postOwner_type: input.data('owner-type')
       }
-    }
-  });
 
-  $('.add-reply-box').keyup(function(e){
-    if( e.keyCode != 13 ) {
-      return;
-    }
+      if( comment.replace(/\s/g, '').length > 0 ) {
+        if( comment.length > 500 ) {
+          alert('The Max Length For A Comment Is 500 Characters.');
+          return;
+        }
+        else {
+          dataObj.comment = comment;
+          $scope.addPostCommentUser(input , dataObj);
+        }
+      }
+    });
 
-    var input = $(this);
-    var reply = trimTrailingSpaces( input.val() );
-
-
-    var dataObj = {
-      comment_id: input.data('comment-id'),
-      commentOwner_id: input.data('owner-id'),
-      commenttOwner_type: input.data('owner-type')
-    }
-
-    if( reply.replace(/\s/g, '').length > 0 ) {
-      if( reply.length > 500 ) {
-        alert('The Max Length For A Reply Is 500 Characters.');
+    $('.add-reply-box').keyup(function(e){
+      if( e.keyCode != 13 ) {
         return;
       }
-      else {
-        dataObj.reply = reply;
-        $scope.addCommentReplyUser(input , dataObj);
+
+      var input = $(this);
+      var reply = trimTrailingSpaces( input.val() );
+
+
+      var dataObj = {
+        comment_id: input.data('comment-id'),
+        commentOwner_id: input.data('owner-id'),
+        commenttOwner_type: input.data('owner-type')
       }
-    }
+
+      if( reply.replace(/\s/g, '').length > 0 ) {
+        if( reply.length > 500 ) {
+          alert('The Max Length For A Reply Is 500 Characters.');
+          return;
+        }
+        else {
+          dataObj.reply = reply;
+          $scope.addCommentReplyUser(input , dataObj);
+        }
+      }
+    });
+
   });
 
-  //
+  /*
+
+    Angular
+
+  */
 
   $scope.createUserPost = function() {
     $('#new-post-form input[name="origin"]').val( location.pathname );
@@ -174,6 +199,11 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       // Error Callback
       console.log(resp);
     });
+  }
+
+  $scope.likeAction = function(obj) {
+    console.log(obj);
+
   }
 
 }])
