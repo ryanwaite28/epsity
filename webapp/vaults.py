@@ -61,6 +61,12 @@ pages = {
     'profilePhoto': 'profile-photo.html',
     'profileVideo': 'profile-video.html',
     'profileAudio': 'profile-audio.html',
+
+    'new_post': 'new-post-1.html',
+    'new_comment': 'new-comment-1.html',
+    'new_reply': 'new-reply-1.html',
+
+    'test': 'test-1.html'
 }
 
 localPaths = {

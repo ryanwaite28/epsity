@@ -7,6 +7,7 @@ import datetime
 import webapp
 
 from django import forms
+from django.utils import timezone
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
@@ -35,9 +36,14 @@ from vaults import masterDICT
 # --- ----- ----- --- #
 
 def loadPosts(user_id, you, msg):
-    if msg == None or msg == '' or msg == 'home':
+    if msg == None or msg == '':
         posts = Posts.objects \
         .filter( ownerid = user_id ) \
+        .order_by('-date_created')[:10]
+
+    elif msg == 'home':
+        posts = Posts.objects \
+        .filter( ownerid = you.id ) \
         .order_by('-date_created')[:10]
 
     elif msg == 'main':
@@ -155,7 +161,7 @@ def errorPage(request, msg = None):
 
     string = randomVal()
     return render(request,
-                    pages['error'],
+                    masterDICT['pages']['error'],
                     {'errorMessage': msg,
                     'value': string})
 
@@ -164,7 +170,7 @@ def genericPage(request, msg, redirect):
 
     string = randomVal()
     return render(request,
-                    pages['generic'],
+                    masterDICT['pages']['generic'],
                     {'message': msg,
                     'redirect': redirect,
                     'value': string})
@@ -1538,8 +1544,24 @@ def addPostCommentUser(request, data):
 
         newComment.save()
 
+        comment = newComment.serialize
+        comment['content_type'] = masterDICT['contentTypes']['comment']
+        comment['like_status'] = masterDICT['statuses']['like']['not_liked']
+        comment['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+        comment_html = render(request,
+                                masterDICT['pages']['new_comment'],
+                                {'comment': comment})
+
+        comment_html = str(comment_html) \
+        .replace("Content-Type: text/html; charset=utf-8" , "")
+
+        commentMeter = int(data['info']['comments']) + 1
+
         return JsonResponse({'msg': 'comment added',
-                                'comment': newComment.serialize})
+                                'comment': newComment.serialize,
+                                'comment_html': comment_html,
+                                'commentMeter': commentMeter})
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
@@ -1563,8 +1585,78 @@ def addCommentReplyUser(request, data):
 
         newReply.save()
 
+        reply = newReply.serialize
+        reply['content_type'] = masterDICT['contentTypes']['reply']
+        reply['like_status'] = masterDICT['statuses']['like']['not_liked']
+        reply['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+        reply_html = render(request,
+                                masterDICT['pages']['new_reply'],
+                                {'reply': reply})
+
+        reply_html = str(reply_html) \
+        .replace("Content-Type: text/html; charset=utf-8" , "")
+
+        replyMeter = int(data['info']['replies']) + 1
+
         return JsonResponse({'msg': 'reply added',
-                                'reply': newReply.serialize})
+                                'reply': newReply.serialize,
+                                'reply_html': reply_html,
+                                'replyMeter': replyMeter})
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def likeContent(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        likeMeter = int(data['info']['likes'])
+
+        newLike = Likes(ownerid = you.id,
+                        owner_type = masterDICT['ownerTypes']['account'],
+                        item_id = data['info']['contentID'],
+                        item_type = data['info']['contentType'])
+
+        newLike.save()
+
+        likeMeter += 1
+
+        return JsonResponse \
+        ({'msg': 'content liked',
+        'likeMeter': likeMeter,
+        'likeStatus': masterDICT['statuses']['like']['liked']})
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def unlikeContent(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        likeMeter = int(data['info']['likes'])
+
+        like = Likes.objects \
+        .filter(ownerid = you.id,
+                    owner_type = masterDICT['ownerTypes']['account'],
+                    item_id = data['info']['contentID'],
+                    item_type = data['info']['contentType'])
+
+        if like == None:
+            return JsonResponse({'msg': 'Error - Cannot Load Like'})
+
+        like.delete()
+
+        likeMeter -= 1
+
+        return JsonResponse \
+        ({'msg': 'content unliked',
+            'likeMeter': likeMeter,
+            'likeStatus': masterDICT['statuses']['like']['not_liked']})
+
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

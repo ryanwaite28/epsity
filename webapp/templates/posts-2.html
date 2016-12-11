@@ -1,0 +1,38 @@
+<div ng-controller="newPostsCtrl">
+
+  <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+    <h4 class="text-center">Create Post</h4>
+    <p class="no-marg text-center p-emp-1"><i data-toggle="collapse" data-target="#new-post-div" class="rotator fa fa-chevron-circle-down transition" aria-hidden="true"></i></p>
+
+    <div id="new-post-div" class="mk-rel collapse">
+      <hr>
+      <form class="middlr" id="new-post-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create post"/>
+
+        <p class="text-center">Choose A Post Type</p>
+        <select class="middlr" id="newpost-type" name="post_type" required>
+          <option value="Text" selected>Text</option>
+          <option value="Audio">Audio</option>
+          <option value="Photo">Photo</option>
+          <option value="Video">Video</option>
+        </select>
+        <br>
+
+        <input class="middlr input-t-s1" type="text" name="title" placeholder="Title..."/><br>
+        <textarea style="min-height: 100px;" class="middlr input-t-s1" type="middlr" name="contents" placeholder="Contents..." required></textarea><br>
+        <input class="middlr input-t-s1" type="text" name="link"  placeholder="Add a Link If You Want..."/><br>
+        <input style="display: none;" class="middlr btn btn-default transition" type="file" name="media"/><br>
+        <input type="hidden" name="owner_type" value="Account"/>
+        <input type="hidden" name="origin" value=""/>
+        <input class="btn btn-success transition middlr" type="button" value="Create Post" ng-click="createUserPost()"/>
+      </form>
+    </div>
+
+  </div>
+
+  {% include 'posts-1.html' %}
+
+</div>
+
+<script src="/static/js/controllers/posts-ctrl.js"></script>

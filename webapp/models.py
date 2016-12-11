@@ -109,7 +109,7 @@ class Accounts(models.Model):
     bio_link = models.CharField(max_length = 150, default = '')
     #bio_link_name = models.CharField(max_length = 100, default = '')
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -162,7 +162,7 @@ class Groups(models.Model):
     avi = models.CharField(max_length = 1725, default = '')
     background = models.CharField(max_length = 1725, default = '')
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -192,7 +192,7 @@ class GroupInvitations(models.Model):
     userid = models.IntegerField(blank = False, default = 0)
     user_rel = models.ForeignKey(Accounts, default = 0, related_name = "i_group_user")
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -223,7 +223,7 @@ class GroupRequests(models.Model):
     userid = models.IntegerField(blank = False, default = 0)
     user_rel = models.ForeignKey(Accounts, default = 0, related_name = "r_group_user")
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -255,7 +255,7 @@ class GroupMembers(models.Model):
     user_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_user_rel")
     status = models.CharField(max_length = 500, default = '') # Admin, user, etc...
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -288,7 +288,7 @@ class GroupFavorites(models.Model):
     group_id = models.IntegerField(blank = False, default = 0)
     group_rel = models.ForeignKey(Groups, default = 0, related_name = "fav_group_rel")
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
 
     @property
     def serialize(self):
@@ -318,7 +318,7 @@ class Follows(models.Model):
     follow_id = models.IntegerField(blank = False, default = 0)
     follow_rel = models.ForeignKey(Accounts, default = 0, related_name = "follow_rel")
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
 
     @property
     def serialize(self):
@@ -349,7 +349,7 @@ class FollowRequests(models.Model):
 
     msg = models.CharField(max_length = 500, default = '')
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
 
     @property
     def serialize(self):
@@ -400,7 +400,7 @@ class Posts(models.Model):
     post_type = models.CharField(max_length = 20, choices = PostTypes, default = '')
     status = models.CharField(max_length = 20, default = 'public') # either public, private, or deleted
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -444,7 +444,7 @@ class Comments(models.Model):
     attachment = models.CharField(max_length = 500, default = '')
     attachment_type = models.CharField(max_length = 500, default = '')
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -486,7 +486,7 @@ class Replies(models.Model):
     attachment = models.CharField(max_length = 500, default = '')
     attachment_type = models.CharField(max_length = 500, default = '')
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -532,7 +532,7 @@ class Likes(models.Model):
     item_type = models.CharField(choices = ContentType, blank = False, default = '', max_length = 50)
     item_id = models.IntegerField(blank = False, default = 0)
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -578,7 +578,7 @@ class Events(models.Model):
     status = models.CharField(max_length = 20, default = 'upcoming')
     # either upcoming, live, or ended
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -621,7 +621,7 @@ class EventAttendees(models.Model):
     attendee_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
     attendee_id = models.IntegerField(blank = False, default = 0)
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -650,7 +650,7 @@ class Conversations(models.Model):
     owner = models.ForeignKey(Accounts, default = 0, related_name = "convo_owner")
     ownerid = models.IntegerField(blank = False, default = 0)
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -675,7 +675,7 @@ class ConvoMembers(models.Model):
     convo_id = models.IntegerField(blank = False, default = 0)
     convo_rel = models.ForeignKey(Conversations, default = 0, related_name = "convo_member_rel")
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -707,7 +707,7 @@ class ConvoMessages(models.Model):
     attachment = models.CharField(max_length = 500, default = '')
     attachment_type = models.CharField(max_length = 500, default = '')
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -772,7 +772,7 @@ class Messages(models.Model):
     userB_id = models.IntegerField(blank = False, default = 0)
     userB_rel = models.ForeignKey(Accounts, default = 0, related_name = "message_user_b_rel")
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
@@ -808,7 +808,7 @@ class MessageReply(models.Model):
     attachment = models.CharField(max_length = 500, default = '')
     attachment_type = models.CharField(max_length = 500, default = '')
 
-    date_created = models.DateTimeField( default = datetime.datetime.now )
+    date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property

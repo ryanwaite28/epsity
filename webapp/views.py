@@ -6,6 +6,7 @@ import os, sys, cgi, random, string, hashlib, json
 import webapp
 
 from django.db.models import Q
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.http import JsonResponse
@@ -60,7 +61,15 @@ def login(request):
 @csrf_protect
 def logout(request):
     if request.method == 'POST':
-        return redirect('/')
+        try:
+            del request.session['username']
+            del request.session['email']
+            request.session.flush()
+
+            return redirect('/')
+
+        except KeyError:
+            pass
 
     if request.method == 'GET':
         try:
@@ -101,8 +110,9 @@ def profileMain(request):
 
             # --- #
 
-            feed = routines.loadPosts \
-            (you.id, you, masterDICT['fetchType']['posts']['main'])
+            feed = routines\
+            .loadPosts(user_id = you.id, you = you,
+                        msg = masterDICT['fetchType']['posts']['main'])
 
             # --- #
 
@@ -131,6 +141,7 @@ def profileMain(request):
                 for u in users:
                     su.append( u.serialize )
             su = su[:5]
+
 
             return render(request, masterDICT['pages']['profileMain'],
                             {'you': you,
@@ -162,9 +173,9 @@ def profileHome(request):
             following = Follows.objects.filter(userid=you.id)
             groups = GroupMembers.objects.filter(userid=you.id)
 
-            posts = routines.loadPosts \
-            (you.id, you, masterDICT['fetchType']['posts']['home'])
-
+            posts = routines\
+            .loadPosts(user_id = you.id, you = you,
+                        msg = masterDICT['fetchType']['posts']['home'])
 
             return render(request, masterDICT['pages']['profileHome'],
                             {'you': you,
@@ -199,30 +210,8 @@ def userPage(request, query):
             following = Follows.objects.filter(userid=user.id)
             groups = GroupMembers.objects.filter(userid=user.id)
 
-            posts = routines.loadPosts \
-            (user.id, you )
-
-            posts = [p.serialize for p in posts]
-            for p in posts:
-                likes = len( Likes.objects \
-                .filter(item_type=p['post_type'], item_id=p['p_id']) )
-
-                comments = len( Comments.objects.filter(post_id=p['p_id']) )
-
-                p['likes'] = likes
-                p['comments'] = comments
-
-                checkLike = Likes.objects \
-                .filter(item_type=masterDICT['contentTypes']['post'],
-                        item_id=p['p_id'],
-                        owner_type=masterDICT['ownerTypes']['account'],
-                        ownerid=you.id).first()
-
-                if checkLike != None:
-                    p['like_status'] = masterDICT['statuses']['like']['liked']
-
-                else:
-                    p['like_status'] = masterDICT['statuses']['like']['not_liked']
+            posts = routines \
+            .loadPosts(user_id = user.id, you = you, msg = '')
 
             if user == None:
                 msg = 'User Account Not Found.'
@@ -609,8 +598,6 @@ def userActionAJAX(request):
             if data['action'] == 'cancelPendingGroupRequest':
                 return routines.cancelPendingGroupRequest(request, data)
 
-
-
             # ---
 
             if data['action'] == 'load notes all':
@@ -626,6 +613,12 @@ def userActionAJAX(request):
 
             if data['action'] == 'addCommentReplyUser':
                 return routines.addCommentReplyUser(request, data)
+
+            if data['action'] == 'like':
+                return routines.likeContent(request, data)
+
+            if data['action'] == 'unlike':
+                return routines.unlikeContent(request, data)
 
 
             else:

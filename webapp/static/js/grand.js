@@ -80,6 +80,7 @@ $(document).ready(function(){
 	window.alphaNum_one = /^[a-zA-Z0-9\.]{3,25}/;
 	window.alphaNum_two = /^[a-zA-Z0-9\_\-]{3,25}/;
 	window.catCheck = /^[a-zA-Z0-9\_\-\.]{3,25}/;
+	
 
 	window.backToTop = function() {
 		$('html, body').animate({
@@ -96,4 +97,22 @@ function trimTrailingSpaces(str) {
 
 	return str.replace(/(\s+|\s+$)/g, " ").trim();
 
+}
+
+function newhttpRequestObj() {
+	var req = {
+		method: '',
+		url: '',
+		headers: {
+			'Content-Type': 'application/json',
+			'responseType': 'json',
+			"Accept" : "application/json",
+			'X-CSRFToken': Cookies.get('csrftoken')
+		},
+		data: {
+			csrfmiddlewaretoken: Cookies.get('csrftoken'),
+		}
+	}
+
+	return req;
 }

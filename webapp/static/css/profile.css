@@ -449,17 +449,23 @@ body {
 }
 
 .comment-box-1 {
-  background: #e9ebee;
+  /*background: #e9ebee;*/
   margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid black;
+  padding: 10px 5px;
+  /*border: 1px solid black;*/
 }
 
 .reply-box-1 {
-  background: #f2f2f2;
+  /*background: #f2f2f2;*/
   margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid black;
+  padding: 0px 5px;
+  /*border: 1px solid black;*/
+}
+
+.icon-s1 {
+  width: 45px;
+  float: right;
+  margin-right: 10px;
 }
 
 /* --- */
@@ -474,6 +480,14 @@ body {
 
 }
 
+@media (max-width: 768px) {
+
+  .icon-s1 {
+    width: 45px;
+    float: left;
+  }
+
+}
 
 @media (max-width: 625px) {
 
@@ -519,6 +533,10 @@ body {
   .sr-inner-div {
     width: 100%;
     float: none;
+  }
+  .icon-s1 {
+    width: 45px;
+    float: left;
   }
 
 }
