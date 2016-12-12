@@ -15,6 +15,8 @@
   <script src="/static/js/grand.js"></script>
   <script src="/static/js/profile.js"></script>
   <script src="/static/js/controllers/create-ctrl.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSHPWjouiZzdAI_EhWkuuLsFMEGTgyYWE&libraries=places&callback=initMap" async defer></script>
+
 </head>
 
   <body ng-app="epsityApp" ng-controller="createCtrl" class="transition">
@@ -91,7 +93,7 @@
                   <div>
                     <p class="text-center">Create An Event!</p>
                     <br>
-                    <div class="">
+                    <div id="mapdiv" class="max-w" style="min-height: 35vh;">
 
                     </div>
                   </div>

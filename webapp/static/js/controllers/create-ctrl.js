@@ -2,7 +2,17 @@
 
 App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
-  // window.scope = $scope;
+  window.scope = $scope;
+
+  window.initMap = function() {
+
+    var map = new google.maps.Map(document.getElementById('mapdiv'), {
+      center: {lat: -34.397, lng: 150.644},
+      scrollwheel: true,
+      zoom: 8
+    });
+
+  }
 
   $scope.createGroup = function() {
     if( !alphaNum_two.test(  $('input[name="displayname"]').val() ) ) {
