@@ -153,6 +153,16 @@ def loadPosts(user_id, you, msg):
 
     return posts
 
+# ---
+
+def format_datetime(value, format='medium'):
+    if format == 'full':
+        format="EEEE, d. MMMM y 'at' HH:mm"
+    elif format == 'medium':
+        format="EE dd.MM.y HH:mm"
+    return babel.dates.format_datetime(value, format)
+
+# ---
 
 def errorPage(request, msg = None):
     if msg == None or msg == '' or request.method == 'POST':
@@ -616,7 +626,7 @@ def searchForMembers(request):
 def searchUsers(request):
     data = json.loads(request.body)
     you = Accounts.objects.get(uname = request.session['username'])
-    
+
     if data['query'] == None:
         return JsonResponse({'msg': 'Query Is Missing...'})
 

@@ -1,12 +1,12 @@
 <li class="reply-box-1">
   <div class="row">
     <div class="col-sm-2">
-      <img width="100px" class="brd-bl max-w2" src="{{ reply.owner.avi }}" />
+      <img class="brd-bl max-w2 icon-s1" src="{{ reply.owner.avi }}" />
     </div>
     <div class="col-sm-10">
-      <p><a title="See {{ reply.owner.uname }} Page" href="/users/{{ reply.owner.uname }}">{{ reply.owner.uname }}</a> {{ reply.contents }}</p>
-      <p class="text-grey text-sm-1">{{ reply.date_created }}</p>
+      <p><a title="See {{ reply.owner.uname }} Page" href="/users/{{ reply.owner.uname }}"><strong>{{ reply.owner.uname }}</strong></a> {{ reply.contents }}</p>
       <p class="text-sm-1">
+        <span class="text-grey"><em>{{ reply.date_created }}</em></span> |
         <span><strong>Likes:</strong> <span id="reply-likemeter-{{ reply.reply_id }}">0</span></span>
       </p>
       <span class="transition btn-xs btn-s1 {{ reply.like_status.class }} like-btn" data-comment-id="{{ reply.comment_id }}" data-content-type="{{ reply.content_type }}" data-content-id="{{ reply.reply_id }}" data-like-status="{{ reply.like_status }}" data-like-status-json="{{ reply.like_status_json }}" data-reply-id="{{ reply.reply_id }}" data-owner-id="{{ reply.ownerid }}" data-owner-type="{{ reply.owner_type }}">

@@ -1,22 +1,22 @@
 <li class="comment-box-1">
   <div class="row">
     <div class="col-sm-2">
-      <img width="100px" class="brd-bl max-w2" src="{{ comment.owner.avi }}" />
+      <img class="brd-bl max-w2 icon-s1" src="{{ comment.owner.avi }}" />
     </div>
     <div class="col-sm-10">
-      <p><a title="See {{ comment.owner.uname }} Page" href="/users/{{ comment.owner.uname }}">{{ comment.owner.uname }}</a> {{ comment.contents }}</p>
-      <p class="text-grey text-sm-1">{{ comment.date_created }}</p>
+      <p><a title="See {{ comment.owner.uname }} Page" href="/users/{{ comment.owner.uname }}"><strong>{{ comment.owner.uname }}</strong></a> {{ comment.contents }}</p>
       <p class="text-sm-1">
-        <span><strong>Likes:</strong> <span id="comment-likemeter-{{ comment.comment_id }}">0</span></span> |
-        <span><strong>Replies:</strong> <span id="comment-replymeter-{{ comment.comment_id }}">0</span></span>
+        <span class="text-grey"><em>{{ c.date_created }}</em></span> |
+        <span><strong>Likes:</strong> <span id="comment-likemeter-{{ c.comment_id }}">0</span></span> |
+        <span><strong>Replies:</strong> <span id="comment-replymeter-{{ c.comment_id }}">0</span></span>
       </p>
       <p class="">
         <span class="transition btn-xs btn-s1 {{ comment.like_status.class }} like-btn" data-comment-id="{{ comment.comment_id }}" data-content-type="{{ comment.content_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}" data-like-status-json="{{ comment.like_status_json }}" data-post-id="{{ comment.post_rel.p_id }}" data-post-type="{{ comment.post_rel.post_type }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}">
-        <i class="fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ comment.like_status.text }}</span>
-      </span>
+          <i class="fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ comment.like_status.text }}</span>
+        </span>
         <span title="Show/Hide Replies" data-toggle="collapse" data-target="#rpdv-{{ comment.comment_id }}" data-comment-id="{{ comment.comment_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ comment.content_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}" data-post-id="{{ comment.post_rel.p_id }}" data-post-type="{{ comment.post_rel.post_type }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}">
-        <i class="fa fa-comments" aria-hidden="true"></i> Replies
-      </span>
+          <i class="fa fa-comments" aria-hidden="true"></i> Replies
+        </span>
       </p>
       <hr>
       <div class="collapse in" id="rpdv-{{ comment.comment_id }}">

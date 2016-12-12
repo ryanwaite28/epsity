@@ -1,3 +1,4 @@
+<!-- Jinja Date Filter = |date:"F j, Y" -->
 <div ng-controller="postsCtrl">
   {% if posts|length == 0 %}
   <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
@@ -10,7 +11,7 @@
     <div class="row padd-1">
       <div class="col-sm-3">
         <img width="80px" class="middlr brd-bl" src="{{ p.owner.avi }}" /><br>
-        <p class="text-center"><a title="See {{ p.owner.uname }} Page" href="/users/{{ p.owner.uname }}">{{ p.owner.uname }}</a></p>
+        <p class="text-center"><a title="See {{ p.owner.uname }} Page" href="/users/{{ p.owner.uname }}"><strong>{{ p.owner.uname }}</strong></a></p>
       </div>
       <div class="col-sm-9">
         <h4><strong>{{ p.title }}</strong></h4>
@@ -34,7 +35,12 @@
         {% endif %}
 
         <p>&nbsp;</p>
-        <p class="text-grey text-sm-1"><em>{{ p.date_created }}</em></p>
+        <p class="text-sm-1">
+          <span class="text-grey"><em>{{ p.date_created }}</em></span> |
+          <span><strong>Likes:</strong> <span id="post-likemeter-{{ p.p_id }}">{{ p.likes }}</span></span> |
+          <span><strong>Comments:</strong> <span id="post-commentmeter-{{ p.p_id }}">{{ p.comments_len }}</span></span>
+        </p>
+        <p>&nbsp;</p>
         <p class="">
           <span ng-click="likeBtn()" class="text-center btn-xs transition btn-s1 {{ p.like_status.class }} like-btn" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-like-status="{{ p.like_status }}" data-like-status-json="{{ p.like_status_json }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
           <i class="text-center fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ p.like_status.text }}</span>
@@ -42,11 +48,6 @@
           <span title="Show/Hide Comments" data-toggle="collapse" data-target="#cmdv-{{ p.p_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
           <i class="fa fa-comments" aria-hidden="true"></i> Comments
           </span>
-        </p>
-        <br>
-        <p class="">
-          <span><strong>Likes:</strong> <span id="post-likemeter-{{ p.p_id }}">{{ p.likes }}</span></span> |
-          <span><strong>Comments:</strong> <span id="post-commentmeter-{{ p.p_id }}">{{ p.comments_len }}</span></span>
         </p>
       </div>
 
@@ -64,19 +65,20 @@
                   <img class="brd-bl max-w2 icon-s1" src="{{ c.owner.avi }}" />
                 </div>
                 <div class="col-sm-10">
-                  <p><a title="See {{ c.owner.uname }} Page" href="/users/{{ c.owner.uname }}">{{ c.owner.uname }}</a> {{ c.contents }}</p>
-                  <p class="text-grey text-sm-1">{{ c.date_created }}</p>
+                  <p><a title="See {{ c.owner.uname }} Page" href="/users/{{ c.owner.uname }}"><strong>{{ c.owner.uname }}</strong></a> {{ c.contents }}</p>
                   <p class="text-sm-1">
+                    <span class="text-grey"><em>{{ c.date_created }}</em></span> |
                     <span><strong>Likes:</strong> <span id="comment-likemeter-{{ c.comment_id }}">{{ c.likes }}</span></span> |
                     <span><strong>Replies:</strong> <span id="comment-replymeter-{{ c.comment_id }}">{{ c.replies_len }}</span></span>
                   </p>
+
                   <p class="">
                     <span ng-click="likeBtn()" class="transition btn-xs btn-s1 {{ c.like_status.class }} like-btn" data-comment-id="{{ c.comment_id }}" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-like-status="{{ c.like_status }}" data-like-status-json="{{ c.like_status_json }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}">
-                    <i class="fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ c.like_status.text }}</span>
-                  </span>
+                      <i class="fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ c.like_status.text }}</span>
+                    </span>
                     <span title="Show/Hide Replies" data-toggle="collapse" data-target="#rpdv-{{ c.comment_id }}" data-comment-id="{{ c.comment_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-like-status="{{ c.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}">
-                    <i class="fa fa-comments" aria-hidden="true"></i> Replies
-                  </span>
+                      <i class="fa fa-comments" aria-hidden="true"></i> Replies
+                    </span>
                   </p>
 
                   <div class="collapse in" id="rpdv-{{ c.comment_id }}">
@@ -89,11 +91,12 @@
                             <img class="brd-bl max-w2 icon-s1" src="{{ r.owner.avi }}" />
                           </div>
                           <div class="col-sm-10">
-                            <p><a title="See {{ r.owner.uname }} Page" href="/users/{{ r.owner.uname }}">{{ r.owner.uname }}</a> {{ r.contents }}</p>
-                            <p class="text-grey text-sm-1">{{ r.date_created }}</p>
+                            <p><a title="See {{ r.owner.uname }} Page" href="/users/{{ r.owner.uname }}"><strong>{{ r.owner.uname }}</strong></a> {{ r.contents }}</p>
                             <p class="text-sm-1">
+                              <span class="text-grey"><em>{{ r.date_created }}</em></span> |
                               <span><strong>Likes:</strong> <span id="reply-likemeter-{{ r.reply_id }}">{{ r.likes }}</span></span>
                             </p>
+
                             <span ng-click="likeBtn()" class="transition btn-xs btn-s1 {{ r.like_status.class }} like-btn" data-comment-id="{{ c.comment_id }}" data-content-type="{{ r.content_type }}" data-content-id="{{ r.reply_id }}" data-like-status="{{ r.like_status }}" data-like-status-json="{{ r.like_status_json }}" data-reply-id="{{ r.reply_id }}" data-owner-id="{{ r.ownerid }}" data-owner-type="{{ r.owner_type }}">
                               <i class="fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ r.like_status.text }}</span>
                             </span>
