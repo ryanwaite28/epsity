@@ -449,17 +449,22 @@ body {
 }
 
 .comment-box-1 {
-  /*background: #e9ebee;*/
   margin-bottom: 10px;
   padding: 10px 5px;
-  /*border: 1px solid black;*/
+  border-bottom: 1px solid black;
+}
+.comment-box-1:first-child {
+  border-top: 1px solid black;
 }
 
 .reply-box-1 {
-  /*background: #f2f2f2;*/
-  margin-bottom: 10px;
-  padding: 0px 5px;
-  /*border: 1px solid black;*/
+  background: #fbfbfb;
+  /*margin-bottom: 10px;*/
+  padding: 5px;
+  border-bottom: 1px solid black;
+}
+.reply-box-1:first-child {
+  border-top: 1px solid black;
 }
 
 .icon-s1 {

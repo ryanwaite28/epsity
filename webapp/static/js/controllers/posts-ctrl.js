@@ -232,8 +232,8 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       // Success Callback
       console.log(resp);
       var id = '#cmlst-' + dataObj.post_id;
-      var elm = $(resp.data.comment_html)
-      $(id).append(elm)
+      var elm = $(resp.data.comment_html);
+      $(id).append(elm);
       $(inputELM).val('');
       $(dataObj.commentMeter_elm).text(resp.data.commentMeter);
       $scope.applyNewLikeListeners(elm);
@@ -275,8 +275,8 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       // Success Callback
       console.log(resp);
       var id = '#rplst-' + dataObj.comment_id;
-      var elm = $(resp.data.reply_html)
-      $(id).append(elm)
+      var elm = $(resp.data.reply_html);
+      $(id).append(elm);
       $(inputELM).val('');
       $(dataObj.replyMeter_elm).text(resp.data.replyMeter);
       $scope.applyNewLikeListeners(elm);

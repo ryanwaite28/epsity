@@ -613,6 +613,34 @@ def searchForMembers(request):
 
 # ---
 
+def searchUsers(request):
+    data = json.loads(request.body)
+    you = Accounts.objects.get(uname = request.session['username'])
+    
+    if data['query'] == None:
+        return JsonResponse({'msg': 'Query Is Missing...'})
+
+    if data['query'] == '':
+        return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
+
+    if data['limit'] == None or data['limit'] == '' or data['limit'] >= 30:
+        data['limit'] = 30
+
+    users = Accounts.objects \
+    .exclude(id = you.id) \
+    .filter(uname__contains = data['query'])[:data['limit']]
+
+    users = [u.serialize for u in users]
+
+    resp = {
+        'msg': 'search results',
+        'users': users,
+    }
+
+    return JsonResponse(resp)
+
+# ---
+
 def checkGroupUserName(request, data):
     if data['groupUserName'][-1] == ' ':
         data['groupUserName'] = data['groupUserName'][:-1]

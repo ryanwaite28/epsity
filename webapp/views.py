@@ -304,6 +304,9 @@ def searchEngine(request):
         if data['action'] == 'search query':
             return routines.searchEngine(request)
 
+        if data['action'] == 'searchUsers':
+            return routines.searchUsers(request)
+
         if data['action'] == 'search for members':
             return routines.searchForMembers(request)
 

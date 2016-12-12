@@ -14,20 +14,20 @@
         <span class="transition btn-xs btn-s1 {{ comment.like_status.class }} like-btn" data-comment-id="{{ comment.comment_id }}" data-content-type="{{ comment.content_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}" data-like-status-json="{{ comment.like_status_json }}" data-post-id="{{ comment.post_rel.p_id }}" data-post-type="{{ comment.post_rel.post_type }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}">
         <i class="fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ comment.like_status.text }}</span>
       </span>
-        <span data-toggle="collapse" data-target="#rpdv-{{ comment.comment_id }}" data-comment-id="{{ comment.comment_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ comment.content_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}" data-post-id="{{ comment.post_rel.p_id }}" data-post-type="{{ comment.post_rel.post_type }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}">
+        <span title="Show/Hide Replies" data-toggle="collapse" data-target="#rpdv-{{ comment.comment_id }}" data-comment-id="{{ comment.comment_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ comment.content_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}" data-post-id="{{ comment.post_rel.p_id }}" data-post-type="{{ comment.post_rel.post_type }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}">
         <i class="fa fa-comments" aria-hidden="true"></i> Replies
       </span>
       </p>
       <hr>
       <div class="collapse in" id="rpdv-{{ comment.comment_id }}">
-        <ul id="rplst-{{ comment.comment_id }}" class="ul-raw bg-grey-1 padd-2">
+        <ul id="rplst-{{ comment.comment_id }}" class="ul-raw">
 
 
 
         </ul>
       </div>
       <input id="cmrly-{{ comment.comment_id }}" class="add-reply-box block input-t-s1 transition dsp-n" data-elm-kind="add-reply-box" data-comment-id="{{ comment.comment_id }}" data-content-type="{{ comment.content_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}" data-like-status-json="{{ comment.like_status_json }}" data-post-id="{{ comment.post_rel.p_id }}" data-post-type="{{ comment.post_rel.post_type }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}" placeholder="Add Reply..." />
-      <input class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ comment.comment_id }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}"/>
+      <inputtitle="Show/Hide Reply Input Field"   class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ comment.comment_id }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}"/>
     </div>
   </div>
 

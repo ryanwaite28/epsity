@@ -2,7 +2,7 @@
 
 App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
-  window.scope = $scope;
+  // window.scope = $scope;
 
   $scope.createGroup = function() {
     if( !alphaNum_two.test(  $('input[name="displayname"]').val() ) ) {
@@ -27,6 +27,42 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
       $('#create-group-form input[name="origin"]').val( location.pathname );
       $('#create-group-form').submit();
     }
+
+  }
+
+  $scope.searchUsers = function() {
+    if( $scope.searchQuery == '' ) {
+      return;
+    }
+    else if( !alphaNumeric.test($scope.searchQuery) ) {
+      alert('Alphanumeric Query Only (Letters & Numbers).');
+      return;
+    }
+
+    var req = {
+      method: 'POST',
+      url: '/search/',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      data: {
+        action: 'searchUsers',
+        query: $scope.searchQuery,
+        csrfmiddlewaretoken: Cookies.get('csrftoken'),
+      }
+    }
+    $http(req).then(function(resp){
+      // Success Callback
+      console.log(resp);
+
+      $scope.srUsers = resp.data.users;
+      $scope.srGroups = resp.data.groups;
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
 
   }
 

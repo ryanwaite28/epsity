@@ -39,7 +39,7 @@
           <span ng-click="likeBtn()" class="text-center btn-xs transition btn-s1 {{ p.like_status.class }} like-btn" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-like-status="{{ p.like_status }}" data-like-status-json="{{ p.like_status_json }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
           <i class="text-center fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ p.like_status.text }}</span>
           </span>
-          <span data-toggle="collapse" data-target="#cmdv-{{ p.p_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
+          <span title="Show/Hide Comments" data-toggle="collapse" data-target="#cmdv-{{ p.p_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}">
           <i class="fa fa-comments" aria-hidden="true"></i> Comments
           </span>
         </p>
@@ -74,13 +74,13 @@
                     <span ng-click="likeBtn()" class="transition btn-xs btn-s1 {{ c.like_status.class }} like-btn" data-comment-id="{{ c.comment_id }}" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-like-status="{{ c.like_status }}" data-like-status-json="{{ c.like_status_json }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}">
                     <i class="fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ c.like_status.text }}</span>
                   </span>
-                    <span data-toggle="collapse" data-target="#rpdv-{{ c.comment_id }}" data-comment-id="{{ c.comment_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-like-status="{{ c.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}">
+                    <span title="Show/Hide Replies" data-toggle="collapse" data-target="#rpdv-{{ c.comment_id }}" data-comment-id="{{ c.comment_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-like-status="{{ c.like_status }}" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}">
                     <i class="fa fa-comments" aria-hidden="true"></i> Replies
                   </span>
                   </p>
 
                   <div class="collapse in" id="rpdv-{{ c.comment_id }}">
-                    <ul id="rplst-{{ c.comment_id }}" class="ul-raw bg-grey-1 padd-2">
+                    <ul id="rplst-{{ c.comment_id }}" class="ul-raw">
 
                       {% for r in c.replies %}
                       <li class="reply-box-1">
@@ -107,7 +107,7 @@
                     <br>
                   </div>
                   <input id="cmrly-{{ c.comment_id }}" class="add-reply-box block input-t-s1 transition dsp-n" data-elm-kind="add-reply-box" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}" placeholder="Add Reply..." />
-                  <input ng-click="addReplyBtn()" class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}" />
+                  <input title="Show/Hide Reply Input Field" class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}" />
                 </div>
               </div>
 
@@ -126,7 +126,7 @@
           <textarea id="cmbox-{{ p.p_id }}" class="middlr add-comment-box block max-w input-t-s1 transition dsp-n" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-elm-kind="add-comment-box" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}"
               data-post-status="{{ p.status }}" placeholder="Add Comment..."></textarea>
 
-          <input ng-click="addCommentBtn()" class="middlr add-comment-btn transition btn btn-sm btn-info" type="button" value="Add Comment" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}"
+          <input title="Show/Hide Comment Input Field" ng-click="addCommentBtn()" class="middlr add-comment-btn transition btn btn-sm btn-info" type="button" value="Add Comment" data-post-id="{{ p.p_id }}" data-post-type="{{ p.post_type }}" data-content-type="{{ p.content_type }}" data-content-id="{{ p.p_id }}" data-owner-id="{{ p.ownerid }}" data-owner-type="{{ p.owner_type }}" data-post-status="{{ p.status }}"
           />
         </div>
       </div>

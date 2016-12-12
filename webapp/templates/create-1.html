@@ -45,7 +45,6 @@
                   <li role="presentation" class="active"><a data-toggle="tab" href="#new-group-pane">Group</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#new-convo-pane">Conversation</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#new-event-pane">Event</a></li>
-                  <li role="presentation"><a data-toggle="tab" href="#new-post-pane">Post</a></li>
                 </ul>
               </div>
             </div>
@@ -72,10 +71,18 @@
                   </div>
 
                 <div id="new-convo-pane" class="tab-pane fade">
-                  <div>
+                  <div class="row">
                     <p class="text-center">Create A Conversation!</p>
                     <br>
-                    <div class="">
+                    <div class="col-sm-4">
+                      <div class="">
+                        <h3 class="text-center">Search For Users</h3>
+                        <br>
+                        <input style="width: 375px; max-width: 90%;" type="text" class="middlr input-t-s1" placeholder="Search..." ng-model="searchQuery"/><br>
+                        <input type="button" class="middlr transition btn btn-info" value="Submit" ng-click="searchUsers()"/>
+                      </div>
+                    </div>
+                    <div class="col-sm-8">
 
                     </div>
                   </div>
@@ -86,15 +93,6 @@
                     <br>
                     <div class="">
 
-                    </div>
-                  </div>
-                </div>
-                <div id="new-post-pane" class="tab-pane fade">
-                  <div>
-                    <p class="text-center">Create A Post!</p>
-                    <br>
-                    <div class="">
-                      {{ post_form }}
                     </div>
                   </div>
                 </div>
