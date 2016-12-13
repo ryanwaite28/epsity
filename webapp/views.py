@@ -335,6 +335,28 @@ def messagesView(request):
 # ---
 
 @csrf_protect
+def conversationsView(request):
+    if request.method == 'POST':
+        return redirect('/')
+
+    if request.method == 'GET':
+        if 'username' not in request.session:
+            return redirect('/')
+
+        try:
+            you = Accounts.objects.get(uname = request.session['username'])
+            return render(request, masterDICT['pages']['conversationsView'],
+                            {'you': you,
+                            'message': ''},
+                            context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
+
+# ---
+
+@csrf_protect
 def mySettings(request):
     if request.method == 'POST':
         return redirect('/')
@@ -476,13 +498,16 @@ def settingsActionAJAX(request):
 
 @csrf_protect
 def checkPoint(request):
-    ''' This View Function Is Intended To Be Called By AJAX Requests '''
+    ''' This View Function Is Intended To Be Called By AJAX Requests Only '''
     if request.method == 'GET':
         return redirect('/')
 
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+
+            if 'action' not in data:
+                return JsonResponse({'msg': 'Action Message Is Missing...'})
 
             if data['action'] == None:
                 return JsonResponse({'msg': 'Action Message Is Missing...'})
@@ -495,7 +520,10 @@ def checkPoint(request):
             if data['action'] == 'check group uname':
                 return routines.checkGroupUserName(request, data)
 
-        except:
+            if data['action'] == 'checkConvoName':
+                return routines.checkConvoName(request, data)
+
+        except KeyError:
             return JsonResponse({'msg': 'Failed To Load JSON Data...'})
 
 
@@ -516,6 +544,9 @@ def userActionFORM(request):
 
         if request.POST['action'] == 'send message':
             return routines.sendMessage(request)
+
+        if request.POST['action'] == 'sendGroupMessage':
+            return routines.sendGroupMessage(request)
 
         if request.POST['action'] == 'create group':
             return routines.createGroup(request)
@@ -611,6 +642,12 @@ def userActionAJAX(request):
             if data['action'] == 'load messages':
                 return routines.loadMessages(request, data)
 
+            if data['action'] == 'loadConversations':
+                return routines.loadConversations(request, data)
+
+            if data['action'] == 'getConversation':
+                return routines.getConversation(request, data)
+
             if data['action'] == 'addPostCommentUser':
                 return routines.addPostCommentUser(request, data)
 
@@ -622,6 +659,11 @@ def userActionAJAX(request):
 
             if data['action'] == 'unlike':
                 return routines.unlikeContent(request, data)
+
+            # ---
+
+            if data['action'] == 'createGroupConvo':
+                return routines.createGroupConvo(request, data)
 
 
             else:

@@ -52,6 +52,7 @@ pages = {
     'notificationsView': 'notifications-1.html',
     'mySettings': 'user-settings.html',
     'messagesView': 'messages-1.html',
+    'conversationsView': 'conversations-1.html',
     'searchEngine': 'search-1.html',
     'profileMain': 'profile-main.html',
     'profileHome': 'profile-home.html',

@@ -20,11 +20,13 @@ from django.db.models import Q
 
 from WebTools import randomVal, processImage, saveImageLocal
 
+import models
 from models import Accounts, AviModel, WpModel, Groups, GroupMembers
 from models import Follows, FollowRequests
 from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
 from models import Posts, Comments, Replies, Likes
+from models import Conversations, ConvoMembers, ConvoMessages
 
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
 from vaults import allowed_audio, allowed_photo, allowed_video, allowed_media
@@ -1411,6 +1413,75 @@ def loadMessages(request, data):
         msg = 'Server Side Error Occured.'
         return errorPage(request, msg)
 
+def loadConversations(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        memberOf_list = ConvoMembers.objects.filter( userid = you.id )
+        memberOf_list = [m.serialize for m in memberOf_list]
+        conversations_list = []
+
+        for m in memberOf_list:
+            # conversation = Conversations.objects \
+            # .filter( id = m['convo_id'] )
+            conversations_list.append( m['convo_rel'] )
+            print '--- Conversation ---'
+            print m['convo_rel']
+
+
+        resp = {
+            'msg': 'loaded conversations',
+            'you': you.serialize,
+            'conversations': conversations_list
+        }
+
+        # print resp
+
+        return JsonResponse(resp)
+
+    except ObjectDoesNotExist:
+        msg = 'Server Side Error Occured.'
+        return errorPage(request, msg)
+
+# ---
+
+def getConversation(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        conversation = Conversations.objects \
+        .filter( id = data['convo']['convo_id'] ).first()
+
+        members = ConvoMembers.objects \
+        .filter( convo_id = conversation.id, convo_rel = conversation )
+        members = [m.serialize for m in members]
+
+        messages = ConvoMessages.objects \
+        .filter( convo_id = conversation.id, convo_rel = conversation )
+        messages = [m.serialize for m in messages]
+
+        convo = {}
+        convo['conversation'] = conversation.serialize
+        convo['members'] = members
+        convo['messages'] = messages
+        convo['owner'] = conversation.owner.serialize
+
+        print members
+
+        resp = {
+            'msg': 'loaded conversations',
+            'you': you.serialize,
+            'convo': convo
+        }
+
+        # print resp
+
+        return JsonResponse(resp)
+
+    except ObjectDoesNotExist:
+        msg = 'Server Side Error Occured.'
+        return errorPage(request, msg)
+
 
 def sendMessage(request):
     try:
@@ -1700,6 +1771,74 @@ def unlikeContent(request, data):
         ({'msg': 'content unliked',
             'likeMeter': likeMeter,
             'likeStatus': masterDICT['statuses']['like']['not_liked']})
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+def checkConvoName(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        print data['name']
+
+        CheckConvoName = Conversations.objects \
+        .filter(name = data['name'], ownerid = you.id).first()
+
+        if CheckConvoName != None:
+            return JsonResponse({'text': 'You Already Have A Group Chat With That Name.',
+                                    'msg': 'taken'})
+
+        else:
+            return JsonResponse({'text': 'That Name Is Good.',
+                                    'msg': 'available'})
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+
+def createGroupConvo(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        newGroupConvo = Conversations(owner = you,
+                                        ownerid = you.id,
+                                        name = data['name'])
+        newGroupConvo.save()
+
+        for u in data['members']:
+            user = Accounts.objects.filter(id = u['userid']).first()
+            if user == None:
+                msg = 'There Was An Error In Loading One Of The User Members...'
+                return errorPage(request, msg)
+
+            newMember = ConvoMembers(user = user,
+                                        userid = user.id,
+                                        convo_id = newGroupConvo.id,
+                                        convo_rel = newGroupConvo)
+            newMember.save()
+
+        newMember_u = ConvoMembers(user = you,
+                                    userid = you.id,
+                                    convo_id = newGroupConvo.id,
+                                    convo_rel = newGroupConvo)
+        newMember_u.save()
+
+        return JsonResponse({'msg': 'Group Chat Created!'})
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def sendGroupMessage(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
 
 
     except ObjectDoesNotExist:

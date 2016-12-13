@@ -3,6 +3,11 @@
 .row {
   position: relative;
 }
+
+.middlr-2 {
+  display: table;
+}
+
 .ul-raw {
   padding: 0px;
   margin: 0px;
@@ -186,6 +191,13 @@
 .mk-rel {
   position: relative;
 }
+.mk-abs {
+  position: absolute;
+}
+.mk-fxd {
+  position: fixed;
+}
+
 .text-white {
   color: white;
 }
@@ -331,6 +343,7 @@
 
 .overf-box-1 {
   overflow-y: scroll;
+  overflow-x: hidden;
   height: 35vh;
   min-height: 275px;
 }

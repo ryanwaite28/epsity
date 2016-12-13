@@ -6,9 +6,9 @@
     <div class="col-sm-10">
       <p><a title="See {{ comment.owner.uname }} Page" href="/users/{{ comment.owner.uname }}"><strong>{{ comment.owner.uname }}</strong></a> {{ comment.contents }}</p>
       <p class="text-sm-1">
-        <span class="text-grey"><em>{{ c.date_created }}</em></span> |
-        <span><strong>Likes:</strong> <span id="comment-likemeter-{{ c.comment_id }}">0</span></span> |
-        <span><strong>Replies:</strong> <span id="comment-replymeter-{{ c.comment_id }}">0</span></span>
+        <span class="text-grey"><em>{{ comment.date_created }}</em></span> |
+        <span><strong>Likes:</strong> <span id="comment-likemeter-{{ comment.comment_id }}">0</span></span> |
+        <span><strong>Replies:</strong> <span id="comment-replymeter-{{ comment.comment_id }}">0</span></span>
       </p>
       <p class="">
         <span class="transition btn-xs btn-s1 {{ comment.like_status.class }} like-btn" data-comment-id="{{ comment.comment_id }}" data-content-type="{{ comment.content_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}" data-like-status-json="{{ comment.like_status_json }}" data-post-id="{{ comment.post_rel.p_id }}" data-post-type="{{ comment.post_rel.post_type }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}">
@@ -27,7 +27,7 @@
         </ul>
       </div>
       <input id="cmrly-{{ comment.comment_id }}" class="add-reply-box block input-t-s1 transition dsp-n" data-elm-kind="add-reply-box" data-comment-id="{{ comment.comment_id }}" data-content-type="{{ comment.content_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}" data-like-status-json="{{ comment.like_status_json }}" data-post-id="{{ comment.post_rel.p_id }}" data-post-type="{{ comment.post_rel.post_type }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}" placeholder="Add Reply..." />
-      <inputtitle="Show/Hide Reply Input Field"   class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ comment.comment_id }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}"/>
+      <input title="Show/Hide Reply Input Field"   class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ comment.comment_id }}" data-owner-id="{{ comment.ownerid }}" data-owner-type="{{ comment.owner_type }}" data-content-id="{{ comment.comment_id }}" data-like-status="{{ comment.like_status }}"/>
     </div>
   </div>
 

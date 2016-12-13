@@ -15,7 +15,7 @@
   <script src="/static/js/grand.js"></script>
   <script src="/static/js/profile.js"></script>
   <script src="/static/js/controllers/create-ctrl.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSHPWjouiZzdAI_EhWkuuLsFMEGTgyYWE&libraries=places&callback=initMap" async defer></script>
+
 
 </head>
 
@@ -76,6 +76,10 @@
                   <div class="row">
                     <h3 class="text-center">Create A Conversation!</h3>
                     <hr class="hr-grey">
+                    <div class="col-sm-12">
+                      <input class="middlr input-t-s1" type="text" placeholder="New Conversation Name..." ng-model="newConvoName"/>
+                      <br>
+                    </div>
                     <div class="col-sm-4">
                       <div class="">
                         <h4 class="text-center">Search For Users</h4>
@@ -84,11 +88,11 @@
                         <input type="button" class="middlr btn-sm transition btn btn-info" value="Submit" ng-click="searchUsers()"/>
                       </div>
                       <hr>
+                      <h4 class="text-center">Selected Users</h4>
+                      <br>
                       <div class="overf-box-1">
-                        <h4 class="text-center">Selected Users</h4>
-                        <br>
                         <ul class="ul-raw">
-                          <li class="li-style-1" ng-repeat="u in selectedConvoMembers">
+                          <li class="li-style-1 transition" ng-repeat="u in selectedConvoMembers">
                             <div class="row">
                               <div class="col-xs-12">
                                 <img width="80px" class="img-left middlr polaroid-3" src="{[ u.avi ]}"/>
@@ -109,7 +113,7 @@
                       <h4 class="text-center">Search Results</h4>
                       <hr>
                       <ul class="ul-raw">
-                        <li class="li-style-1" ng-repeat="u in srUsers">
+                        <li class="li-style-1 transition" ng-repeat="u in srUsers">
                           <div class="row">
                             <div class="col-xs-12">
                               <img width="80px" class="img-left middlr polaroid-3" src="{[ u.avi ]}"/>
@@ -129,7 +133,7 @@
                       <br>
                       <hr>
                       <p class="text-center">
-                        <a title="Create Group Message" class="btn btn-success transition" ng-click="createGroupConvo()">Create</a>
+                        <a title="Create Group Message" class="btn btn-success transition" ng-click="checkConvoName()">Create</a>
                       </p>
                     </div>
                   </div>
@@ -138,8 +142,10 @@
                   <div class="row">
                     <h3 class="text-center">Create An Event!</h3>
                     <hr class="hr-grey">
-                    <div id="mapdiv" class="max-w" style="min-height: 35vh;">
+                    <div class="spacr-1" style="height: 45vh; min-height: 40vh;">
+                      <div id="mapdiv" class="mk-abs reach">
 
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -152,6 +158,9 @@
         </div>
       </div>
     </div>
+
+    <!--  -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSHPWjouiZzdAI_EhWkuuLsFMEGTgyYWE&libraries=places&callback=initMap" async defer></script>
 
   </body>
 

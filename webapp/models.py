@@ -650,14 +650,18 @@ class Conversations(models.Model):
     owner = models.ForeignKey(Accounts, default = 0, related_name = "convo_owner")
     ownerid = models.IntegerField(blank = False, default = 0)
 
+    name = models.CharField(max_length = 500, default = '')
+
     date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
 
     @property
     def serialize(self):
         return {
+            'convo_id': self.id, 
             'owner': self.owner.serialize,
             'ownerid': self.ownerid,
+            'name': self.name,
             'date_created': self.date_created,
             'last_active': self.last_active
         }

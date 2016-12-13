@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Epsity | Conversations</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load staticfiles %}
+
+  {% include 'dependencies-1.html' %}
+
+  <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+  <script src="/static/js/grand.js"></script>
+  <script src="/static/js/profile.js"></script>
+  <script src="/static/js/controllers/conversations-ctrl.js"></script>
+  <!-- <script src="/static/js/controllers/follow-ctrl.js"></script> -->
+</head>
+
+  <body ng-app="epsityApp" ng-controller="conversationsCtrl" class="transition">
+
+    {% include 'topbar-1.html' %}
+
+    <!--  -->
+
+    <div id="main-container">
+      <div id="mc-inner" class="">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12" style="height: 25px;"></div>
+
+            <div class="col-md-3">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <img id="" class="middlr polaroid-2" title="Profile Image" alt="Profile Image" src="{{ you.avi }}"/>
+                <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
+                <p class="text-center">{{ you.displayname }}</p>
+              </div>
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <p class="text-center"><strong>Messages</strong></p>
+                <hr class="hr-grey">
+                <ul id="messages-list" class="ul-raw text-center">
+                  <li class="transition" ng-repeat="c in conversations">
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <p class="no-marg text-center">
+                          <strong>{[ c.name ]}</strong>
+                        </p>
+                        <br>
+                        <a title="See Conversation" class="btn btn-xs btn-info transition" ng-click="getConversation(this.c)">Open</a>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <p class="text-center"><strong>Conversation</strong></p>
+                <hr class="hr-grey">
+
+              </div> -->
+            </div>
+
+            <!-- ng-controller="followCtrl" -->
+
+            <div class="col-md-9">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
+                <p class="text-center p-emp-1"><strong>{[ currentConversation.conversation.name ]}</strong></p>
+                <p class="text-center"><a class="btn btn-sm btn-primary transition" data-toggle="modal" data-target="#attachmentModal">Show Attachment</a></p>
+                <hr class="hr-grey">
+                <ul class="ul-raw">
+                  <li ng-repeat="r in currentMessages.replies">
+                    <div class="row" style="padding: 0px 15px;">
+                      <div class="message-box-1 sbm-1" style="float: {[ r.pos ]}; background: {[ r.color ]};">
+                        <div class="">
+                          <p class="text-{[ r.pos ]}">{[ r.contents ]}<br>
+                          <a class="{[ r.class ]}" title="See attachment" ng-click="showMsgAttachment(this.r)">{[ r.attachment_type ]}</a></p><br>
+                          <p style="font-size: 11px;" class="text-{[ r.pos ]}"><em><strong>{[ r.date_created | date : "MM/dd/y" ]}</strong></em></p>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <hr class="hr-grey">
+                <form ng-hide="sendgroupmsg" class="middlr text-center" id="sendmsg-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="sendGroupMessage"/>
+
+                  <input type="hidden" name="origin" value=""/>
+                  <input type="hidden" name="convoid" value=""/>
+
+                  <textarea id="send-msg-1" name="contents" placeholder="Send Message..." ng-model="messageContents"></textarea>
+                  <br>
+                  <input type="file" name="media" class="middlr transition btn btn-default"/>
+                  <br>
+                  <a title="Send Message To {{ user.uname }}" class="btn btn-success transition" ng-click="sendGroupMessage()">Send Group Message</a>
+                  <p class="text-center">{[ msgResp ]}</p>
+                </form>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+<div id="attachmentModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title text-center">Attachment</h4>
+      </div>
+
+      <div class="modal-body" id="modal-body">
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  </body>
+
+  <!--
+
+    wp = Welcome Page
+
+  -->
+
+</html>
