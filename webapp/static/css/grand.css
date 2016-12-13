@@ -328,3 +328,20 @@
 .bg-grey-2 {
   background: #f2f2f2;
 }
+
+.overf-box-1 {
+  overflow-y: scroll;
+  height: 35vh;
+  min-height: 275px;
+}
+
+.li-style-1 {
+  background: lightgrey;
+  border: 1px solid black;
+  padding: 10px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+.li-style-1:hover {
+  background: #fbfbfb;
+}

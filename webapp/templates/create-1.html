@@ -42,7 +42,7 @@
 
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <p class="text-center"><strong>Create</strong></p>
-                <hr>
+                <hr class="hr-grey">
                 <ul class="nav nav-pills nav-stacked text-center">
                   <li role="presentation" class="active"><a data-toggle="tab" href="#new-group-pane">Group</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#new-convo-pane">Conversation</a></li>
@@ -54,9 +54,9 @@
             <div class="col-md-9" style="min-height: 75vh;">
               <div class="tab-content padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <div id="new-group-pane" class="tab-pane fade in active">
-                  <div>
-                    <p class="text-center">Create A Group!</p>
-                    <br>
+                  <div class="row">
+                    <h3 class="text-center">Create A Group!</h3>
+                    <hr class="hr-grey">
                     <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/action/form/" method="POST">{% csrf_token %}
                       <input type="hidden" name="action" value="create group"/>
 
@@ -74,25 +74,70 @@
 
                 <div id="new-convo-pane" class="tab-pane fade">
                   <div class="row">
-                    <p class="text-center">Create A Conversation!</p>
-                    <br>
+                    <h3 class="text-center">Create A Conversation!</h3>
+                    <hr class="hr-grey">
                     <div class="col-sm-4">
                       <div class="">
-                        <h3 class="text-center">Search For Users</h3>
+                        <h4 class="text-center">Search For Users</h4>
                         <br>
                         <input style="width: 375px; max-width: 90%;" type="text" class="middlr input-t-s1" placeholder="Search..." ng-model="searchQuery"/><br>
-                        <input type="button" class="middlr transition btn btn-info" value="Submit" ng-click="searchUsers()"/>
+                        <input type="button" class="middlr btn-sm transition btn btn-info" value="Submit" ng-click="searchUsers()"/>
+                      </div>
+                      <hr>
+                      <div class="overf-box-1">
+                        <h4 class="text-center">Selected Users</h4>
+                        <br>
+                        <ul class="ul-raw">
+                          <li class="li-style-1" ng-repeat="u in selectedConvoMembers">
+                            <div class="row">
+                              <div class="col-xs-12">
+                                <img width="80px" class="img-left middlr polaroid-3" src="{[ u.avi ]}"/>
+                                <p class="no-marg text-left">
+                                  <a title="See Profile" href="/users/{[ u.uname ]}">
+                                    <strong>{[ u.uname ]}</strong>
+                                  </a>
+                                </p>
+                                <br>
+                                <a title="See Messages" class="btn btn-xs btn-danger transition float-left" ng-click="removeSelected(this.u)">Remove</a>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
                       </div>
                     </div>
                     <div class="col-sm-8">
-
+                      <h4 class="text-center">Search Results</h4>
+                      <hr>
+                      <ul class="ul-raw">
+                        <li class="li-style-1" ng-repeat="u in srUsers">
+                          <div class="row">
+                            <div class="col-xs-12">
+                              <img width="80px" class="img-left middlr polaroid-3" src="{[ u.avi ]}"/>
+                              <p class="no-marg text-left">
+                                <a title="See Profile" href="/users/{[ u.uname ]}">
+                                  <strong>{[ u.uname ]}</strong>
+                                </a>
+                              </p>
+                              <br>
+                              <a title="See Messages" class="btn btn-xs btn-primary transition float-left" ng-click="addToSelected(this.u)">Add</a>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col-sm-12">
+                      <br>
+                      <hr>
+                      <p class="text-center">
+                        <a title="Create Group Message" class="btn btn-success transition" ng-click="createGroupConvo()">Create</a>
+                      </p>
                     </div>
                   </div>
                 </div>
                 <div id="new-event-pane" class="tab-pane fade">
-                  <div>
-                    <p class="text-center">Create An Event!</p>
-                    <br>
+                  <div class="row">
+                    <h3 class="text-center">Create An Event!</h3>
+                    <hr class="hr-grey">
                     <div id="mapdiv" class="max-w" style="min-height: 35vh;">
 
                     </div>

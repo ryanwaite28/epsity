@@ -1,18 +1,22 @@
 // User Settings
 
+function initMap() {
+
+  var map = new google.maps.Map(document.getElementById('mapdiv'), {
+    center: {lat: -34.397, lng: 150.644},
+    scrollwheel: true,
+    zoom: 8
+  });
+
+  window.map = map;
+
+}
+
 App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
   window.scope = $scope;
 
-  window.initMap = function() {
 
-    var map = new google.maps.Map(document.getElementById('mapdiv'), {
-      center: {lat: -34.397, lng: 150.644},
-      scrollwheel: true,
-      zoom: 8
-    });
-
-  }
 
   $scope.createGroup = function() {
     if( !alphaNum_two.test(  $('input[name="displayname"]').val() ) ) {
@@ -74,6 +78,19 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
       console.log(resp);
     });
 
+  }
+
+  $scope.selectedConvoMembers = [];
+
+  $scope.addToSelected = function(user) {
+    console.log(user);
+    $scope.selectedConvoMembers.push(user);
+  }
+
+  $scope.removeSelected = function(user) {
+    console.log(user);
+    var index = $scope.selectedConvoMembers.indexOf(user);
+    $scope.selectedConvoMembers.splice(index, 1);
   }
 
 }])

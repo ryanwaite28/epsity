@@ -574,7 +574,10 @@ def searchForMembers(request):
     if data['query'] == '':
         return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
 
-    if data['limit'] == None or data['limit'] == '' or data['limit'] >= 30:
+    if 'limit' in data:
+        if data['limit'] == None or data['limit'] == '' or data['limit'] >= 30:
+            data['limit'] = 30
+    else:
         data['limit'] = 30
 
     users = Accounts.objects \
@@ -633,7 +636,10 @@ def searchUsers(request):
     if data['query'] == '':
         return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
 
-    if data['limit'] == None or data['limit'] == '' or data['limit'] >= 30:
+    if 'limit' in data:
+        if data['limit'] == None or data['limit'] == '' or data['limit'] >= 30:
+            data['limit'] = 30
+    else:
         data['limit'] = 30
 
     users = Accounts.objects \
