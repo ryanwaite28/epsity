@@ -4,14 +4,11 @@
 <head>
   <title>Epsity | Create</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% load staticfiles %}
-
-  {% include 'dependencies-1.html' %}
+  <meta name="viewport" content="width=device-width, initial-scale=1"> {% load staticfiles %} {% include 'dependencies-1.html' %}
 
   <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
   <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
-  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png" />
   <script src="/static/js/grand.js"></script>
   <script src="/static/js/profile.js"></script>
   <script src="/static/js/controllers/create-ctrl.js"></script>
@@ -19,149 +16,186 @@
 
 </head>
 
-  <body ng-app="epsityApp" ng-controller="createCtrl" class="transition">
+<body ng-app="epsityApp" ng-controller="createCtrl" class="transition">
 
-    {% include 'topbar-1.html' %}
+  {% include 'topbar-1.html' %}
 
-    <!--  -->
+  <!--  -->
 
-    <div id="main-container">
-      <div id="mc-inner" class="">
-        <div class="container-fluid">
+  <div id="main-container">
+    <div id="mc-inner" class="">
+      <div class="container-fluid">
 
-          <div class="row">
-            <div class="col-md-3"></div><div class="col-md-9" style="min-height: 25px;"><p class="text-center" style="padding: 15px;">{{ message }}</p></div>
-            <!--  -->
+        <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-9" style="min-height: 25px;">
+            <p class="text-center" style="padding: 15px;">{{ message }}</p>
+          </div>
+          <!--  -->
 
-            <div class="col-md-3">
-              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <img class="polaroid-2 middlr" src="{{ you.avi }}"/>
-                <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
-                <p class="text-center">{{ you.displayname }}</p>
-              </div>
-
-              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <p class="text-center"><strong>Create</strong></p>
-                <hr class="hr-grey">
-                <ul class="nav nav-pills nav-stacked text-center">
-                  <li role="presentation" class="active"><a data-toggle="tab" href="#new-group-pane">Group</a></li>
-                  <li role="presentation"><a data-toggle="tab" href="#new-convo-pane">Conversation</a></li>
-                  <li role="presentation"><a data-toggle="tab" href="#new-event-pane">Event</a></li>
-                </ul>
-              </div>
+          <div class="col-md-3">
+            <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+              <img class="polaroid-2 middlr" src="{{ you.avi }}" />
+              <h3 class="text-center"><strong>{{ you.uname }}</strong></h3>
+              <p class="text-center">{{ you.displayname }}</p>
             </div>
 
-            <div class="col-md-9" style="min-height: 75vh;">
-              <div class="tab-content padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <div id="new-group-pane" class="tab-pane fade in active">
-                  <div class="row">
-                    <h3 class="text-center">Create A Group!</h3>
-                    <hr class="hr-grey">
-                    <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/action/form/" method="POST">{% csrf_token %}
-                      <input type="hidden" name="action" value="create group"/>
+            <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+              <p class="text-center"><strong>Create</strong></p>
+              <hr class="hr-grey">
+              <ul class="nav nav-pills nav-stacked text-center">
+                <li role="presentation" class="active"><a data-toggle="tab" href="#new-event-pane">Event</a></li>
+                <li role="presentation"><a data-toggle="tab" href="#new-group-pane">Group</a></li>
+                <li role="presentation"><a data-toggle="tab" href="#new-convo-pane">Conversation</a></li>
+              </ul>
+            </div>
+          </div>
 
-                      <input class="input-t-s1 middlr" type="text" name="displayname" placeholder="Group Display Name..." ng-model="newGroupName" required/><br>
-                      <input class="input-t-s1 middlr" type="text" name="uname" placeholder="Group Username..." ng-model="newGroupUserName" required/><br>
-                      <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Group Description..." ng-model="newGroupDesc" required></textarea><br>
-                      <p class="text-center">Group Avatar</p>
-                      <input type="file" name="imageFileAvi" class="middlr transition btn btn-default" accept="image/*"/><br><br>
-                      <p class="text-center">Group Wallpaper</p>
-                      <input type="file" name="imageFileWp" class="middlr transition btn btn-default" accept="image/*"/><br>
-                      <input type="hidden" name="origin" value=""/>
-                      <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createGroup()"/>
+          <div class="col-md-9" style="min-height: 75vh;">
+            <div class="tab-content padd-1 mk-rel sdw-1 sbm-1 bg-white">
+              <div id="new-event-pane" class="tab-pane fade in active">
+                <div class="row">
+                  <h3 class="text-center">Create An Event!</h3>
+                  <hr class="hr-grey">
+                  <div class="spacr-1">
+                    <input id="pac-input" type="text" class="controls" placeholder="Enter a location" style="z-index: 0; position: absolute; left: 114px; top: 0px;" autocomplete="off">
+                    <div id="mapdiv" class="brd-bl" style="height: 45vh; min-height: 40vh;">
+
                     </div>
                   </div>
+                  <br>
+                  <form class="middlr" id="create-event-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="createEvent" />
 
-                <div id="new-convo-pane" class="tab-pane fade">
-                  <div class="row">
-                    <h3 class="text-center">Create A Conversation!</h3>
-                    <hr class="hr-grey">
-                    <div class="col-sm-12">
-                      <input class="middlr input-t-s1" type="text" placeholder="New Conversation Name..." ng-model="newConvoName"/>
-                      <br>
-                    </div>
-                    <div class="col-sm-4">
-                      <div class="">
-                        <h4 class="text-center">Search For Users</h4>
+                    <input class="input-t-s1 middlr" type="text" name="eventname" placeholder="Event Name..." ng-model="newEventName" required/><br>
+                    <input class="input-t-s1 middlr" type="text" name="eventlocation" placeholder="Event Location..." ng-model="newEventLocation" required/><br>
+                    <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="eventdescription" type="text" placeholder="Event Description..." ng-model="newEventDesc" required></textarea><br>
+                    <div class="text-center row">
+                      <!-- <div class="col-sm-3"></div> -->
+                      <div class="col-sm-6">
+                        Start Date<br>
+                        <select name="">
+                          <span ng-repeat="m in months">
+                            <option value="{[ m ]}">{[ m ]}</option>
+                          </span>
+                        </select>
+
                         <br>
-                        <input style="width: 375px; max-width: 90%;" type="text" class="middlr input-t-s1" placeholder="Search..." ng-model="searchQuery"/><br>
-                        <input type="button" class="middlr btn-sm transition btn btn-info" value="Submit" ng-click="searchUsers()"/>
+                        Start Time
+                        <input class="middlr" type="text" name="bday" max="1979-12-31">
                       </div>
-                      <hr>
-                      <h4 class="text-center">Selected Users</h4>
-                      <br>
-                      <div class="overf-box-1">
-                        <ul class="ul-raw">
-                          <li class="li-style-1 transition" ng-repeat="u in selectedConvoMembers">
-                            <div class="row">
-                              <div class="col-xs-12">
-                                <img width="80px" class="img-left middlr polaroid-3" src="{[ u.avi ]}"/>
-                                <p class="no-marg text-left">
-                                  <a title="See Profile" href="/users/{[ u.uname ]}">
-                                    <strong>{[ u.uname ]}</strong>
-                                  </a>
-                                </p>
-                                <br>
-                                <a title="See Messages" class="btn btn-xs btn-danger transition float-left" ng-click="removeSelected(this.u)">Remove</a>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
+
+
+                      <!-- <div class="col-sm-3"></div> -->
                     </div>
-                    <div class="col-sm-8">
-                      <h4 class="text-center">Search Results</h4>
-                      <hr>
+                    <br>
+                    <p class="text-center">Event Icon</p>
+                    <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*" /><br>
+                    <br>
+                    <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createEvent()" />
+                  </form>
+                </div>
+              </div>
+
+              <div id="new-group-pane" class="tab-pane fade">
+                <div class="row">
+                  <h3 class="text-center">Create A Group!</h3>
+                  <hr class="hr-grey">
+                  <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/action/form/" method="POST">{% csrf_token %}
+                    <input type="hidden" name="action" value="create group" />
+
+                    <input class="input-t-s1 middlr" type="text" name="displayname" placeholder="Group Display Name..." ng-model="newGroupName" required/><br>
+                    <input class="input-t-s1 middlr" type="text" name="uname" placeholder="Group Username..." ng-model="newGroupUserName" required/><br>
+                    <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Group Description..." ng-model="newGroupDesc" required></textarea><br>
+                    <p class="text-center">Group Avatar</p>
+                    <input type="file" name="imageFileAvi" class="middlr transition btn btn-default" accept="image/*" /><br><br>
+                    <p class="text-center">Group Wallpaper</p>
+                    <input type="file" name="imageFileWp" class="middlr transition btn btn-default" accept="image/*" /><br>
+                    <input type="hidden" name="origin" value="" />
+                    <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createGroup()" />
+                </div>
+              </div>
+
+              <div id="new-convo-pane" class="tab-pane fade">
+                <div class="row">
+                  <h3 class="text-center">Create A Conversation!</h3>
+                  <hr class="hr-grey">
+                  <div class="col-sm-12">
+                    <input class="middlr input-t-s1" type="text" placeholder="New Conversation Name..." ng-model="newConvoName" />
+                    <br>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="">
+                      <h4 class="text-center">Search For Users</h4>
+                      <br>
+                      <input style="width: 375px; max-width: 90%;" type="text" class="middlr input-t-s1" placeholder="Search..." ng-model="searchQuery" /><br>
+                      <input type="button" class="middlr btn-sm transition btn btn-info" value="Submit" ng-click="searchUsers()" />
+                    </div>
+                    <hr>
+                    <h4 class="text-center">Selected Users</h4>
+                    <br>
+                    <div class="overf-box-1">
                       <ul class="ul-raw">
-                        <li class="li-style-1 transition" ng-repeat="u in srUsers">
+                        <li class="li-style-1 transition" ng-repeat="u in selectedConvoMembers">
                           <div class="row">
                             <div class="col-xs-12">
-                              <img width="80px" class="img-left middlr polaroid-3" src="{[ u.avi ]}"/>
+                              <img width="80px" class="img-left middlr polaroid-3" src="{[ u.avi ]}" />
                               <p class="no-marg text-left">
                                 <a title="See Profile" href="/users/{[ u.uname ]}">
                                   <strong>{[ u.uname ]}</strong>
                                 </a>
                               </p>
                               <br>
-                              <a title="See Messages" class="btn btn-xs btn-primary transition float-left" ng-click="addToSelected(this.u)">Add</a>
+                              <a title="See Messages" class="btn btn-xs btn-danger transition float-left" ng-click="removeSelected(this.u)">Remove</a>
                             </div>
                           </div>
                         </li>
                       </ul>
                     </div>
-                    <div class="col-sm-12">
-                      <br>
-                      <hr>
-                      <p class="text-center">
-                        <a title="Create Group Message" class="btn btn-success transition" ng-click="checkConvoName()">Create</a>
-                      </p>
-                    </div>
                   </div>
-                </div>
-                <div id="new-event-pane" class="tab-pane fade">
-                  <div class="row">
-                    <h3 class="text-center">Create An Event!</h3>
-                    <hr class="hr-grey">
-                    <div class="spacr-1" style="height: 45vh; min-height: 40vh;">
-                      <div id="mapdiv" class="mk-abs reach">
-
-                      </div>
-                    </div>
+                  <div class="col-sm-8">
+                    <h4 class="text-center">Search Results</h4>
+                    <hr>
+                    <ul class="ul-raw">
+                      <li class="li-style-1 transition" ng-repeat="u in srUsers">
+                        <div class="row">
+                          <div class="col-xs-12">
+                            <img width="80px" class="img-left middlr polaroid-3" src="{[ u.avi ]}" />
+                            <p class="no-marg text-left">
+                              <a title="See Profile" href="/users/{[ u.uname ]}">
+                                <strong>{[ u.uname ]}</strong>
+                              </a>
+                            </p>
+                            <br>
+                            <a title="See Messages" class="btn btn-xs btn-primary transition float-left" ng-click="addToSelected(this.u)">Add</a>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="col-sm-12">
+                    <br>
+                    <hr>
+                    <p class="text-center">
+                      <a title="Create Group Message" class="btn btn-success transition" ng-click="checkConvoName()">Create</a>
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div class="col-md-12"><br></div>
           </div>
 
+          <div class="col-md-12"><br></div>
         </div>
+
       </div>
     </div>
+  </div>
 
-    <!--  -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSHPWjouiZzdAI_EhWkuuLsFMEGTgyYWE&libraries=places&callback=initMap" async defer></script>
+  <!--  -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSHPWjouiZzdAI_EhWkuuLsFMEGTgyYWE&libraries=places&callback=initMap" async defer></script>
 
-  </body>
+</body>
 
 </html>

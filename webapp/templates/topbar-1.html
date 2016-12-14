@@ -17,7 +17,7 @@
 
       <div id="p-ld">
         <ul class="ul-raw" id="tb-links">
-          <li title="Notifications"><i class="fa fa-bolt tb-icons" aria-hidden="true"></i>
+          <li data-name="notes" title="Notifications"><i class="fa fa-bolt tb-icons" aria-hidden="true"></i>
             <div class="transition li-dropdown-s1">
               <h4 class="text-center"><strong>Notifications</strong></h4>
               <ul class="ul-raw tb-ul">
@@ -33,7 +33,7 @@
             </div>
           </li> -->
 
-          <li title="User Pages"><i class="fa fa-user-circle-o tb-icons" aria-hidden="true"></i>
+          <li data-name="user" title="User Pages"><i class="fa fa-user-circle-o tb-icons" aria-hidden="true"></i>
             <div class="transition li-dropdown-s1">
               <h4 class="text-center"><strong>Pages</strong></h4>
 
@@ -46,7 +46,7 @@
             </div>
           </li>
 
-          <li title="More Links"><i class="fa fa-chevron-circle-down tb-icons" aria-hidden="true"></i>
+          <li data-name="links" title="More Links"><i class="fa fa-chevron-circle-down tb-icons" aria-hidden="true"></i>
             <div class="transition li-dropdown-s1">
               <h4 class="text-center"><strong>Links</strong></h4>
 
@@ -78,11 +78,31 @@
 
   $(document).ready(function(){
 
-    $(document).on('click', '#tb-links li', function(){
+    var current_li = {
+      name: '',
+      elm: ''
+    };
+
+    $(document).on('click', '#tb-links > li', function(){
+
+      var li = $(this);
+      // console.log(current_li, li);
+
+      if( li.data('name') == current_li.name ) {
+        if( li.find('.li-dropdown-s1').hasClass('show-it') == true ) {
+          li.find('.li-dropdown-s1').removeClass('show-it');
+        }
+        else {
+          li.find('.li-dropdown-s1').addClass('show-it');
+        }
+        return;
+      }
+
+      current_li.name = li.data('name');
+      current_li.elm = li;
 
       $('.li-dropdown-s1').removeClass('show-it');
-      $(this).find('.li-dropdown-s1').addClass('show-it');
-      console.log(this);
+      li.find('.li-dropdown-s1').addClass('show-it');
 
     });
 
