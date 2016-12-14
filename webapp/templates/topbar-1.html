@@ -76,6 +76,18 @@
 
 <script>
 
+  $(document).ready(function(){
+
+    $(document).on('click', '#tb-links li', function(){
+
+      $('.li-dropdown-s1').removeClass('show-it');
+      $(this).find('.li-dropdown-s1').addClass('show-it');
+      console.log(this);
+
+    });
+
+  });
+
   App.controller('topbarSearchCtrl', ['$scope', '$http', function($scope, $http) {
 
     $scope.topbarSearch = function() {
@@ -86,6 +98,6 @@
       location.href = '/search/results/' + $scope.searchquery;
     }
 
-  }])
+  }]);
 
 </script>

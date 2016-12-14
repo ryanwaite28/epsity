@@ -121,10 +121,12 @@ body {
   padding: 0px;
   max-width: 100vw;
 }
-#tb-links > li:hover .li-dropdown-s1 {
+
+/*#tb-links > li:hover .li-dropdown-s1 {
   opacity: 1.0;
   visibility: visible;
-}
+}*/
+
 .li-dropdown-s1 h4 {
   margin: 0px;
   padding: 15px;
@@ -239,6 +241,10 @@ body {
 .hide-it {
   opacity: 0.0;
   visibility: hidden;
+}
+.show-it {
+  opacity: 1.0;
+  visibility: visible;
 }
 
 #prof-mainbar div {
