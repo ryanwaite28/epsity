@@ -66,7 +66,7 @@
             <div class="col-md-9">
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
                 <p class="text-center p-emp-1"><strong>{[ currentConversation.conversation.name ]}</strong></p>
-                <p class="text-center"><a class="btn btn-sm btn-primary transition" data-toggle="modal" data-target="#attachmentModal">Show Attachment</a></p>
+                <p ng-hide="sendgroupmsgForm" class="text-center"><a class="btn btn-sm btn-primary transition" data-toggle="modal" data-target="#attachmentModal">Show Attachment</a></p>
                 <hr class="hr-grey">
                 <ul class="ul-raw">
                   <li ng-repeat="r in currentMessages.replies">
@@ -82,7 +82,7 @@
                   </li>
                 </ul>
                 <hr class="hr-grey">
-                <form ng-hide="sendgroupmsg" class="middlr text-center" id="sendmsg-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+                <form ng-hide="sendgroupmsgForm" class="middlr text-center" id="sendmsg-form" enctype="multipart/form-data" action="/action/form/" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="action" value="sendGroupMessage"/>
 

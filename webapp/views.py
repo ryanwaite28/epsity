@@ -690,3 +690,21 @@ def notificationsView(request):
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
             return errorPage(request, msg)
+
+
+
+
+# ---
+
+def testing(request):
+    if request.method == 'GET':
+        you = Accounts.objects \
+        .filter(uname = request.session['username']).first()
+
+        return render(request, masterDICT['pages']['testing'],
+                        {'you': you, 'message': ''},
+                        context_instance = RequestContext(request))
+
+    if request.method == 'POST':
+        '''  '''
+        print request.body

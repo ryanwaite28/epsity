@@ -39,10 +39,10 @@ App.controller('conversationsCtrl', ['$scope', '$http', function($scope, $http) 
 
   //
 
-  $scope.sendmsgForm = true;
+  $scope.sendgroupmsgForm = true;
 
   $scope.getConversation = function(convo) {
-    console.log(convo);
+    // console.log(convo);
     // return;
     var req = {
       method: 'POST',
@@ -64,7 +64,7 @@ App.controller('conversationsCtrl', ['$scope', '$http', function($scope, $http) 
       console.log(resp);
       $scope.currentConversation = resp.data.convo;
 
-      $scope.sendmsgForm = false;
+      $scope.sendgroupmsgForm = false;
 
     },
     function(resp){

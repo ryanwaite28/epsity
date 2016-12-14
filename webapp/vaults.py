@@ -67,7 +67,7 @@ pages = {
     'new_comment': 'new-comment-1.html',
     'new_reply': 'new-reply-1.html',
 
-    'test': 'test-1.html'
+    'testing': 'testing-1.html'
 }
 
 localPaths = {

@@ -33,4 +33,6 @@ urlpatterns = [
     url(r'^groups/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.groupPage, name='grouppage'),
     #url(r'^groups/(?P<query>[a-zA-Z0-9\-\_]+)/members/$', views.groupMembers, name='groupmembers'),
 
+
+    url(r'^testing/$', views.testing, name='testing'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

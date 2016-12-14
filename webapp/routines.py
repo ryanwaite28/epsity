@@ -211,7 +211,7 @@ def loginAccount(request):
         you.last_active = datetime.datetime.now()
         you.save( update_fields=['last_active'] )
 
-        return redirect('/home/')
+        return redirect('/main/')
 
     except ObjectDoesNotExist:
         return render(request,
@@ -1425,8 +1425,6 @@ def loadConversations(request, data):
             # conversation = Conversations.objects \
             # .filter( id = m['convo_id'] )
             conversations_list.append( m['convo_rel'] )
-            print '--- Conversation ---'
-            print m['convo_rel']
 
 
         resp = {
@@ -1465,8 +1463,6 @@ def getConversation(request, data):
         convo['members'] = members
         convo['messages'] = messages
         convo['owner'] = conversation.owner.serialize
-
-        print members
 
         resp = {
             'msg': 'loaded conversations',
@@ -1780,8 +1776,6 @@ def unlikeContent(request, data):
 def checkConvoName(request, data):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
-
-        print data['name']
 
         CheckConvoName = Conversations.objects \
         .filter(name = data['name'], ownerid = you.id).first()

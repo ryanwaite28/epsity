@@ -16,7 +16,8 @@
       <div class="col-sm-9">
         <h4><strong>{{ p.title }}</strong></h4>
         <p>{{ p.contents }}</p>
-        <br> {% if p.attachment_type == 'Audio' %}
+        <br>
+        {% if p.attachment_type == 'Audio' %}
         <div class="polaroid-3 brd-bl">
           <audio class="smb-1 max-w" controls>
             <source src="{{ p.attachment }}" type="">
