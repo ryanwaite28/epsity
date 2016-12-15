@@ -32,6 +32,7 @@ urlpatterns = [
     #url(r'^users/(?P<query>[a-zA-Z0-9\-\_]+)/groupmember/$', views.userGroupMember, name='usergroupmember'),
     url(r'^groups/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.groupPage, name='grouppage'),
     #url(r'^groups/(?P<query>[a-zA-Z0-9\-\_]+)/members/$', views.groupMembers, name='groupmembers'),
+    url(r'^posts/(?P<query>[0-9]+)/$', views.postView, name='postview'),
 
 
     url(r'^testing/$', views.testing, name='testing'),

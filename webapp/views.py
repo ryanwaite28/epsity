@@ -282,6 +282,35 @@ def groupPage(request, query):
 # ---
 
 @csrf_protect
+def postView(request, query):
+    if request.method == 'GET':
+        # print query
+        try:
+            if 'username' in request.session:
+                you = Accounts.objects.get(uname = request.session['username'])
+                post = routines.loadPost_B(query, you)
+            else:
+                you = None
+                post = routines.loadPost_A(query)
+
+            if post == None:
+                msg = 'Post Not Found.'
+                return errorPage(request, msg)
+
+            else:
+                return render(request,
+                                masterDICT['pages']['postView'],
+                                {'you': you,
+                                'post': post},
+                                context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
+
+# ---
+
+@csrf_protect
 def searchEngine(request):
     if request.method == 'GET':
         if 'username' not in request.session:

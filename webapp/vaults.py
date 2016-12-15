@@ -58,6 +58,7 @@ pages = {
     'profileHome': 'profile-home.html',
     'UserPage': 'user-page-view.html',
     'GroupPage': 'group-page-view.html',
+    'postView': 'post-view-1.html',
     'profilePosts': 'profile-posts.html',
     'profilePhoto': 'profile-photo.html',
     'profileVideo': 'profile-video.html',

@@ -16,16 +16,17 @@
       <div class="col-sm-9">
         <h4><strong>{{ p.title }}</strong></h4>
         <p>{{ p.contents }}</p>
+        {% if p.link != '' %}<p><a title="Post Link" href="{{ p.link }}">Link</a></p>{% endif %}
         <br>
         {% if p.attachment_type == 'Audio' %}
         <div class="polaroid-3 brd-bl">
-          <audio class="smb-1 max-w" controls>
+          <audio class="smb-1 max-w media-elm" controls>
             <source src="{{ p.attachment }}" type="">
           </audio>
         </div>
         {% elif p.attachment_type == 'Video' %}
         <div class="polaroid-3 brd-bl">
-          <video class="smb-1 max-w" width="320" height="240" controls>
+          <video class="smb-1 max-w media-elm" width="320" height="240" controls>
             <source src="{{ p.attachment }}" type="">
           </video>
         </div>
@@ -39,7 +40,8 @@
         <p class="text-sm-1">
           <span class="text-grey"><em>{{ p.date_created }}</em></span> |
           <span><strong>Likes:</strong> <span id="post-likemeter-{{ p.p_id }}">{{ p.likes }}</span></span> |
-          <span><strong>Comments:</strong> <span id="post-commentmeter-{{ p.p_id }}">{{ p.comments_len }}</span></span>
+          <span><strong>Comments:</strong> <span id="post-commentmeter-{{ p.p_id }}">{{ p.comments_len }}</span></span> |
+          <span><strong><a title="See Whole Post" href="/posts/{{ p.p_id }}">See Whole Post</a></strong></span>
         </p>
         <p>&nbsp;</p>
         <p class="">
@@ -140,4 +142,5 @@
   </div>
 </div>
 
+<!--  -->
 <script src="/static/js/controllers/posts-ctrl.js"></script>

@@ -54,8 +54,13 @@ App.controller('newPostsCtrl', ['$scope', '$http', function($scope, $http) {
 
       var elm = $(resp.data.post_html);
       $(elm).hide().prependTo('#allposts-div').fadeIn('fast');
+
+      $('#new-post-form input[name="title"]').val('');
+      $('#new-post-form textarea').val('');
+      $('#new-post-form input[name="media"]').val('');
+
       $('#new-post-div').removeClass('in');
-      $('i.rotator').toggleClass('rotator');
+      $('#newpost-arrow').toggleClass('rotate');
     },
     function(resp){
       // Error Callback

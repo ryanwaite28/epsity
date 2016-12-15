@@ -7,20 +7,21 @@
     <div class="col-sm-9">
       <h4><strong>{{ post.title }}</strong></h4>
       <p>{{ post.contents }}</p>
+      {% if post.link != '' %}<p><a title="Post Link" href="{{ post.link }}">Link</a></p>{% endif %}
       <br>
-      {% if p.attachment_type == 'Audio' %}
+      {% if post.attachment_type == 'Audio' %}
       <div class="polaroid-3 brd-bl">
-        <audio class="smb-1 max-w" controls>
+        <audio class="smb-1 max-w media-elm" controls>
           <source src="{{ post.attachment }}" type="">
         </audio>
       </div>
-      {% elif p.attachment_type == 'Video' %}
+      {% elif post.attachment_type == 'Video' %}
       <div class="polaroid-3 brd-bl">
-        <video class="smb-1 max-w" width="320" height="240" controls>
+        <video class="smb-1 max-w media-elm" width="320" height="240" controls>
           <source src="{{ post.attachment }}" type="">
         </video>
       </div>
-      {% elif p.attachment_type == 'Photo' %}
+      {% elif post.attachment_type == 'Photo' %}
       <div class="polaroid-3 brd-bl">
         <img class="smb-1 max-w" src="{{ post.attachment }}" />
       </div>
@@ -30,7 +31,8 @@
       <p class="text-sm-1">
         <span class="text-grey"><em>{{ post.date_created }}</em></span> |
         <span><strong>Likes:</strong> <span id="post-likemeter-{{ post.p_id }}">0</span></span> |
-        <span><strong>Comments:</strong> <span id="post-commentmeter-{{ post.p_id }}">0</span></span>
+        <span><strong>Comments:</strong> <span id="post-commentmeter-{{ post.p_id }}">0</span></span> |
+        <span><strong><a title="See Whole Post" href="/posts/{{ post.p_id }}">See Whole Post</a></strong></span>
       </p>
       <p>&nbsp;</p>
       <p class="">
@@ -47,7 +49,7 @@
 
   <div class="row">
     <div class="col-sm-12">
-      <div class="collapse in  fb-bgc" id="cmdv-{{ post.p_id }}">
+      <div class="collapse in fb-bgc" id="cmdv-{{ post.p_id }}">
         <ul id="cmlst-{{ post.p_id }}" class="ul-raw">
 
 

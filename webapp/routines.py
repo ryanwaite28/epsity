@@ -37,27 +37,207 @@ from vaults import masterDICT
 # --- Helper Code --- #
 # --- ----- ----- --- #
 
+def loadPost_A(post_id):
+    if post_id == None or post_id == '':
+        return None
+
+    post = Posts.objects.filter(id = post_id).first()
+    if post == None:
+        return None
+
+    post = post.serialize
+
+    post['content_type'] = masterDICT['contentTypes']['post']
+
+    post['like_status'] = masterDICT['statuses']['like']['not_liked']
+    post['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+    # ---
+
+    likes = len( Likes.objects \
+    .filter(item_type=masterDICT['contentTypes']['post'],
+            item_id=post['p_id']) )
+    post['likes'] = likes
+
+    comments_len = len( Comments.objects.filter(post_id=post['p_id']) )
+    post['comments_len'] = comments_len
+
+    comments = Comments.objects \
+    .filter(post_id=post['p_id']).order_by('date_created')
+
+    comments = [c.serialize for c in comments]
+    for c in comments:
+        c['content_type'] = masterDICT['contentTypes']['comment']
+
+        c['like_status'] = masterDICT['statuses']['like']['not_liked']
+        c['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+        # ---
+
+        likes = len( Likes.objects \
+        .filter(item_type=masterDICT['contentTypes']['comment'],
+                item_id=c['comment_id']) )
+
+        c['likes'] = likes
+
+        replies_len = len( Replies.objects \
+        .filter(comment_id=c['comment_id']) )
+        c['replies_len'] = replies_len
+
+        replies = Replies.objects \
+        .filter(comment_id=c['comment_id']) \
+        .order_by('date_created')
+
+        replies = [r.serialize for r in replies]
+        for r in replies:
+            r['content_type'] = masterDICT['contentTypes']['reply']
+
+            r['like_status'] = masterDICT['statuses']['like']['not_liked']
+            r['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+            # ---
+
+            likes = len( Likes.objects \
+            .filter(item_type=masterDICT['contentTypes']['reply'],
+                    item_id=r['reply_id']) )
+
+            r['likes'] = likes
+
+
+        c['replies'] = replies
+
+    post['comments'] = comments
+
+
+    return post
+
+# ---
+
+def loadPost_B(post_id, you):
+    if post_id == None or post_id == '':
+        return None
+
+    post = Posts.objects.filter(id = post_id).first()
+    if post == None:
+        return None
+        
+    post = post.serialize
+
+    post['content_type'] = masterDICT['contentTypes']['post']
+    checkLike = Likes.objects \
+    .filter(item_type=masterDICT['contentTypes']['post'],
+            item_id=post['p_id'],
+            owner_type=masterDICT['ownerTypes']['account'],
+            ownerid=you.id).first()
+
+    if checkLike != None:
+        post['like_status'] = masterDICT['statuses']['like']['liked']
+        post['like_status_json'] = json.dumps(masterDICT['statuses']['like']['liked'])
+
+    else:
+        post['like_status'] = masterDICT['statuses']['like']['not_liked']
+        post['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+    # ---
+
+    likes = len( Likes.objects \
+    .filter(item_type=masterDICT['contentTypes']['post'],
+            item_id=post['p_id']) )
+    post['likes'] = likes
+
+    comments_len = len( Comments.objects.filter(post_id=post['p_id']) )
+    post['comments_len'] = comments_len
+
+    comments = Comments.objects \
+    .filter(post_id=post['p_id']).order_by('date_created')
+
+    comments = [c.serialize for c in comments]
+    for c in comments:
+        c['content_type'] = masterDICT['contentTypes']['comment']
+        checkLike = Likes.objects \
+        .filter(item_type=masterDICT['contentTypes']['comment'],
+                item_id=c['comment_id'],
+                owner_type=masterDICT['ownerTypes']['account'],
+                ownerid=you.id).first()
+
+        if checkLike != None:
+            c['like_status'] = masterDICT['statuses']['like']['liked']
+            c['like_status_json'] = json.dumps(masterDICT['statuses']['like']['liked'])
+
+        else:
+            c['like_status'] = masterDICT['statuses']['like']['not_liked']
+            c['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+        # ---
+
+        likes = len( Likes.objects \
+        .filter(item_type=masterDICT['contentTypes']['comment'],
+                item_id=c['comment_id']) )
+
+        c['likes'] = likes
+
+        replies_len = len( Replies.objects \
+        .filter(comment_id=c['comment_id']) )
+        c['replies_len'] = replies_len
+
+        replies = Replies.objects \
+        .filter(comment_id=c['comment_id']) \
+        .order_by('date_created')
+
+        replies = [r.serialize for r in replies]
+        for r in replies:
+            r['content_type'] = masterDICT['contentTypes']['reply']
+            checkLike = Likes.objects \
+            .filter(item_type=masterDICT['contentTypes']['reply'],
+                    item_id=r['reply_id'],
+                    owner_type=masterDICT['ownerTypes']['account'],
+                    ownerid=you.id).first()
+
+            if checkLike != None:
+                r['like_status'] = masterDICT['statuses']['like']['liked']
+                r['like_status_json'] = json.dumps(masterDICT['statuses']['like']['liked'])
+
+            else:
+                r['like_status'] = masterDICT['statuses']['like']['not_liked']
+                r['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+            # ---
+
+            likes = len( Likes.objects \
+            .filter(item_type=masterDICT['contentTypes']['reply'],
+                    item_id=r['reply_id']) )
+
+            r['likes'] = likes
+
+
+        c['replies'] = replies
+
+    post['comments'] = comments
+
+
+    return post
+
+# ---
+
 def loadPosts(user_id, you, msg):
     if msg == None or msg == '':
         posts = Posts.objects \
         .filter( ownerid = user_id ) \
-        .order_by('-date_created')[:10]
+        .order_by('-date_created')[:20]
 
     elif msg == 'home':
         posts = Posts.objects \
         .filter( ownerid = you.id ) \
-        .order_by('-date_created')[:10]
+        .order_by('-date_created')[:20]
 
     elif msg == 'main':
         following = Follows.objects.filter(userid=you.id)
         posts = Posts.objects \
         .filter( Q( ownerid = you.id ) | Q(ownerid__in = [f.follow_id for f in following]) ) \
-        .order_by('-date_created')[:10]
+        .order_by('-date_created')[:20]
 
     else:
         posts = Posts.objects \
         .filter( ownerid = user_id ) \
-        .order_by('-date_created')[:10]
+        .order_by('-date_created')[:20]
 
 
     posts = [p.serialize for p in posts]
@@ -87,7 +267,7 @@ def loadPosts(user_id, you, msg):
         p['comments_len'] = comments_len
 
         comments = Comments.objects \
-        .filter(post_id=p['p_id']).order_by('date_created')[:5]
+        .filter(post_id=p['p_id']).order_by('date_created')[:10]
 
         comments = [c.serialize for c in comments]
         for c in comments:
