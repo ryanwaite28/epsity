@@ -1,0 +1,66 @@
+<div class="mk-rel sdw-1 sbm-1 bg-white post-div">
+  <div class="row padd-1">
+    <div class="col-sm-3">
+      <img width="80px" class="middlr brd-bl" src="{{ post.owner.avi }}" /><br>
+      <p class="text-center"><a title="See {{ post.owner.uname }} Page" href="/users/{{ post.owner.uname }}"><strong>{{ post.owner.uname }}</strong></a></p>
+    </div>
+    <div class="col-sm-9">
+      <h4><strong>{{ post.title }}</strong></h4>
+      <p>{{ post.contents }}</p>
+      <br>
+      {% if p.attachment_type == 'Audio' %}
+      <div class="polaroid-3 brd-bl">
+        <audio class="smb-1 max-w" controls>
+          <source src="{{ post.attachment }}" type="">
+        </audio>
+      </div>
+      {% elif p.attachment_type == 'Video' %}
+      <div class="polaroid-3 brd-bl">
+        <video class="smb-1 max-w" width="320" height="240" controls>
+          <source src="{{ post.attachment }}" type="">
+        </video>
+      </div>
+      {% elif p.attachment_type == 'Photo' %}
+      <div class="polaroid-3 brd-bl">
+        <img class="smb-1 max-w" src="{{ post.attachment }}" />
+      </div>
+      {% endif %}
+
+      <p>&nbsp;</p>
+      <p class="text-sm-1">
+        <span class="text-grey"><em>{{ post.date_created }}</em></span> |
+        <span><strong>Likes:</strong> <span id="post-likemeter-{{ post.p_id }}">0</span></span> |
+        <span><strong>Comments:</strong> <span id="post-commentmeter-{{ post.p_id }}">0</span></span>
+      </p>
+      <p>&nbsp;</p>
+      <p class="">
+        <span ng-click="likeBtn()" class="text-center btn-xs transition btn-s1 {{ post.like_status.class }} like-btn" data-content-type="{{ post.content_type }}" data-content-id="{{ post.p_id }}" data-like-status="{{ post.like_status }}" data-like-status-json="{{ post.like_status_json }}" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-owner-id="{{ post.ownerid }}" data-owner-type="{{ post.owner_type }}" data-post-status="{{ post.status }}">
+        <i class="text-center fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ post.like_status.text }}</span>
+        </span>
+        <span title="Show/Hide Comments" data-toggle="collapse" data-target="#cmdv-{{ post.p_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ post.content_type }}" data-content-id="{{ post.p_id }}" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-owner-id="{{ post.ownerid }}" data-owner-type="{{ post.owner_type }}" data-post-status="{{ post.status }}">
+        <i class="fa fa-comments" aria-hidden="true"></i> Comments
+        </span>
+      </p>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="collapse in  fb-bgc" id="cmdv-{{ post.p_id }}">
+        <ul id="cmlst-{{ post.p_id }}" class="ul-raw">
+
+
+
+        </ul>
+      </div>
+      <div class="padd-2">
+        <textarea id="cmbox-{{ post.p_id }}" class="middlr add-comment-box block max-w input-t-s1 transition dsp-n" data-content-type="{{ post.content_type }}" data-content-id="{{ post.p_id }}" data-elm-kind="add-comment-box" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-owner-id="{{ post.ownerid }}" data-owner-type="{{ post.owner_type }}"
+            data-post-status="{{ post.status }}" placeholder="Add Comment..."></textarea>
+
+        <input title="Show/Hide Comment Input Field" ng-click="addCommentBtn()" class="middlr add-comment-btn transition btn btn-sm btn-info" type="button" value="Add Comment" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-content-type="{{ post.content_type }}" data-content-id="{{ post.p_id }}" data-owner-id="{{ post.ownerid }}" data-owner-type="{{ post.owner_type }}" data-post-status="{{ post.status }}"
+        />
+      </div>
+    </div>
+  </div>
+</div>

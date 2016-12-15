@@ -34,7 +34,34 @@ App.controller('newPostsCtrl', ['$scope', '$http', function($scope, $http) {
     }
 
     $('#new-post-form input[name="origin"]').val( location.pathname );
-    $('#new-post-form').submit();
+    // $('#new-post-form').submit();
+
+    var form = document.getElementById('new-post-form');
+    var formData = new FormData( form );
+
+    $http({
+      method: 'POST',
+      url: '/action/form/',
+      headers: {
+        'Content-Type': undefined,
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      processData: false,
+      data: formData
+    }).then(function(resp){
+      // Success Callback
+      console.log(resp);
+
+      var elm = $(resp.data.post_html);
+      $(elm).hide().prependTo('#allposts-div').fadeIn('fast');
+      $('#new-post-div').removeClass('in');
+      $('i.rotator').toggleClass('rotator');
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
+
   }
 
 }])

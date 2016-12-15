@@ -1628,10 +1628,25 @@ def createUserPost(request):
 
         newPost.save()
 
-        return genericPage(request = request,
-                            msg = 'Post Created!',
-                            redirect=request.POST['origin'])
+        post = newPost.serialize
+        post['content_type'] = masterDICT['contentTypes']['post']
+        post['like_status'] = masterDICT['statuses']['like']['not_liked']
+        post['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
 
+        post_html = render(request,
+                                masterDICT['pages']['new_post'],
+                                {'post': post})
+
+        post_html = str(post_html) \
+        .replace("Content-Type: text/html; charset=utf-8" , "")
+
+        # return genericPage(request = request,
+        #                     msg = 'Post Created!',
+        #                     redirect=request.POST['origin'])
+
+        return JsonResponse({'msg': 'post created',
+                                'post': post,
+                                'post_html': post_html})
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

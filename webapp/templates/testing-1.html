@@ -24,6 +24,25 @@
 
     <!--  -->
 
+    <div id="main-container">
+      <div id="mc-inner" style="background: transparent;">
+        <div class="container-fluid">
+
+          <div style="min-height: 45vh;" class="row fill transition bg-white">
+            <br>
+            <input id="media" type="file" name="media" class="middlr btn btn-default"/>
+            <br>
+            <input class="middlr transition btn btn-info" ng-click="test()" value="Test"/>
+          </div>
+
+          <div id="demo">
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
     <!--  -->
 
     <script>
@@ -31,6 +50,38 @@
       App.controller('testingCtrl', ['$scope', '$http' , function($scope, $http){
 
         console.log('We In Here!');
+
+
+        $scope.test = function() {
+
+          var formData = new FormData();
+          var input = document.getElementById('media');
+          formData.append('media' , input.files[0]);
+          formData.append('text' , 'Admit One');
+          console.log(input.files[0]);
+
+          $http({
+            method: 'POST',
+            url: '/testing/',
+            headers: {
+              'Content-Type': undefined,
+              'X-CSRFToken': Cookies.get('csrftoken')
+            },
+            processData: false,
+            data: formData
+          }).then(function(resp){
+            // Success Callback
+            console.log(resp);
+
+            var elm = $(resp.data.test_html);
+            $(elm).hide().prependTo('#demo').fadeIn('fast');
+          },
+          function(resp){
+            // Error Callback
+            console.log(resp);
+          });
+
+        }
 
       }])
 

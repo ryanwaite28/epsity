@@ -698,13 +698,33 @@ def notificationsView(request):
 
 def testing(request):
     if request.method == 'GET':
-        you = Accounts.objects \
-        .filter(uname = request.session['username']).first()
+        if 'username' in request.session:
+            you = Accounts.objects \
+            .filter(uname = request.session['username']).first()
+        else:
+            you = None
 
         return render(request, masterDICT['pages']['testing'],
                         {'you': you, 'message': ''},
                         context_instance = RequestContext(request))
 
     if request.method == 'POST':
-        '''  '''
-        print request.body
+        print [r for r in request.POST]
+
+        if request.FILES:
+            print '--- File(s) Detected ---'
+            media = request.FILES['media']
+            print media.name
+
+        else:
+            print '--- No File(s) Detected ---'
+
+
+        test_html = render(request,
+                                masterDICT['pages']['new_post'],
+                                {'post': 'post'})
+        test_html = str(test_html) \
+        .replace("Content-Type: text/html; charset=utf-8" , "")
+
+
+        return JsonResponse({'msg': 'admit-one', 'test_html': test_html})
