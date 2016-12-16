@@ -2,3 +2,34 @@
 <div id="prof-desc-div" class="collapse">
   <p class="text-center text-lightgrey">description</p>
 </div> -->
+
+
+<!--  -->
+
+<!--
+{% for m in messages %}
+<li class="transition">
+  <div class="row">
+    <div class="col-xs-12">
+      {% if you.id == m.userA_id %}
+      <img width="80px" class="img-left middlr polaroid-3" src="{{ m.userB_rel.avi }}"/>
+      <p class="no-marg text-left">
+        <a title="See Profile" href="/users/{{  m.userB_rel.uname }}">
+          <strong>{{ m.userB_rel.uname }}</strong>
+        </a>
+      </p>
+      {% else %}
+      <img width="80px" class="img-left middlr polaroid-3" src="{{ m.userA_rel.avi }}"/>
+      <p class="no-marg text-left">
+        <a title="See Profile" href="/users/{{  m.userA_rel.uname }}">
+          <strong>{{ m.userA_rel.uname }}</strong>
+        </a>
+      </p>
+      {% endif %}
+      <br>
+      <a data-message-id="{{ m.mid }}" title="See Messages" class="btn btn-xs btn-info transition float-left" ng-click="gool()">Open</a>
+    </div>
+  </div>
+</li>
+{% endfor %}
+-->

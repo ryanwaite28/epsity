@@ -26,7 +26,7 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 				lng: 151.2195
 			},
 			zoom: 13,
-			scrollwheel: false
+			scrollwheel: true
 		};
 		var map = new google.maps.Map(document.getElementById('map'),
 			mapOptions);
@@ -277,6 +277,8 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 		$http(req).then(function(resp) {
 				// Success Callback
 				console.log(resp);
+				alert(resp.data.msg);
+				location.reload();
 			},
 			function(resp) {
 				// Error Callback

@@ -352,9 +352,12 @@ def messagesView(request):
 
         try:
             you = Accounts.objects.get(uname = request.session['username'])
+
             return render(request, masterDICT['pages']['messagesView'],
                             {'you': you,
-                            'message': ''},
+                            'message': '',
+                            # 'messages': messages,
+                            },
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -669,7 +672,10 @@ def userActionAJAX(request):
             # ---
 
             if data['action'] == 'load messages':
-                return routines.loadMessages(request, data)
+                return routines.loadMessages(request)
+
+            if data['action'] == 'loadMessageReplies':
+                return routines.loadMessageReplies(request, data)
 
             if data['action'] == 'loadConversations':
                 return routines.loadConversations(request, data)

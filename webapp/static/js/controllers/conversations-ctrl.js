@@ -7,6 +7,12 @@ App.controller('conversationsCtrl', ['$scope', '$http', function($scope, $http) 
 
   //
 
+  $(document).ready(function(){
+    $(document).on('click', '.attachment-btn', function(){
+      console.log(this);
+    });
+  }); 
+
   $scope.currentlyChattingWith = '';
 
   $scope.loadConversations = function() {
@@ -135,7 +141,7 @@ App.controller('conversationsCtrl', ['$scope', '$http', function($scope, $http) 
     // modalBody.html('');
 
     if( obj.attachment[0] == '' ) {
-      obj.attachment
+
     }
 
     if( obj.attachment_type == 'photo' ) {

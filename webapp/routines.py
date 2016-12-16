@@ -119,7 +119,7 @@ def loadPost_B(post_id, you):
     post = Posts.objects.filter(id = post_id).first()
     if post == None:
         return None
-        
+
     post = post.serialize
 
     post['content_type'] = masterDICT['contentTypes']['post']
@@ -1549,7 +1549,7 @@ def leaveGroup(request, data):
         return errorPage(request, msg)
 
 
-def loadMessages(request, data):
+def loadMessages(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
 
@@ -1557,27 +1557,27 @@ def loadMessages(request, data):
         .filter( Q(userA_id = you.id) | Q(userB_id = you.id) )
 
         messages = [m.serialize for m in messages]
-        for m in messages:
-            messageReplies = MessageReply.objects \
-            .filter( message_id = m['mid'] )
-
-            messagesReplies = [mr.serialize for mr in messageReplies]
-            for mr in messagesReplies:
-                if mr['userid'] == you.id:
-                    mr['pos'] = 'right'
-                    mr['color'] = 'lightgrey'
-
-                else:
-                    mr['pos'] = 'left'
-                    mr['color'] = '#fbfbfb'
-
-                if mr['attachment'] != '':
-                    mr['class'] = 'transition btn btn-sm btn-default point-cursor'
-
-                else:
-                    mr['class'] = 'transition point-cursor'
-
-            m['replies'] = messagesReplies
+        # for m in messages:
+        #     messageReplies = MessageReply.objects \
+        #     .filter( message_id = m['mid'] )
+        #
+        #     messagesReplies = [mr.serialize for mr in messageReplies]
+        #     for mr in messagesReplies:
+        #         if mr['userid'] == you.id:
+        #             mr['pos'] = 'right'
+        #             mr['color'] = 'lightgrey'
+        #
+        #         else:
+        #             mr['pos'] = 'left'
+        #             mr['color'] = '#fbfbfb'
+        #
+        #         if mr['attachment'] != '':
+        #             mr['class'] = 'transition btn btn-sm btn-default point-cursor'
+        #
+        #         else:
+        #             mr['class'] = 'transition point-cursor'
+        #
+        #     m['replies'] = messagesReplies
 
         resp = {
             'msg': 'loaded messaged',
@@ -1585,9 +1585,49 @@ def loadMessages(request, data):
             'messages': messages
         }
 
-        # print resp
+        return JsonResponse(resp)
+        # return messages
+
+    except ObjectDoesNotExist:
+        msg = 'Server Side Error Occured.'
+        return errorPage(request, msg)
+
+def loadMessageReplies(request, data):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        message = Messages.objects.filter( id = data['mid'] ).first()
+        message = message.serialize
+
+        messageReplies = MessageReply.objects \
+        .filter( message_id = message['mid'] )
+
+        messagesReplies = [mr.serialize for mr in messageReplies]
+        for mr in messagesReplies:
+            if mr['userid'] == you.id:
+                mr['pos'] = 'right'
+                mr['color'] = 'lightgrey'
+                mr['num'] = '1'
+            else:
+                mr['pos'] = 'left'
+                mr['color'] = '#fbfbfb'
+                mr['num'] = '2'
+
+            if mr['attachment'] != '':
+                mr['class'] = 'transition btn btn-sm btn-default point-cursor'
+            else:
+                mr['class'] = 'transition point-cursor'
+
+        message['replies'] = messagesReplies
+
+        resp = {
+            'msg': 'loaded messaged',
+            'you': you.serialize,
+            'replies': messagesReplies
+        }
 
         return JsonResponse(resp)
+        # return messages
 
     except ObjectDoesNotExist:
         msg = 'Server Side Error Occured.'
@@ -1661,6 +1701,8 @@ def getConversation(request, data):
 
 def sendMessage(request):
     try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
         sender = Accounts.objects \
         .filter(id = request.POST['senderid']).first() # You
 
@@ -1743,10 +1785,27 @@ def sendMessage(request):
             newMessageReply.attachment_type = doctype
 
         newMessageReply.save()
+        reply = newMessageReply.serialize
+        if reply['userid'] == you.id:
+            reply['pos'] = 'right'
+            reply['color'] = 'lightgrey'
+            reply['num'] = '1'
+        else:
+            reply['pos'] = 'left'
+            reply['color'] = '#fbfbfb'
+            reply['num'] = '2'
 
-        return genericPage(request = request,
-                            msg = 'Message Sent!',
-                            redirect=request.POST['origin'])
+        if reply['attachment'] != '':
+            reply['class'] = 'transition btn btn-sm btn-default point-cursor'
+        else:
+            reply['class'] = 'transition point-cursor'
+
+        # return genericPage(request = request,
+        #                     msg = 'Message Sent!',
+        #                     redirect=request.POST['origin'])
+
+        return JsonResponse({'msg': 'message sent',
+                                'reply': reply})
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

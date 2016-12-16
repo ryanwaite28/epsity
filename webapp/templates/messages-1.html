@@ -74,10 +74,10 @@
                 <ul class="ul-raw">
                   <li ng-repeat="r in currentMessages.replies">
                     <div class="row" style="padding: 0px 15px;">
-                      <div class="message-box-1 sbm-1" style="float: {[ r.pos ]}; background: {[ r.color ]};">
+                      <div class="message-box-1 message-box-s{[ r.num ]} sbm-1" style="float: {[ r.pos ]}; background: {[ r.color ]};">
                         <div class="">
                           <p class="text-{[ r.pos ]}">{[ r.contents ]}<br>
-                          <a class="{[ r.class ]}" title="See attachment" ng-click="showMsgAttachment(this.r)">{[ r.attachment_type ]}</a></p><br>
+                          <a data-attachment-link="{[ r.attachment ]}" data-attachment-type="{[ r.attachment_type ]}" class="{[ r.class ]} attachment-btn" title="See attachment">{[ r.attachment_type ]}</a></p><br>
                           <p style="font-size: 11px;" class="text-{[ r.pos ]}"><em><strong>{[ r.date_created | date : "MM/dd/y" ]}</strong></em></p>
                         </div>
                       </div>

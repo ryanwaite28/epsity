@@ -8,9 +8,11 @@ App.controller('newPostsCtrl', ['$scope', '$http', function($scope, $http) {
 
     $('#new-post-form select#newpost-type').change(function(){
       if( $(this).val() == 'Text' ) {
+        $('#new-post-form input[name="media"]').val('');
         $('#new-post-form input[name="media"]').hide();
       }
       else {
+        $('#new-post-form input[name="media"]').val('');
         $('#new-post-form input[name="media"]').show();
       }
     });
@@ -57,10 +59,13 @@ App.controller('newPostsCtrl', ['$scope', '$http', function($scope, $http) {
 
       $('#new-post-form input[name="title"]').val('');
       $('#new-post-form textarea').val('');
+      $('#new-post-form input[name="link"]').val('');
       $('#new-post-form input[name="media"]').val('');
 
       $('#new-post-div').removeClass('in');
       $('#newpost-arrow').toggleClass('rotate');
+
+      $('#sample-post-div').hide();
     },
     function(resp){
       // Error Callback
