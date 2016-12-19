@@ -210,7 +210,6 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 	}
 
 	$scope.selectedConvoMembers = [];
-
 	$scope.addToSelected = function(user) {
 		if ($scope.selectedConvoMembers.indexOf(user) != -1) {
 			// alert('That user is already selected.');
@@ -218,12 +217,10 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 		}
 		$scope.selectedConvoMembers.push(user);
 	}
-
 	$scope.removeSelected = function(user) {
 		var index = $scope.selectedConvoMembers.indexOf(user);
 		$scope.selectedConvoMembers.splice(index, 1);
 	}
-
 	$scope.checkConvoName = function() {
 		if ($scope.newConvoName == undefined) {
 			alert('Conversation Name Is Needed.');
@@ -266,7 +263,6 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 				console.log(resp);
 		});
 	}
-
 	$scope.createGroupConvo = function() {
 
 		if ($scope.selectedConvoMembers.length <= 0) {
@@ -298,6 +294,24 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 				// Error Callback
 				console.log(resp);
 		});
+
+	}
+
+	$scope.productCategories = [];
+	$scope.addProductCategory = function() {
+
+	}
+	$scope.deleteProductCategory = function() {
+
+	}
+
+	//
+
+	$scope.serviceCategories = [];
+	$scope.addServiceCategory = function() {
+
+	}
+	$scope.deleteServiceCategory = function() {
 
 	}
 

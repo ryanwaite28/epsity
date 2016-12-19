@@ -47,6 +47,8 @@
                 <li role="presentation" class="active"><a data-toggle="tab" href="#new-event-pane">Event</a></li>
                 <li role="presentation"><a data-toggle="tab" href="#new-group-pane">Group</a></li>
                 <li role="presentation"><a data-toggle="tab" href="#new-convo-pane">Conversation</a></li>
+                <li role="presentation"><a data-toggle="tab" href="#new-product-pane">Product</a></li>
+                <li role="presentation"><a data-toggle="tab" href="#new-service-pane">Service</a></li>
               </ul>
             </div>
           </div>
@@ -187,6 +189,72 @@
                       <a title="Create Group Message" class="btn btn-success transition" ng-click="checkConvoName()">Create</a>
                     </p>
                   </div>
+                </div>
+              </div>
+
+              <div id="new-product-pane" class="tab-pane fade">
+                <div class="row">
+                  <h3 class="text-center">Create A Product!</h3>
+                  <hr class="hr-grey">
+                  <form class="middlr" id="create-product-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="createProduct" />
+
+                    <input class="input-t-s1 middlr" type="text" name="productname" placeholder="Product Name..." ng-model="newProductName" required/><br>
+                    <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Product Description..." ng-model="newProductDesc" required></textarea><br>
+                    <p class="text-center">Product Icon</p>
+                    <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*" /><br><br>
+                    <div class="row padd-1">
+                      <div class="col-sm-4">
+                        <p class="text-center"><strong>Add Product Category</strong></p>
+                        <input class="middlr input-t-s1" type="text" placeholder="Product Category" ng-model="productCategoryName"/><br>
+                        <p class="text-center"><a class="btn btn-sm btn-info transition">Add</a></p>
+                      </div>
+                      <div class="col-sm-8">
+                        <ul class="transition ul-raw user-s-list" id="">
+                          <li class="transition " ng-repeat="c in productCategories">
+                            <p>{[ c ]}</p>
+                            <span class="transition btn btn-sm btn-danger " ng-click="deleteProductCategory(this.c)">Delete</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <input type="hidden" name="categories" value="" />
+                    <input type="hidden" name="origin" value="" />
+                    <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createProduct()" />
+                </div>
+              </div>
+
+              <div id="new-service-pane" class="tab-pane fade">
+                <div class="row">
+                  <h3 class="text-center">Create A Service!</h3>
+                  <hr class="hr-grey">
+                  <form class="middlr" id="create-service-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="createService" />
+
+                    <input class="input-t-s1 middlr" type="text" name="servicename" placeholder="Service Name..." ng-model="newServiceName" required/><br>
+                    <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Service Description..." ng-model="newServiceDesc" required></textarea><br>
+                    <p class="text-center">Service Icon</p>
+                    <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*" /><br><br>
+                    <div class="row padd-1">
+                      <div class="col-sm-4">
+                        <p class="text-center"><strong>Add Service Category</strong></p>
+                        <input class="middlr input-t-s1" type="text" placeholder="Service Category" ng-model="serviceCategoryName"/><br>
+                        <p class="text-center"><a class="btn btn-sm btn-info transition">Add</a></p>
+                      </div>
+                      <div class="col-sm-8">
+                        <ul class="transition ul-raw user-s-list" id="">
+                          <li class="transition " ng-repeat="c in serviceCategories">
+                            <p>{[ c ]}</p>
+                            <span class="transition btn btn-sm btn-danger " ng-click="deleteServiceCategory(this.c)">Delete</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <input type="hidden" name="categories" value="" />
+                    <input type="hidden" name="origin" value="" />
+                    <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createService()" />
                 </div>
               </div>
             </div>
