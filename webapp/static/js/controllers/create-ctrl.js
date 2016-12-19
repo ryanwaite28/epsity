@@ -76,6 +76,8 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 				'Place ID: ' + place.place_id + '<br>' +
 				place.formatted_address + '</div>');
 			infowindow.open(map, marker);
+
+			$('input[name="eventlocation"]').val( place.formatted_address );
 		});
 
 		//
@@ -102,6 +104,7 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
     'November',
     'December'
   ];
+
   $scope.monthDays = {
     January: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
     February: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],
@@ -117,19 +120,30 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
     December: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
   }
 
+	$scope.currentSelectedMonth = $scope.monthDays.January;
+
   $scope.currentStartDate = {
     month: '',
-    days: ''
+    days: '',
+		year: ''
   }
   $scope.currentEndDate = {
     month: '',
-    days: ''
+    days: '',
+		year: ''
   }
+
+	var currentYear = parseInt( Date().split(' ')[3] );
+	$scope.years = [];
+	for(var i = currentYear; i < currentYear + 30; i++ ) {
+		$scope.years.push( i );
+	}
 
   //
 
   $scope.createEvent = function() {
     var timeRegex = /^[0-9]{2}:[0-9]{2} (AM|PM)$/;
+		var yearRegex = /^[0-9]{4}$/;
 
     console.log('admit one');
   }

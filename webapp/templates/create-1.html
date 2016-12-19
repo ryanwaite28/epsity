@@ -69,21 +69,27 @@
                     <input type="hidden" name="action" value="createEvent" />
 
                     <input class="input-t-s1 middlr" type="text" name="eventname" placeholder="Event Name..." ng-model="newEventName" required/><br>
-                    <input class="input-t-s1 middlr" type="text" name="eventlocation" placeholder="Event Location..." ng-model="newEventLocation" required/><br>
+                    <input class="input-t-s1 middlr" type="text" name="eventlocation" placeholder="Event Location..." ng-model="newEventLocation" disabled required/><br>
                     <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="eventdescription" type="text" placeholder="Event Description..." ng-model="newEventDesc" required></textarea><br>
                     <div class="text-center row">
                       <!-- <div class="col-sm-3"></div> -->
                       <div class="col-sm-6">
-                        Start Date<br>
-                        <select name="">
-                          <span ng-repeat="m in months">
-                            <option value="{[ m ]}">{[ m ]}</option>
-                          </span>
+                        Start Date
+                        <br>
+                        <select name="startmonth">
+                          <option ng-repeat="m in months" value="{[ m ]}">{[ m ]}</option>
+                        </select>
+                        <select name="startday">
+                          <option ng-repeat="d in monthDays['January']" value="{[ d ]}">{[ d ]}</option>
+                        </select>
+                        <select name="startyear">
+                          <option ng-repeat="y in years" value="{[ y ]}">{[ y ]}</option>
                         </select>
 
-                        <br>
+                        <br><br>
+
                         Start Time
-                        <input class="middlr" type="text" name="bday" max="1979-12-31">
+                        <input class="middlr" type="text" name="bday" max="1979-12-31" placeholder="Time...">
                       </div>
 
 

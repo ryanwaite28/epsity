@@ -62,18 +62,21 @@
                 <hr class="hr-grey">
                 <ul class="ul-raw">
                   {% for u in similar %}
-                  <li class="sample-li-s1">
-                    <div class="row">
-                      <div class="col-xs-4">
-                        <img class="max-w" src="{{ u.avi }}"/>
+                  <li class="sample-li-s1 fill mk-rel" style="background-image: url('{{ u.background }}');">
+
+                      <div class="dim-4"></div>
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <img width="100px" class="middlr max=w2" src="{{ u.avi }}"/>
+                        </div>
+                        <div class="col-xs-12">
+                          <p class="text-center"><strong>
+                            <a title="See {{ u.uname }} Page" href="/users/{{ u.uname }}">{{ u.uname }}</a>
+                          </strong></p>
+
+                        </div>
                       </div>
-                      <div class="col-xs-8">
-                        <p><strong>
-                          <a title="See {{ u.uname }} Page" href="/users/{{ u.uname }}">{{ u.uname }}</a>
-                        </strong></p>
-                        
-                      </div>
-                    </div>
+
                     <br>
                   </li>
                   {% endfor %}
