@@ -425,10 +425,10 @@ body {
 }
 
 .message-box-s1 {
-  border-radius: 10px 10px 0px 10px;
+  border-radius: 15px 15px 0px 15px;
 }
 .message-box-s2 {
-  border-radius: 10px 10px 10px 0px;
+  border-radius: 15px 15px 15px 0px;
 }
 
 .btn-s1 {

@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 
 import datetime
 
+import random, string, os, paramiko
 from django import forms
 from django.db import models
 from django.db.models import Model
@@ -23,6 +24,12 @@ from django.contrib.contenttypes.models import ContentType
 # --- --- --- --- --- #
 # --- Helper Code --- #
 # --- --- --- --- --- #
+
+def randomVal():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+
+    return state
 
 
 def returnModelSerialized(type, id):
@@ -629,7 +636,7 @@ class EventAttendees(models.Model):
         return {
             'aid': self.id,
 
-            'evenr_rel': self.event_rel.serialize,
+            'event_rel': self.event_rel.serialize,
             'event_id': self.event_id,
             'attendee': returnModelSerialized( self.attendee_type, self.attendee_id ),
             'attendee_id': self.attendee_id,
@@ -658,7 +665,7 @@ class Conversations(models.Model):
     @property
     def serialize(self):
         return {
-            'convo_id': self.id, 
+            'convo_id': self.id,
             'owner': self.owner.serialize,
             'ownerid': self.ownerid,
             'name': self.name,
@@ -835,3 +842,127 @@ class MessageReply(models.Model):
 
     class Meta:
         db_table = "messagereplies"
+
+
+
+# --- #
+# --- #
+# --- #
+
+class Products(models.Model):
+    OwnerType = (
+        ('Account', 'Account'),
+        ('Group', 'Group'),
+    )
+
+    ownerid = models.IntegerField(blank = False, default = 0)
+    owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+
+    price = models.IntegerField(blank = False, default = 0)
+    title = models.CharField(max_length = 500, default = '')
+    desc = models.CharField(max_length = 1500, default = '')
+    attachment = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(max_length = 500, default = '')
+    link = models.CharField(max_length = 500, default = '')
+
+    categories = models.CharField(max_length = 500, default = '')
+    status = models.CharField(max_length = 125, default = '')
+
+    unique_val = models.CharField(max_length = 125, default = '')
+
+    date_created = models.DateTimeField( default = timezone.now )
+    last_active = models.DateTimeField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            'product_id': self.id,
+            'unique_val': self.unique_val,
+            'owner': returnModelSerialized( self.owner_type , self.ownerid ),
+            'owner_type': self.owner_type,
+            'price': self.price,
+            'tilte': self.title,
+            'desc': self.desc,
+            'attachment': self.attachment,
+            'attachment_type': self.attachment_type,
+            'link': self.link,
+            'categories': self.categories,
+            'status': self.status,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
+
+    class Meta:
+        db_table = "products"
+
+
+class Services(models.Model):
+    OwnerType = (
+        ('Account', 'Account'),
+        ('Group', 'Group'),
+    )
+
+    ownerid = models.IntegerField(blank = False, default = 0)
+    owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+
+    price = models.IntegerField(blank = False, default = 0)
+    title = models.CharField(max_length = 500, default = '')
+    desc = models.CharField(max_length = 1500, default = '')
+    attachment = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(max_length = 500, default = '')
+    link = models.CharField(max_length = 500, default = '')
+
+    categories = models.CharField(max_length = 500, default = '')
+    status = models.CharField(max_length = 125, default = '')
+
+    unique_val = models.CharField(max_length = 125, default = '')
+
+    date_created = models.DateTimeField( default = timezone.now )
+    last_active = models.DateTimeField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            'service_id': self.id,
+            'unique_val': self.unique_val,
+            'owner': returnModelSerialized( self.owner_type , self.ownerid ),
+            'owner_type': self.owner_type,
+            'price': self.price,
+            'tilte': self.title,
+            'desc': self.desc,
+            'attachment': self.attachment,
+            'attachment_type': self.attachment_type,
+            'link': self.link,
+            'categories': self.categories,
+            'status': self.status,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
+
+
+    class Meta:
+        db_table = "services"
+
+
+class Transactions(models.Model):
+    ItemType = (
+        ('Product', 'Product'),
+        ('Service', 'Service'),
+    )
+
+    ownerid = models.IntegerField(blank = False, default = 0)
+    # owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+
+    item_type = models.CharField(choices = ItemType, blank = False, default = '', max_length = 50)
+    item_id = models.IntegerField(blank = False, default = 0)
+
+    class Meta:
+        db_table = "transactions"
+
+
+class Feedback(models.Model):
+
+
+
+    class Meta:
+        db_table = "feedback"

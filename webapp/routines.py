@@ -367,6 +367,47 @@ def genericPage(request, msg, redirect):
                     'redirect': redirect,
                     'value': string})
 
+def processFileUpload(request):
+    newdoc = None # Default For Message Media
+    doctype = ''
+
+    if request.FILES:
+        media = request.FILES['media']
+
+        if media and media.name != '':
+            if allowed_audio(media.name):
+                newdoc = mediaAudioModel(docfile = request.FILES['media'])
+                doctype = 'Audio'
+
+            elif allowed_video(media.name):
+                newdoc = mediaVideoModel(docfile = request.FILES['media'])
+                doctype = 'Video'
+
+            elif allowed_photo(media.name):
+                newdoc = mediaPhotoModel(docfile = request.FILES['media'])
+                doctype = 'Photo'
+
+            else:
+                return genericPage(request = request,
+                                    msg = 'Error - Bad Media File Input.',
+                                    redirect=request.POST['origin'])
+
+
+            newdoc.save()
+
+            return {
+                'newdoc': newdoc,
+                'doctype': doctype
+            }
+
+        else:
+            return genericPage(request = request,
+                                msg = 'Error - Bad Media File Input.',
+                                redirect=request.POST['origin'])
+
+    else:
+        return None
+
 # --- -------- --- #
 # --- Routines --- #
 # --- -------- --- #
@@ -1677,6 +1718,20 @@ def getConversation(request, data):
         messages = ConvoMessages.objects \
         .filter( convo_id = conversation.id, convo_rel = conversation )
         messages = [m.serialize for m in messages]
+        for message in messages:
+            if message['userid'] == you.id:
+                message['pos'] = 'right'
+                message['color'] = 'lightgrey'
+                message['num'] = '1'
+            else:
+                message['pos'] = 'left'
+                message['color'] = '#fbfbfb'
+                message['num'] = '2'
+
+            if message['attachment'] != '':
+                message['class'] = 'transition btn btn-sm btn-default point-cursor'
+            else:
+                message['class'] = 'transition point-cursor'
 
         convo = {}
         convo['conversation'] = conversation.serialize
@@ -2087,6 +2142,42 @@ def createGroupConvo(request, data):
 def sendGroupMessage(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
+
+        conversation = Conversations.objects \
+        .filter( id = request.POST['convoid'] ).first()
+        if conversation == None:
+            return JsonResponse({'msg': 'Conversation Cannot Be Loaded...'})
+
+        newConvoMessage = ConvoMessages(user = you,
+                                        userid = you.id,
+                                        convo_id = conversation.id,
+                                        convo_rel = conversation,
+                                        contents = request.POST['contents'])
+
+        media = processFileUpload(request)
+        if media != None:
+            newConvoMessage.attachment = media['newdoc'].docfile.url
+            newConvoMessage.attachment_type = media['doctype']
+
+        newConvoMessage.save()
+
+        message = newConvoMessage.serialize
+        if message['userid'] == you.id:
+            message['pos'] = 'right'
+            message['color'] = 'lightgrey'
+            message['num'] = '1'
+        else:
+            message['pos'] = 'left'
+            message['color'] = '#fbfbfb'
+            message['num'] = '2'
+
+        if message['attachment'] != '':
+            message['class'] = 'transition btn btn-sm btn-default point-cursor'
+        else:
+            message['class'] = 'transition point-cursor'
+
+        return JsonResponse({'msg': 'group message sent',
+                                'message': message})
 
 
     except ObjectDoesNotExist:

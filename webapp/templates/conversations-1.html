@@ -69,27 +69,29 @@
                 <p ng-hide="sendgroupmsgForm" class="text-center"><a class="btn btn-sm btn-primary transition" data-toggle="modal" data-target="#attachmentModal">Show Attachment</a></p>
                 <hr class="hr-grey">
                 <ul class="ul-raw">
-                  <li ng-repeat="r in currentMessages.replies">
+                  <li ng-repeat="r in currentConversation.messages">
                     <div class="row" style="padding: 0px 15px;">
-                      <div class="message-box-1 sbm-1" style="float: {[ r.pos ]}; background: {[ r.color ]};">
+                      <div class="message-box-1 message-box-s{[ r.num ]} sbm-1" style="float: {[ r.pos ]}; background: {[ r.color ]};">
                         <div class="">
                           <p class="text-{[ r.pos ]}">{[ r.contents ]}<br>
-                          <a class="{[ r.class ]}" title="See attachment" ng-click="showMsgAttachment(this.r)">{[ r.attachment_type ]}</a></p><br>
-                          <p style="font-size: 11px;" class="text-{[ r.pos ]}"><em><strong>{[ r.date_created | date : "MM/dd/y" ]}</strong></em></p>
+                          <a data-attachment-link="{[ r.attachment ]}" data-attachment-type="{[ r.attachment_type ]}" class="{[ r.class ]} attachment-btn" title="See attachment">{[ r.attachment_type ]}</a></p><br>
+                          <p style="font-size: 11px;" class="text-{[ r.pos ]}"><em><strong>{[ r.date_created | date : "MM/dd/y" ]}</strong></em><br>
+                          {[ r.user.uname ]}</p>
+                          <img class="brd-bl" src="{[ r.user.avi ]}" style="float: {[ r.pos ]}; width: 50px;"/>
                         </div>
                       </div>
                     </div>
                   </li>
                 </ul>
                 <hr class="hr-grey">
-                <form ng-hide="sendgroupmsgForm" class="middlr text-center" id="sendmsg-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+                <form ng-hide="sendgroupmsgForm" class="middlr text-center" id="sendgroupmsg-form" enctype="multipart/form-data" action="/action/form/" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="action" value="sendGroupMessage"/>
 
                   <input type="hidden" name="origin" value=""/>
                   <input type="hidden" name="convoid" value=""/>
 
-                  <textarea id="send-msg-1" name="contents" placeholder="Send Message..." ng-model="messageContents"></textarea>
+                  <textarea id="send-msg-1" name="contents" placeholder="Message..." ng-model="messageContents"></textarea>
                   <br>
                   <input type="file" name="media" class="middlr transition btn btn-default"/>
                   <br>

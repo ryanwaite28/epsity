@@ -9,9 +9,16 @@ App.controller('conversationsCtrl', ['$scope', '$http', function($scope, $http) 
 
   $(document).ready(function(){
     $(document).on('click', '.attachment-btn', function(){
-      console.log(this);
+      // console.log(this);
+
+      var obj = {
+        attachment: $(this).data('attachment-link'),
+        attachment_type: $(this).data('attachment-type').toLowerCase()
+      }
+
+      $scope.showMsgAttachment(obj);
     });
-  }); 
+  });
 
   $scope.currentlyChattingWith = '';
 
@@ -95,7 +102,34 @@ App.controller('conversationsCtrl', ['$scope', '$http', function($scope, $http) 
 
     $('#sendgroupmsg-form > input[name="origin"]').val( location.pathname );
     $('#sendgroupmsg-form > input[name="convoid"]').val( $scope.currentConversation.conversation.convo_id );
-    $('#sendgroupmsg-form').submit();
+    // $('#sendgroupmsg-form').submit();
+
+    var form = document.getElementById('sendgroupmsg-form');
+    var formData = new FormData( form );
+
+    console.log(form, formData);
+    // return;
+
+    $http({
+      method: 'POST',
+      url: '/action/form/',
+      headers: {
+        'Content-Type': undefined,
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      processData: false,
+      data: formData
+    }).then(function(resp){
+      // Success Callback
+      console.log(resp);
+      $scope.messageContents = '';
+      $('#sendgroupmsg-form > input[name="media"]').val('');
+      $scope.currentConversation.messages.push( resp.data.message );
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
 
   }
 
