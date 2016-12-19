@@ -25,7 +25,7 @@ from django.contrib.contenttypes.models import ContentType
 # --- Helper Code --- #
 # --- --- --- --- --- #
 
-def randomVal():
+def randomUniqueValue():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
 
@@ -868,7 +868,7 @@ class Products(models.Model):
     categories = models.CharField(max_length = 500, default = '')
     status = models.CharField(max_length = 125, default = '')
 
-    unique_val = models.CharField(max_length = 125, default = '')
+    unique_val = models.CharField(max_length = 125, default = randomUniqueValue )
 
     date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
@@ -915,7 +915,7 @@ class Services(models.Model):
     categories = models.CharField(max_length = 500, default = '')
     status = models.CharField(max_length = 125, default = '')
 
-    unique_val = models.CharField(max_length = 125, default = '')
+    unique_val = models.CharField(max_length = 125, default = randomUniqueValue )
 
     date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
