@@ -59,9 +59,9 @@
                 <div class="row">
                   <h3 class="text-center">Create An Event!</h3>
                   <hr class="hr-grey">
-                  <div class="spacr-1">
+                  <div class="middlr" style="max-width: 95%;">
                     <input id="pac-input" type="text" class="controls" placeholder="Enter a location" style="z-index: 0; position: absolute; left: 114px; top: 0px;" autocomplete="off">
-                    <div id="map" class="brd-bl" style="height: 45vh; min-height: 40vh;">
+                    <div id="map" class="brd-bl max-w" style="height: 65vh; min-height: 40vh;">
 
                     </div>
                   </div>
@@ -71,12 +71,14 @@
                     <input type="hidden" name="action" value="createEvent" />
 
                     <input class="input-t-s1 middlr" type="text" name="eventname" placeholder="Event Name..." ng-model="newEventName" required/><br>
+                    <input class="input-t-s1 middlr" type="text" name="eventplace" placeholder="Event Place..." ng-model="newEventName" disabled required/><br>
                     <input class="input-t-s1 middlr" type="text" name="eventlocation" placeholder="Event Location..." ng-model="newEventLocation" disabled required/><br>
                     <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="eventdescription" type="text" placeholder="Event Description..." ng-model="newEventDesc" required></textarea><br>
-                    <div class="text-center row">
-                      <!-- <div class="col-sm-3"></div> -->
-                      <div class="col-sm-6">
-                        Start Date
+                    <br>
+                    <div class="padd-2 text-center">
+                      <div class="col-sm-2"></div>
+                      <div class="col-sm-4">
+                        Date
                         <br>
                         <select name="startmonth">
                           <option ng-repeat="m in months" value="{[ m ]}">{[ m ]}</option>
@@ -87,17 +89,32 @@
                         <select name="startyear">
                           <option ng-repeat="y in years" value="{[ y ]}">{[ y ]}</option>
                         </select>
-
-                        <br><br>
-
-                        Start Time
-                        <input class="middlr" type="text" name="bday" max="1979-12-31" placeholder="Time...">
                       </div>
-
-
-                      <!-- <div class="col-sm-3"></div> -->
+                      <div class="col-md-4">
+                        Time
+                        <br>
+                        <input class="middlr" type="text" name="bday" max="1979-12-31" placeholder="Format = 09:00 AM">
+                      </div>
+                      <div class="col-sm-2"></div>
                     </div>
-                    <br>
+
+                    <input type="hidden" name="origin" value="" />
+
+                    <div class="padd-2 text-center">
+                      <div class="col-sm-12">
+                        <p class="text-center">Categories</p>
+                      </div>
+                      <div class="col-sm-4">
+                        <input class="input-t-s1 middlr" type="text" name="categoryone" placeholder="Category 1..." />
+                      </div>
+                      <div class="col-sm-4">
+                        <input class="input-t-s1 middlr" type="text" name="categorytwo" placeholder="Category 2..." />
+                      </div>
+                      <div class="col-sm-4">
+                        <input class="input-t-s1 middlr" type="text" name="categorythree" placeholder="Category 3..." />
+                      </div>
+                    </div>
+                    <br><br>
                     <p class="text-center">Event Icon</p>
                     <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*" /><br>
                     <br>
@@ -269,6 +286,19 @@
 
   <!--  -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSHPWjouiZzdAI_EhWkuuLsFMEGTgyYWE&libraries=places&callback=initMap" async defer></script>
+
+  <script>
+
+    var source = new EventSource("/eventsource");
+
+    source.onopen = function() {
+      alert('New Connection!');
+    };
+    source.onmessage = function(event) {
+      alert(event);
+    };
+
+  </script>
 
 </body>
 

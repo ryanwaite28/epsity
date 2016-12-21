@@ -1925,7 +1925,8 @@ def createUserPost(request):
         post = newPost.serialize
         post['content_type'] = masterDICT['contentTypes']['post']
         post['like_status'] = masterDICT['statuses']['like']['not_liked']
-        post['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+        post['like_status_json'] = json.dumps \
+        (masterDICT['statuses']['like']['not_liked'])
 
         post_html = render(request,
                                 masterDICT['pages']['new_post'],
@@ -1967,7 +1968,8 @@ def addPostCommentUser(request, data):
         comment = newComment.serialize
         comment['content_type'] = masterDICT['contentTypes']['comment']
         comment['like_status'] = masterDICT['statuses']['like']['not_liked']
-        comment['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+        comment['like_status_json'] = json.dumps \
+        (masterDICT['statuses']['like']['not_liked'])
 
         comment_html = render(request,
                                 masterDICT['pages']['new_comment'],
@@ -1992,7 +1994,8 @@ def addPostCommentUser(request, data):
 def addCommentReplyUser(request, data):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
-        comment = Comments.objects.filter(id =  data['info']['comment_id']).first()
+        comment = Comments.objects \
+        .filter(id =  data['info']['comment_id']).first()
 
         if comment == None:
             return JsonResponse({'msg': 'Error - Comment Cannot Be Loaded.'})
@@ -2008,7 +2011,8 @@ def addCommentReplyUser(request, data):
         reply = newReply.serialize
         reply['content_type'] = masterDICT['contentTypes']['reply']
         reply['like_status'] = masterDICT['statuses']['like']['not_liked']
-        reply['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+        reply['like_status_json'] = json.dumps \
+        (masterDICT['statuses']['like']['not_liked'])
 
         reply_html = render(request,
                                 masterDICT['pages']['new_reply'],
@@ -2090,8 +2094,9 @@ def checkConvoName(request, data):
         .filter(name = data['name'], ownerid = you.id).first()
 
         if CheckConvoName != None:
-            return JsonResponse({'text': 'You Already Have A Group Chat With That Name.',
-                                    'msg': 'taken'})
+            return JsonResponse \
+            ({'text': 'You Already Have A Group Chat With That Name.',
+                'msg': 'taken'})
 
         else:
             return JsonResponse({'text': 'That Name Is Good.',

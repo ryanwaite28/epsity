@@ -763,3 +763,12 @@ def testing(request):
 
 
         return JsonResponse({'msg': 'admit-one', 'test_html': test_html})
+
+
+
+def eventSource(request):
+    return HttpResponse("Text only, please.", content_type="text/event-stream")
+
+
+def pushNotif( obj ):
+    return JsonResponse({'msg': 'admit-one'})

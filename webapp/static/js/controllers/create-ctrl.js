@@ -77,6 +77,7 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 				place.formatted_address + '</div>');
 			infowindow.open(map, marker);
 
+			$('input[name="eventplace"]').val( place.name );
 			$('input[name="eventlocation"]').val( place.formatted_address );
 		});
 
@@ -121,6 +122,12 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
   }
 
 	$scope.currentSelectedMonth = $scope.monthDays.January;
+
+	$('select[name="startmonth"]').change(function(){
+		console.log( $(this).val() );
+		$scope.currentSelectedMonth = $(this).val();
+		$scope.$apply();
+	})
 
   $scope.currentStartDate = {
     month: '',

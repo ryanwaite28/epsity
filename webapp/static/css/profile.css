@@ -526,6 +526,10 @@ body {
     top: 0px;
 }
 
+.ovf-h {
+  overflow: hidden;
+}
+
 /* --- */
 /* --- */
 /* --- */
