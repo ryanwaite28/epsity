@@ -526,6 +526,9 @@ body {
     top: 0px;
 }
 
+.ovf-a {
+  overflow: auto;
+}
 .ovf-h {
   overflow: hidden;
 }

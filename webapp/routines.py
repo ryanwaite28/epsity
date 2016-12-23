@@ -25,7 +25,7 @@ from models import Accounts, AviModel, WpModel, Groups, GroupMembers
 from models import Follows, FollowRequests
 from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
-from models import Posts, Comments, Replies, Likes
+from models import Posts, Comments, Replies, Likes, Events
 from models import Conversations, ConvoMembers, ConvoMessages
 
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
@@ -390,6 +390,39 @@ def processFileUpload(request):
             else:
                 return genericPage(request = request,
                                     msg = 'Error - Bad Media File Input.',
+                                    redirect=request.POST['origin'])
+
+
+            newdoc.save()
+
+            return {
+                'newdoc': newdoc,
+                'doctype': doctype
+            }
+
+        else:
+            return genericPage(request = request,
+                                msg = 'Error - Bad Media File Input.',
+                                redirect=request.POST['origin'])
+
+    else:
+        return None
+
+def uploadPhoto(request):
+    newdoc = None # Default For Message Media
+    doctype = ''
+
+    if request.FILES:
+        media = request.FILES['media']
+
+        if media and media.name != '':
+            if allowed_photo(media.name):
+                newdoc = mediaPhotoModel(docfile = request.FILES['media'])
+                doctype = 'Photo'
+
+            else:
+                return genericPage(request = request,
+                                    msg = 'Error - Photos Only.',
                                     redirect=request.POST['origin'])
 
 
@@ -2184,6 +2217,56 @@ def sendGroupMessage(request):
         return JsonResponse({'msg': 'group message sent',
                                 'message': message})
 
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def createEvent(request):
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+
+        name = cgi.escape( request.POST['eventname'] )
+        place = cgi.escape( request.POST['eventplace'] )
+        location = cgi.escape( request.POST['eventlocation'] )
+        desc = cgi.escape( request.POST['eventdescription'] )
+        link = request.POST['eventlink']
+
+        categories = request.POST['categoryone'] + ' ' + \
+        request.POST['categorytwo'] + ' ' + \
+        request.POST['categorytwo']
+
+        start_date = request.POST['startmonth'] + ' ' + \
+        request.POST['startday'] + ', ' + \
+        request.POST['startyear']
+
+        start_time = request.POST['starthour'] + ':' + \
+        request.POST['startminute'] + ' ' + \
+        request.POST['starttime']
+
+        newEvent = Events(ownerid = you.id,
+                            owner_type = masterDICT['ownerTypes']['account'],
+                            name = name,
+                            desc = desc,
+                            place = place,
+                            location = location,
+                            link = link,
+                            categories = categories,
+                            start_date = start_date,
+                            start_time = start_time)
+
+
+        media = processFileUpload(request)
+        if media != None:
+            newEvent.attachment = media['newdoc'].docfile.url
+            newEvent.attachment_type = media['doctype']
+
+        newEvent.save()
+
+        return genericPage(request = request,
+                            msg = 'New Event Created!',
+                            redirect = request.POST['origin'])
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

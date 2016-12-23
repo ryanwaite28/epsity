@@ -66,7 +66,7 @@ $(document).ready(function(){
     }
 	});
 
-	 window.badChars = [
+	window.badChars = [
     '@', '#', '$', '%', '^',
     '^', '&', '*', '(', ')',
     '-', '_', '=', '+', '`',
@@ -94,7 +94,19 @@ $(document).ready(function(){
 
 
 function trimTrailingSpaces(str) {
-	return str.replace(/(\s+|\s+$)/g, " ").trim();
+	'use strict';
+
+	if( str == undefined ) {
+		console.log('No Input Given', str);
+		return;
+	}
+	else if( $.type( str ) != 'string' ) {
+		console.log('Not A String', str);
+		return;
+	}
+	else{
+		return str.replace(/(\s+|\s+$)/g, " ").trim();
+	}
 }
 
 function newhttpRequestObj() {

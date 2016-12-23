@@ -19,7 +19,7 @@ from django.views.decorators.csrf import csrf_protect
 from WebTools import randomVal, processImage
 from models import Accounts, Groups, GroupMembers, Follows, FollowRequests
 from models import GroupRequests, GroupInvitations
-from models import Posts, Comments, Replies, Likes
+from models import Posts, Comments, Replies, Likes, Events
 
 # from forms import PostForm
 
@@ -411,6 +411,30 @@ def mySettings(request):
 # ---
 
 @csrf_protect
+def eventsView(request):
+    if request.method == 'POST':
+        return redirect('/')
+
+    if request.method == 'GET':
+        if 'username' not in request.session:
+            you = None
+        else:
+            you = Accounts.objects.get(uname = request.session['username'])
+
+        try:
+            return render(request,
+                            masterDICT['pages']['eventsview'],
+                            {'you': you,
+                            'message': ''},
+                            context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
+
+# ---
+
+@csrf_protect
 def createView(request):
 
     if request.method == 'GET':
@@ -585,6 +609,9 @@ def userActionFORM(request):
 
         if request.POST['action'] == 'create post':
             return routines.createUserPost(request)
+
+        if request.POST['action'] == 'createEvent':
+            return routines.createEvent(request)
 
 
         else:

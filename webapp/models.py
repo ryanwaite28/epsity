@@ -567,20 +567,29 @@ class Events(models.Model):
         ('Account', 'Account'),
         ('Group', 'Group'),
     )
+    AttachmentTypes = (
+        ('Photo', 'Photo'),
+        ('Audio', 'Audio'),
+        ('Video', 'Video'),
+    )
 
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
 
-    title = models.CharField(max_length = 500, default = '')
+    name = models.CharField(max_length = 500, default = '')
     desc = models.CharField(max_length = 500, default = '')
-    attachment = models.CharField(max_length = 500, default = '')
-    attachment_type = models.CharField(max_length = 500, default = '')
+    place = models.CharField(max_length = 500, default = '')
+    location = models.CharField(max_length = 500, default = '')
     link = models.CharField(max_length = 500, default = '')
+
+    attachment = models.CharField(max_length = 500, default = '')
+    attachment_type = models.CharField(choices = AttachmentTypes, blank = False, default = '', max_length = 50)
 
     categories = models.CharField(max_length = 500, default = '')
 
-    start_datetime = models.DateTimeField(blank = False, default = 0)
-    end_datetime = models.DateTimeField(blank = False, default = 0)
+    start_date = models.CharField(max_length = 500, default = '')
+    start_time = models.CharField(max_length = 500, default = '')
+
 
     status = models.CharField(max_length = 20, default = 'upcoming')
     # either upcoming, live, or ended
@@ -596,8 +605,10 @@ class Events(models.Model):
             'ownerid': self.ownerid,
             'owner': returnModelSerialized( self.owner_type , self.ownerid ),
             'owner_type': self.owner_type,
-            'tilte': self.title,
+            'name': self.name,
             'desc': self.desc,
+            'place': self.place,
+            'location': self.location,
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,
             'link': self.link,

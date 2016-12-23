@@ -65,59 +65,74 @@
 
                     </div>
                   </div>
+                  <br><br>
+                  <p class="text-center">The Place And Location Fields Will Be Filled In<br>By Using The Google Map Search.</p>
                   <br>
                   <form class="middlr" id="create-event-form" enctype="multipart/form-data" action="/action/form/" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="createEvent" />
 
-                    <input class="input-t-s1 middlr" type="text" name="eventname" placeholder="Event Name..." ng-model="newEventName" required/><br>
-                    <input class="input-t-s1 middlr" type="text" name="eventplace" placeholder="Event Place..." ng-model="newEventName" disabled required/><br>
-                    <input class="input-t-s1 middlr" type="text" name="eventlocation" placeholder="Event Location..." ng-model="newEventLocation" disabled required/><br>
-                    <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="eventdescription" type="text" placeholder="Event Description..." ng-model="newEventDesc" required></textarea><br>
+                    <input class="input-t-s1 spacr-2" type="text" name="eventname" placeholder="Event Name..." ng-model="newEventName" required/><br>
+                    <input class="input-t-s1 spacr-2" type="text" name="eventplace" placeholder="Event Place..." ng-model="newEventPlace" disabled required/><br>
+                    <input class="input-t-s1 spacr-2" type="text" name="eventlocation" placeholder="Event Location..." ng-model="newEventLocation" disabled required/><br>
+                    <input class="input-t-s1 spacr-2" type="text" name="eventlink" placeholder="Add a Link..." ng-model="newEventLink"/><br>
+                    <textarea style="min-height: 150px;" class="input-t-s1 spacr-2" name="eventdescription" type="text" placeholder="Event Description..." ng-model="newEventDesc" required></textarea><br>
                     <br>
-                    <div class="padd-2 text-center">
-                      <div class="col-sm-2"></div>
-                      <div class="col-sm-4">
+                    <div class="ovf-a padd-1 text-center">
+                      <div class="sbm-1 col-sm-12">
                         Date
                         <br>
                         <select name="startmonth">
                           <option ng-repeat="m in months" value="{[ m ]}">{[ m ]}</option>
                         </select>
                         <select name="startday">
-                          <option ng-repeat="d in monthDays['January']" value="{[ d ]}">{[ d ]}</option>
+                          <option ng-repeat="d in currentSelectedMonth" value="{[ d ]}">{[ d ]}</option>
                         </select>
                         <select name="startyear">
                           <option ng-repeat="y in years" value="{[ y ]}">{[ y ]}</option>
                         </select>
                       </div>
-                      <div class="col-md-4">
+
+                      <div class="col-md-12">
                         Time
                         <br>
-                        <input class="middlr" type="text" name="bday" max="1979-12-31" placeholder="Format = 09:00 AM">
+                        <select name="starthour">
+                          <option ng-repeat="h in hours" value="{[ h ]}">{[ h ]}</option>
+                        </select>
+                        <span> : </span>
+                        <select name="startminute">
+                          <option ng-repeat="m in minutes" value="{[ m ]}">{[ m ]}</option>
+                        </select>
+                        <select name="starttime">
+                          <option value="AM">AM</option>
+                          <option value="PM">PM</option>
+                        </select>
                       </div>
-                      <div class="col-sm-2"></div>
                     </div>
+                    <br>
 
                     <input type="hidden" name="origin" value="" />
 
-                    <div class="padd-2 text-center">
+                    <div class="ovf-a padd-1 text-center">
                       <div class="col-sm-12">
-                        <p class="text-center">Categories</p>
+                        <p class="text-center">Categories<br>(No Spaces, Just Single Words)</p>
                       </div>
                       <div class="col-sm-4">
-                        <input class="input-t-s1 middlr" type="text" name="categoryone" placeholder="Category 1..." />
+                        <input class="input-t-s1 middlr" type="text" name="categoryone" placeholder="Category 1..."/>
                       </div>
                       <div class="col-sm-4">
-                        <input class="input-t-s1 middlr" type="text" name="categorytwo" placeholder="Category 2..." />
+                        <input class="input-t-s1 middlr" type="text" name="categorytwo" placeholder="Category 2..."/>
                       </div>
                       <div class="col-sm-4">
-                        <input class="input-t-s1 middlr" type="text" name="categorythree" placeholder="Category 3..." />
+                        <input class="input-t-s1 middlr" type="text" name="categorythree" placeholder="Category 3..."/>
                       </div>
                     </div>
                     <br><br>
+
                     <p class="text-center">Event Icon</p>
-                    <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*" /><br>
+                    <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*"/><br>
                     <br>
+
                     <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createEvent()" />
                   </form>
                 </div>
@@ -289,14 +304,14 @@
 
   <script>
 
-    var source = new EventSource("/eventsource");
-
-    source.onopen = function() {
-      alert('New Connection!');
-    };
-    source.onmessage = function(event) {
-      alert(event);
-    };
+    // var source = new EventSource("/eventsource");
+    //
+    // source.onopen = function() {
+    //   alert('New Connection!');
+    // };
+    // source.onmessage = function(event) {
+    //   alert(event);
+    // };
 
   </script>
 

@@ -26,7 +26,7 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 				lng: 151.2195
 			},
 			zoom: 13,
-			scrollwheel: true
+			scrollwheel: false
 		};
 		var map = new google.maps.Map(document.getElementById('map'),
 			mapOptions);
@@ -124,8 +124,7 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 	$scope.currentSelectedMonth = $scope.monthDays.January;
 
 	$('select[name="startmonth"]').change(function(){
-		console.log( $(this).val() );
-		$scope.currentSelectedMonth = $(this).val();
+		$scope.currentSelectedMonth = $scope.monthDays[ $(this).val().toString() ];
 		$scope.$apply();
 	})
 
@@ -142,8 +141,26 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
 	var currentYear = parseInt( Date().split(' ')[3] );
 	$scope.years = [];
-	for(var i = currentYear; i < currentYear + 30; i++ ) {
+	for(var i = currentYear; i < currentYear + 21; i++ ) {
 		$scope.years.push( i );
+	}
+
+	$scope.hours = [];
+	for( var l = 1; l <= 12; l++ ) {
+		var v = l.toString();
+		if( v.length == 1 ) {
+			v = "0" + v;
+		}
+		$scope.hours.push( v );
+	}
+
+	$scope.minutes = [];
+	for( var k = 0; k <= 60; k++ ) {
+		var v = k.toString();
+		if( v.length == 1 ) {
+			v = "0" + v;
+		}
+		$scope.minutes.push( v );
 	}
 
   //
@@ -152,7 +169,29 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
     var timeRegex = /^[0-9]{2}:[0-9]{2} (AM|PM)$/;
 		var yearRegex = /^[0-9]{4}$/;
 
-    console.log('admit one');
+		var name = trimTrailingSpaces($('#create-event-form input[name="eventname"]').val());
+		var place = trimTrailingSpaces($('#create-event-form input[name="eventplace"]').val());
+		var location = trimTrailingSpaces($('#create-event-form input[name="eventlocation"]').val());
+		var desc = trimTrailingSpaces($('#create-event-form textarea[name="eventdescription"]').val());
+
+		if( name.length < 7 ) {
+			alert('Please Give A Descriptive Event Name.');
+			return;
+		}
+		if( desc.length < 10 ) {
+			alert('Please Give A Descriptive Event Description.');
+			return;
+		}
+		if( place == '' || location == '' || place == undefined || location == undefined ) {
+			alert('Place And Location Is Required.');
+			return;
+		}
+
+		$('#create-event-form input[name="eventplace"]').prop('disabled', false);
+		$('#create-event-form input[name="eventlocation"]').prop('disabled', false);
+		$('#create-event-form input[name="origin"]').val( '/create/' );
+
+		$('#create-event-form').submit();
   }
 
 	$scope.createGroup = function() {
