@@ -542,7 +542,7 @@ def settingsActionAJAX(request):
             if data['action'] == 'update seeking':
                 return routines.updateAccountSeeking(request, data['str'])
 
-            if data['action'] == 'load settings lists':
+            if data['action'] == 'loadSettingsLists':
                 return routines.loadSettingsLists(request)
 
         except:

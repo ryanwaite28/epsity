@@ -41,6 +41,49 @@ def allowed_media(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_MEDIA
 
+
+
+# Instance Tuple Variables For Model Classes
+
+OwnerType = (
+    ('Account', 'Account'),
+    ('Group', 'Group'),
+)
+
+PostTypes = (
+    ('Text', 'Text'),
+    ('Photo', 'Photo'),
+    ('Audio', 'Audio'),
+    ('Video', 'Video'),
+)
+
+ContentType = (
+    ('Post', 'Post'),
+    ('Comment', 'Comment'),
+    ('Reply', 'Reply'),
+    ('Group', 'Group'),
+    ('Event', 'Event'),
+)
+
+AttachmentTypes = (
+    ('Photo', 'Photo'),
+    ('Audio', 'Audio'),
+    ('Video', 'Video'),
+)
+
+ItemType = (
+    ('Product', 'Product'),
+    ('Service', 'Service'),
+)
+
+StarType = (
+    ('One', 'One'),
+    ('Two', 'Two'),
+    ('Three', 'Three'),
+    ('Four', 'Four'),
+    ('Five', 'Five'),
+)
+
 # Dictionary of all pages/views for easy and dynamic rendering.
 pages = {
     'welcome': 'welcome.html',
@@ -210,6 +253,13 @@ statuses = {
             'action': 'like',
             'class': 'like-btn-o'
         }
+    },
+
+    'transaction': {
+        'completed': 'completed',
+        'not_completed': 'not_completed',
+        'pending': 'pending',
+        'canceled': 'canceled'
     }
 }
 
@@ -218,6 +268,14 @@ fetchType = {
         'main': 'main',
         'home': 'home'
     }
+}
+
+starType = {
+    'One': 'One',
+    'Two': 'Two',
+    'Three': 'Three',
+    'Four': 'Four',
+    'Five': 'Five'
 }
 
 # Master Dictionary
@@ -232,7 +290,8 @@ masterDICT = {
     'mediaTypes': mediaTypes,
     'contentTypes': contentTypes,
     'statuses': statuses,
-    'fetchType': fetchType
+    'fetchType': fetchType,
+    'starType': starType
 }
 
 # --- #

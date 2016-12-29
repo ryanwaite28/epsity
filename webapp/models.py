@@ -15,8 +15,11 @@ from django.db.models import Model
 from django.utils import timezone
 import hashlib
 
+import vaults
+from vaults import masterDICT
 from vaults import webapp_dir, pages, localPaths, serverPaths
 from vaults import ownerTypes
+
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
@@ -39,12 +42,26 @@ def returnModelSerialized(type, id):
     elif type == '' or type == None:
         return 'error --- invalid type'
 
+
+
     elif type == 'Account':
         obj = Accounts.objects.get(id = id)
         return obj.serialize
 
     elif type == 'Group':
         obj = Groups.objects.get(id = id)
+        return obj.serialize
+
+    elif type == 'Product':
+        obj = Products.objects.get(id = id)
+        return obj.serialize
+
+    elif type == 'Service':
+        obj = Services.objects.get(id = id)
+        return obj.serialize
+
+    elif type == 'Event':
+        obj = Events.objects.get(id = id)
         return obj.serialize
 
 
@@ -381,18 +398,10 @@ class FollowRequests(models.Model):
 
 
 class Posts(models.Model):
+    OwnerType = vaults.OwnerType
+    PostTypes = vaults.PostTypes
 
-    OwnerType = (
-        ('Account', 'Account'),
-        ('Group', 'Group'),
-    )
-
-    PostTypes = (
-        ('Text', 'Text'),
-        ('Photo', 'Photo'),
-        ('Audio', 'Audio'),
-        ('Video', 'Video'),
-    )
+    # ---
 
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
@@ -435,11 +444,9 @@ class Posts(models.Model):
 # ---
 
 class Comments(models.Model):
+    OwnerType = vaults.OwnerType
 
-    OwnerType = (
-        ('Account', 'Account'),
-        ('Group', 'Group'),
-    )
+    # ---
 
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
@@ -477,11 +484,9 @@ class Comments(models.Model):
 # ---
 
 class Replies(models.Model):
+    OwnerType = vaults.OwnerType
 
-    OwnerType = (
-        ('Account', 'Account'),
-        ('Group', 'Group'),
-    )
+    # ---
 
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
@@ -519,19 +524,10 @@ class Replies(models.Model):
 # ---
 
 class Likes(models.Model):
+    OwnerType = vaults.OwnerType
+    ContentType = vaults.ContentType
 
-    OwnerType = (
-        ('Account', 'Account'),
-        ('Group', 'Group'),
-    )
-
-    ContentType = (
-        ('Post', 'Post'),
-        ('Comment', 'Comment'),
-        ('Reply', 'Reply'),
-        ('Group', 'Group'),
-        ('Event', 'Event'),
-    )
+    # ---
 
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
@@ -562,16 +558,10 @@ class Likes(models.Model):
 # ---
 
 class Events(models.Model):
+    OwnerType = vaults.OwnerType
+    AttachmentTypes = vaults.AttachmentTypes
 
-    OwnerType = (
-        ('Account', 'Account'),
-        ('Group', 'Group'),
-    )
-    AttachmentTypes = (
-        ('Photo', 'Photo'),
-        ('Audio', 'Audio'),
-        ('Video', 'Video'),
-    )
+    # ---
 
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
@@ -590,7 +580,6 @@ class Events(models.Model):
     start_date = models.CharField(max_length = 500, default = '')
     start_time = models.CharField(max_length = 500, default = '')
 
-
     status = models.CharField(max_length = 20, default = 'upcoming')
     # either upcoming, live, or ended
 
@@ -601,7 +590,6 @@ class Events(models.Model):
     def serialize(self):
         return {
             'eid': self.id,
-
             'ownerid': self.ownerid,
             'owner': returnModelSerialized( self.owner_type , self.ownerid ),
             'owner_type': self.owner_type,
@@ -613,11 +601,11 @@ class Events(models.Model):
             'attachment_type': self.attachment_type,
             'link': self.link,
             'categories': self.categories,
-            'start_datetime': self.start_datetime,
-            'end_datetime': self.end_datetime,
+            'start_date': self.start_date,
+            'start_time': self.start_time,
             'status': self.status,
             'date_created': self.date_created,
-            'last_active': self.last_active
+            'last_active': self.last_active,
         }
 
     class Meta:
@@ -627,11 +615,9 @@ class Events(models.Model):
 
 
 class EventAttendees(models.Model):
+    OwnerType = vaults.OwnerType
 
-    OwnerType = (
-        ('Account', 'Account'),
-        ('Group', 'Group'),
-    )
+    # ---
 
     event_id = models.IntegerField(blank = False, default = 0)
     event_rel = models.ForeignKey(Events, default = 0, related_name = "event_rel")
@@ -848,7 +834,6 @@ class MessageReply(models.Model):
             'attachment_type': self.attachment_type,
             'date_created': self.date_created,
             'last_active': self.last_active
-            #'linkName': self.bio_link_name,
         }
 
     class Meta:
@@ -861,10 +846,9 @@ class MessageReply(models.Model):
 # --- #
 
 class Products(models.Model):
-    OwnerType = (
-        ('Account', 'Account'),
-        ('Group', 'Group'),
-    )
+    OwnerType = vaults.OwnerType
+
+    # ---
 
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
@@ -908,10 +892,9 @@ class Products(models.Model):
 
 
 class Services(models.Model):
-    OwnerType = (
-        ('Account', 'Account'),
-        ('Group', 'Group'),
-    )
+    OwnerType = vaults.OwnerType
+
+    # ---
 
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
@@ -956,23 +939,88 @@ class Services(models.Model):
 
 
 class Transactions(models.Model):
-    ItemType = (
-        ('Product', 'Product'),
-        ('Service', 'Service'),
-    )
+    ItemType = vaults.ItemType
 
-    ownerid = models.IntegerField(blank = False, default = 0)
-    # owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+    # ---
 
     item_type = models.CharField(choices = ItemType, blank = False, default = '', max_length = 50)
     item_id = models.IntegerField(blank = False, default = 0)
+    item_val = models.CharField(blank = False, default = '', max_length = 50)
+
+    customer_id = models.IntegerField(blank = False, default = 0)
+    customer_rel = models.ForeignKey(Accounts, default = 0, related_name = "transactions_customer_rel")
+    seller_id = models.IntegerField(blank = False, default = 0)
+    seller_rel = models.ForeignKey(Accounts, default = 0, related_name = "transactions_seller_rel")
+
+    unique_val = models.CharField(max_length = 125, default = randomUniqueValue )
+    note = models.CharField(max_length = 500, default = '')
+    status = models.CharField(max_length = 500, default = '')
+    # either completed, not_completed, pending, or canceled
+
+    date_created = models.DateTimeField( default = timezone.now )
+    last_active = models.DateTimeField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            't_id': self.id,
+            'unique_val': self.unique_val,
+            'item': returnModelSerialized( self.id , self.item_type ),
+            'item_type': self.item_type,
+            'item_id': self.item_id,
+            'item_val': self.item_val,
+            'customer_id': self.customer_id,
+            'customer_rel': self.customer_rel.serialize,
+            'seller_id': self.seller_id,
+            'seller_rel': self.seller_rel.serialize,
+            'note': self.note,
+            'status': self.status,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
 
     class Meta:
         db_table = "transactions"
 
 
-class Feedback(models.Model):
 
+class Feedback(models.Model):
+    ItemType = vaults.ItemType
+    StarType = vaults.StarType
+
+    # ---
+
+    transaction_id = models.IntegerField(blank = False, default = 0)
+    transaction_rel = models.ForeignKey(Transactions, default = 0, related_name = "feedback_transaction_rel")
+
+    item_type = models.CharField(choices = ItemType, blank = False, default = '', max_length = 50)
+    item_id = models.IntegerField(blank = False, default = 0)
+    item_val = models.CharField(blank = False, default = '', max_length = 50)
+
+    customer_id = models.IntegerField(blank = False, default = 0)
+    customer_rel = models.ForeignKey(Accounts, default = 0, related_name = "feedback_customer_rel")
+    stars = models.CharField(choices = StarType, blank = False, default = '', max_length = 50)
+    msg = models.CharField(max_length = 500, default = '')
+
+    date_created = models.DateTimeField( default = timezone.now )
+    last_active = models.DateTimeField(auto_now=True)
+
+    @property
+    def serialize(self):
+        return {
+            'feedback_id': self.id,
+            'transaction_id': self.transaction_id,
+            'transaction_rel': self.transaction_rel.serialize,
+            'item_type': self.item_type,
+            'item_id': self.item_id,
+            'item_val': self.item_val,
+            'customer_id': self.customer_id,
+            'customer_rel': self.customer_rel.serialize,
+            'stars': self.stars,
+            'msg': self.status,
+            'date_created': self.date_created,
+            'last_active': self.last_active
+        }
 
 
     class Meta:

@@ -13,39 +13,46 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
 
   //
 
-  $(document).ready(function(){
-    var csrftoken = Cookies.get('csrftoken');
-
-    var obj = {
-      action: 'load settings lists',
-      csrfmiddlewaretoken: csrftoken,
-    }
-
-    $.ajax({
+  $scope.loadSettingsLists = function(){
+    var req = {
+      method: 'POST',
       url: '/user/settingsaction/ajax/',
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify(obj),
-      success: function(resp) {
-        (function(){
-          console.log(resp);
-          $scope.interestsList = resp.interests;
-          $scope.seekingList = resp.seeking;
-
-          if( $scope.interestsList[0] == '' ) {
-            $scope.interestsList = [];
-          }
-          if(  $scope.seekingList[0] == '' ) {
-            $scope.seekingList = [];
-          }
-
-          $scope.groupsList = resp.groups;
-
-          $scope.$apply();
-        })()
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      data: {
+        action: 'loadSettingsLists',
+        csrfmiddlewaretoken: Cookies.get('csrftoken'),
       }
-    });
+    }
+    $http(req).then(function(resp){
+      // Success Callback
+      console.log(resp);
+      if( resp.data.interests[0] == '' ) {
+        $scope.interestsList = [];
+      }
+      else {
+        $scope.interestsList = resp.data.interests;
+      }
 
+      if( resp.data.seeking[0] == '' ) {
+        $scope.seekingList = [];
+      }
+      else {
+        $scope.seekingList = resp.data.seeking;
+      }
+
+      $scope.groupsList = resp.data.groups;
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
+  }
+  $scope.loadSettingsLists();
+
+  $(document).ready(function(){
     $(document).keyup(function(e){
       if( e.keyCode == 13 ) {
         // Find Which Input Is In Focus.
@@ -53,7 +60,6 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
           $scope.addEditGroupCategory();
           $scope.$apply();
         }
-
       }
     });
   });

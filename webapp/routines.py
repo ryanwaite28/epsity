@@ -25,7 +25,7 @@ from models import Accounts, AviModel, WpModel, Groups, GroupMembers
 from models import Follows, FollowRequests
 from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
-from models import Posts, Comments, Replies, Likes, Events
+from models import Posts, Comments, Replies, Likes, Events, EventAttendees
 from models import Conversations, ConvoMembers, ConvoMessages
 
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
@@ -584,14 +584,25 @@ def updateAccountSeeking(request, content):
 def loadSettingsLists(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
-        groups = Groups.objects.filter(ownerid = you.id).all()
+
+        groups = Groups.objects.filter(ownerid = you.id)
+        yourEvents = Events.objects.filter(ownerid = you.id)
+        attendingEvents = EventAttendees.objects.filter(attendee_id = you.id)
+
+
+        print '---|---'
+
 
         resp = {
             'msg': 'lists',
             'interests': you.interests.split(';'),
             'seeking': you.seeking.split(';'),
-            'groups': [g.serialize for g in groups]
+            'groups': [g.serialize for g in groups],
+            'yourEvents': [e.serialize for e in yourEvents],
+            'attendingEvents': [e.serialize for e in attendingEvents],
         }
+
+        # print resp
 
         return JsonResponse(resp)
 
@@ -2223,6 +2234,9 @@ def sendGroupMessage(request):
         return errorPage(request, msg)
 
 
+# def loadYourEvents(request, data):
+
+
 def createEvent(request):
     try:
         you = Accounts.objects.get(uname = request.session['username'])
@@ -2235,7 +2249,7 @@ def createEvent(request):
 
         categories = request.POST['categoryone'] + ' ' + \
         request.POST['categorytwo'] + ' ' + \
-        request.POST['categorytwo']
+        request.POST['categorythree']
 
         start_date = request.POST['startmonth'] + ' ' + \
         request.POST['startday'] + ', ' + \
