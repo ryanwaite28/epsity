@@ -354,11 +354,26 @@
                       <li role="presentation" class="transition active"><a data-toggle="tab" href="#events-y-pane">Your Events</a></li>
                       <li role="presentation"><a data-toggle="tab" href="#events-a-pane">Events Attending</a></li>
                     </ul>
-                    <div class="transition tab-content padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                      <div id="events-y-pane" class="transition tab-pane fade mk-rel">
-                        
+                    <br>
+
+                    <div class="transition tab-content padd-1 mk-rel">
+                      <div id="events-y-pane" class="transition tab-pane fade in active mk-rel">
+                        <h4 class="text-center">Your Events: <strong>{[ yourEventsList.length ]}</strong></h4>
+                        <hr>
+                        <div class="row sbm-1" ng-repeat="e in yourEventsList">
+                          <div class="col-sm-4">
+                            <img width="150px" class="middlr sbm-1" src="{[ e.attachment ]}"/>
+                            <p class="text-center">
+                              <strong>Name: </strong>{[ e.name ]}<br>
+                              <strong>See Full: </strong><a title="See Full Event" href="/events/{[ e.eid ]}">Click Here</a>
+                            </p>
+                          </div>
+                        </div>
                       </div>
+
                       <div id="events-a-pane" class="transition tab-pane fade mk-rel">
+                        <h4 class="text-center">Events Attending: <strong>{[ eventsAttendingList.length ]}</strong></h4>
+                        <hr>
 
                       </div>
                     </div>

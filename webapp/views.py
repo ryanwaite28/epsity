@@ -421,10 +421,46 @@ def eventsView(request):
         else:
             you = Accounts.objects.get(uname = request.session['username'])
 
+
+
         try:
             return render(request,
                             masterDICT['pages']['eventsview'],
                             {'you': you,
+                            'message': ''},
+                            context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
+
+# ---
+
+@csrf_protect
+def eventView(request, query):
+    if request.method == 'POST':
+        return redirect('/')
+
+    if request.method == 'GET':
+        if 'username' not in request.session:
+            you = None
+        else:
+            you = Accounts.objects.get(uname = request.session['username'])
+
+            event = Events.objects.filter(id = query).first()
+            if event == None:
+                msg = 'Event Not Found.'
+                return errorPage(request, msg)
+
+            event = event.serialize
+            event['categories'] = ', '.join( event['categories'].split(' ') )
+            print event['categories']
+
+        try:
+            return render(request,
+                            masterDICT['pages']['eventview'],
+                            {'you': you,
+                            'event': event,
                             'message': ''},
                             context_instance = RequestContext(request))
 
@@ -604,7 +640,7 @@ def userActionFORM(request):
         if request.POST['action'] == 'sendGroupMessage':
             return routines.sendGroupMessage(request)
 
-        if request.POST['action'] == 'create group':
+        if request.POST['action'] == 'createGroup':
             return routines.createGroup(request)
 
         if request.POST['action'] == 'create post':

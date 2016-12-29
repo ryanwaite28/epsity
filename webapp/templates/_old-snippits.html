@@ -32,4 +32,26 @@
   </div>
 </li>
 {% endfor %}
+
+
+
+<p>
+  <strong>Name: </strong>{[ e.name ]}<br>
+  <strong>Description: </strong>{[ e.desc ]}<br>
+</p>
+<p>
+  <strong>Place: </strong>{[ e.place ]}<br>
+  <strong>Location: </strong>{[ e.location ]}<br>
+</p>
+<p>
+  <strong>Start: </strong>{[ e.start_full ]}<br>
+  <strong>End: </strong>{[ e.end_full ]}<br>
+</p>
+<p>
+  <strong>Categories: </strong>{[ e.categories.split(' ').join(', ') ]}
+</p>
+<p>
+  <strong>Attendees: </strong>{[ e.attendees ]}
+</p>
+
 -->

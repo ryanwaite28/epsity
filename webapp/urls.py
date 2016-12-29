@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^action/ajax/$', views.userActionAJAX, name='useractionajax'),
 
     url(r'^events/$', views.eventsView, name='eventsview'),
+    url(r'^events/(?P<query>[0-9]+)/$', views.eventView, name='eventview'),
 
     url(r'^users/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.userPage, name='userpage'),
     #url(r'^users/(?P<query>[a-zA-Z0-9\-\_]+)/groupmember/$', views.userGroupMember, name='usergroupmember'),

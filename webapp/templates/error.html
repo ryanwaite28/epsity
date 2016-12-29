@@ -10,11 +10,17 @@
   {% include 'dependencies-1.html' %}
 
   <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
-  <link rel="stylesheet" type="text/css" href="/static/css/welcome.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
   <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
-
   <script src="/static/js/grand.js"></script>
+
+  {% if you != None %}
+  <script src="/static/js/profile.js"></script>
+  <script src="/static/js/controllers/profile-main-ctrl.js"></script>
+  {% else %}
+  <link rel="stylesheet" type="text/css" href="/static/css/welcome.css">
   <script src="/static/js/welcome.js"></script>
+  {% endif %}
 </head>
 
   <body style="background: #fbfbfb;" ng-app="epsityApp" ng-controller="welcomeCtrl" class="transition">
@@ -25,7 +31,11 @@
     <hr style="border-color: grey;">
     <br> -->
 
-    {% include 'topbar-2.html' %}
+    {% if you != None %}
+      {% include 'topbar-1.html' %}
+    {% else %}
+      {% include 'topbar-2.html' %}
+    {% endif %}
 
     <h2 class="text-center no-marg" style="padding-top: 45vh;"><strong>Error:</strong></h2>
     <h4 class="text-center">{{ errorMessage }}</h4>

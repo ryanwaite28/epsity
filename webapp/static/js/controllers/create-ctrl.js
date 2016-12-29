@@ -121,23 +121,20 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
     December: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
   }
 
-	$scope.currentSelectedMonth = $scope.monthDays.January;
+	$scope.currentSelectedMonthS = $scope.monthDays.January;
+	$scope.currentSelectedMonthE = $scope.monthDays.January;
 
 	$('select[name="startmonth"]').change(function(){
-		$scope.currentSelectedMonth = $scope.monthDays[ $(this).val().toString() ];
+		$scope.currentSelectedMonthS = $scope.monthDays[ $(this).val().toString() ];
+		$scope.$apply();
+	})
+	$('select[name="endmonth"]').change(function(){
+		$scope.currentSelectedMonthE = $scope.monthDays[ $(this).val().toString() ];
 		$scope.$apply();
 	})
 
-  $scope.currentStartDate = {
-    month: '',
-    days: '',
-		year: ''
-  }
-  $scope.currentEndDate = {
-    month: '',
-    days: '',
-		year: ''
-  }
+  $scope.currentStartDateTime = '';
+  $scope.currentEndDateTime = '';
 
 	var currentYear = parseInt( Date().split(' ')[3] );
 	$scope.years = [];
@@ -161,6 +158,43 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 			v = "0" + v;
 		}
 		$scope.minutes.push( v );
+	}
+
+	$scope.checkNewEventDates = function() {
+		var startMonth = $('select[name="startmonth"]').val();
+		var startDay = $('select[name="startday"]').val();
+		var startYear = $('select[name="startyear"]').val();
+		var startHour = $('select[name="starthour"]').val();
+		var startMinute = $('select[name="startminute"]').val();
+		var startTime = $('select[name="starttime"]').val();
+
+		var endMonth = $('select[name="endmonth"]').val();
+		var endDay = $('select[name="endday"]').val();
+		var endYear = $('select[name="endyear"]').val();
+		var endHour = $('select[name="endhour"]').val();
+		var endMinute = $('select[name="endminute"]').val();
+		var endTime = $('select[name="endtime"]').val();
+
+		var startDateTimeString = startMonth + ' ' + startDay + ', ' + startYear + ' - ' + startHour + ':' + startMinute + ' ' + startTime;
+		var endDateTimeString = endMonth + ' ' + endDay + ', ' + endYear + ' - ' + endHour + ':' + endMinute + ' ' + endTime;
+
+		var startDateTime = new Date(startMonth + ' ' + startDay + ', ' + startYear + ' ' + startHour + ':' + startMinute + ' ' + startTime);
+		var endDateTime = new Date(endMonth + ' ' + endDay + ', ' + endYear + ' ' + endHour + ':' + endMinute + ' ' + endTime);
+
+		$scope.currentStartDateTime = startDateTime.toString().substring(0,3) + ' | ' + startDateTimeString;
+		$scope.currentEndDateTime =  endDateTime.toString().substring(0,3) + ' | ' + endDateTimeString;
+
+
+		if( startDateTime >= endDateTime ) {
+			console.log('ERROR');
+			alert('The Start Date & Time Cannot Be The Same As Or After The End Date & Time');
+			return false;
+		}
+		else {
+			console.log('OK');
+			return true;
+		}
+
 	}
 
   //
@@ -187,9 +221,16 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 			return;
 		}
 
+		var checkDates = $scope.checkNewEventDates();
+		if(checkDates == false) {
+			return;
+		}
+
 		$('#create-event-form input[name="eventplace"]').prop('disabled', false);
 		$('#create-event-form input[name="eventlocation"]').prop('disabled', false);
 		$('#create-event-form input[name="origin"]').val( '/create/' );
+		$('#create-event-form input[name="startfull"]').val( $scope.currentStartDateTime );
+		$('#create-event-form input[name="endfull"]').val( $scope.currentEndDateTime );
 
 		$('#create-event-form').submit();
   }
@@ -214,7 +255,7 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
 		var ask = confirm('Are all fields corrects?');
 		if (ask == true) {
-			$('#create-group-form input[name="origin"]').val(location.pathname);
+			$('#create-group-form input[name="origin"]').val( '/mysettings/' );
 			$('#create-group-form').submit();
 		}
 

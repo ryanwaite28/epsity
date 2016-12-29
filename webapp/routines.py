@@ -347,6 +347,11 @@ def format_datetime(value, format='medium'):
 # ---
 
 def errorPage(request, msg = None):
+    if 'username' not in request.session:
+        you = None
+    else:
+        you = Accounts.objects.get(uname = request.session['username'])
+
     if msg == None or msg == '' or request.method == 'POST':
         # print '--- Error Page Redirecting...'
         return redirect('/')
@@ -355,7 +360,8 @@ def errorPage(request, msg = None):
     return render(request,
                     masterDICT['pages']['error'],
                     {'errorMessage': msg,
-                    'value': string})
+                    'value': string,
+                    'you': you})
 
 
 def genericPage(request, msg, redirect):
@@ -589,16 +595,12 @@ def loadSettingsLists(request):
         yourEvents = Events.objects.filter(ownerid = you.id)
         attendingEvents = EventAttendees.objects.filter(attendee_id = you.id)
 
-
-        print '---|---'
-
-
         resp = {
             'msg': 'lists',
             'interests': you.interests.split(';'),
             'seeking': you.seeking.split(';'),
             'groups': [g.serialize for g in groups],
-            'yourEvents': [e.serialize for e in yourEvents],
+            'yourEvents': [e.serializeBasic for e in yourEvents],
             'attendingEvents': [e.serialize for e in attendingEvents],
         }
 
@@ -943,6 +945,7 @@ def createGroup(request):
 
         checkGroup = Groups.objects \
         .filter(uname = request.POST['uname']).first()
+        
         if checkGroup != None:
             return render(request,
                         masterDICT['pages']['createview'],
@@ -2254,10 +2257,18 @@ def createEvent(request):
         start_date = request.POST['startmonth'] + ' ' + \
         request.POST['startday'] + ', ' + \
         request.POST['startyear']
-
         start_time = request.POST['starthour'] + ':' + \
         request.POST['startminute'] + ' ' + \
         request.POST['starttime']
+        start_full = request.POST['startfull']
+
+        end_date = request.POST['endmonth'] + ' ' + \
+        request.POST['endday'] + ', ' + \
+        request.POST['endyear']
+        end_time = request.POST['endhour'] + ':' + \
+        request.POST['endminute'] + ' ' + \
+        request.POST['endtime']
+        end_full = request.POST['endfull']
 
         newEvent = Events(ownerid = you.id,
                             owner_type = masterDICT['ownerTypes']['account'],
@@ -2268,7 +2279,12 @@ def createEvent(request):
                             link = link,
                             categories = categories,
                             start_date = start_date,
-                            start_time = start_time)
+                            start_time = start_time,
+                            start_full = start_full,
+                            end_date = end_date,
+                            end_time = end_time,
+                            end_full = end_full
+        )
 
 
         media = processFileUpload(request)

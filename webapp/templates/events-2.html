@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Epsity | Event - {{ event.name }}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load staticfiles %}
+
+  {% include 'dependencies-1.html' %}
+
+  <link rel="stylesheet" type="text/css" href="/static/css/grand.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
+  <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
+  <script src="/static/js/grand.js"></script>
+
+  {% if you != None %}
+  <script src="/static/js/profile.js"></script>
+  <script src="/static/js/controllers/profile-main-ctrl.js"></script>
+  <script src="/static/js/controllers/posts-ctrl.js"></script>
+  {% else %}
+  <link rel="stylesheet" type="text/css" href="/static/css/welcome.css">
+  <script src="/static/js/welcome.js"></script>
+  {% endif %}
+
+</head>
+
+  {% if you != None %}
+  <body ng-app="epsityApp" ng-controller="profileMainCtrl" class="transition">
+  {% else %}
+  <body ng-app="epsityApp" class="transition">
+  {% endif %}
+
+    {% if you != None %}
+      {% include 'topbar-1.html' %}
+    {% else %}
+      {% include 'topbar-2.html' %}
+    {% endif %}
+
+    <!--  -->
+
+    <div id="main-container">
+      <div id="mc-inner" style="background: transparent;">
+        <div class="container-fluid">
+          <i title="Scroll Back To Top" id="arrow-1" class="sdw-1 transition fa fa-arrow-circle-up"></i>
+
+          <div class="row">
+            <div class="col-md-12" style="height: 25px;"></div>
+
+            <!--  -->
+
+            <div class="col-md-6 col-md-offset-3">
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <h2 class="text-center">{{ event.name }}</h2>
+                <img width="275px" class="middlr sbm-1 polaroid-3" src="{{ event.attachment }}"/>
+                <hr class="hr-grey">
+                <p>
+                  <strong>Name: </strong>{{ event.name }}<br>
+                  <strong>Description: </strong>{{ event.desc }}<br>
+                </p>
+                <hr>
+                <p>
+                  <strong>Place: </strong>{{ event.place }}<br>
+                  <strong>Location: </strong>{{ event.location }}<br>
+                </p>
+                <p>
+                  <strong>Start: </strong>{{ event.start_full }}<br>
+                  <strong>End: </strong>{{ event.end_full }}<br>
+                </p>
+                <hr>
+                <p>
+                  <strong>Categories: </strong>{{ event.categories }}
+                </p><br>
+                <p>
+                  <strong>Attendees: </strong>{{ event.attendees|length }}
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+  <!--
+
+    wp = Welcome Page
+
+  -->
+
+</html>

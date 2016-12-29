@@ -579,9 +579,13 @@ class Events(models.Model):
 
     start_date = models.CharField(max_length = 500, default = '')
     start_time = models.CharField(max_length = 500, default = '')
+    start_full = models.CharField(max_length = 500, default = '')
+    end_date = models.CharField(max_length = 500, default = '')
+    end_time = models.CharField(max_length = 500, default = '')
+    end_full = models.CharField(max_length = 500, default = '')
 
     status = models.CharField(max_length = 20, default = 'upcoming')
-    # either upcoming, live, or ended
+    # either upcoming, live, ended, or canceled
 
     date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
@@ -603,9 +607,35 @@ class Events(models.Model):
             'categories': self.categories,
             'start_date': self.start_date,
             'start_time': self.start_time,
+            'start_full': self.start_full,
+            'end_date': self.end_date,
+            'end_time': self.end_time,
+            'end_full': self.end_full,
             'status': self.status,
+            'attendees': [a.serialize for a in EventAttendees.objects.filter(event_id = self.id)],
             'date_created': self.date_created,
             'last_active': self.last_active,
+        }
+
+    @property
+    def serializeBasic(self):
+        return {
+            'eid': self.id,
+            'ownerid': self.ownerid,
+            'owner_type': self.owner_type,
+            'name': self.name,
+            'desc': self.desc,
+            'place': self.place,
+            'location': self.location,
+            'attachment': self.attachment,
+            'attachment_type': self.attachment_type,
+            'link': self.link,
+            'categories': self.categories,
+            'start_full': self.start_full,
+            'end_full': self.end_full,
+            'status': self.status,
+            'attendees': len(EventAttendees.objects.filter(event_id = self.id)),
+            'date_created': self.date_created,
         }
 
     class Meta:

@@ -10,6 +10,8 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
   $scope.interestsList = [];
   $scope.seekingList = [];
   $scope.groupsList = [];
+  $scope.yourEventsList = [];
+  $scope.eventsAttendingList = [];
 
   //
 
@@ -44,6 +46,8 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
       }
 
       $scope.groupsList = resp.data.groups;
+      $scope.yourEventsList = resp.data.yourEvents;
+      $scope.eventsAttendingList = resp.data.attendingEvents;
     },
     function(resp){
       // Error Callback

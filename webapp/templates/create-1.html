@@ -79,22 +79,20 @@
                     <textarea style="min-height: 150px;" class="input-t-s1 spacr-2" name="eventdescription" type="text" placeholder="Event Description..." ng-model="newEventDesc" required></textarea><br>
                     <br>
                     <div class="ovf-a padd-1 text-center">
-                      <div class="sbm-1 col-sm-12">
-                        Date
+                      <div class="sbm-1 col-sm-6">
+                        Start Date
                         <br>
                         <select name="startmonth">
                           <option ng-repeat="m in months" value="{[ m ]}">{[ m ]}</option>
                         </select>
                         <select name="startday">
-                          <option ng-repeat="d in currentSelectedMonth" value="{[ d ]}">{[ d ]}</option>
+                          <option ng-repeat="d in currentSelectedMonthS" value="{[ d ]}">{[ d ]}</option>
                         </select>
                         <select name="startyear">
                           <option ng-repeat="y in years" value="{[ y ]}">{[ y ]}</option>
                         </select>
-                      </div>
-
-                      <div class="col-md-12">
-                        Time
+                        <br>
+                        Start Time
                         <br>
                         <select name="starthour">
                           <option ng-repeat="h in hours" value="{[ h ]}">{[ h ]}</option>
@@ -108,10 +106,40 @@
                           <option value="PM">PM</option>
                         </select>
                       </div>
+
+                      <div class="sbm-1 col-sm-6">
+                        End Date
+                        <br>
+                        <select name="endmonth">
+                          <option ng-repeat="m in months" value="{[ m ]}">{[ m ]}</option>
+                        </select>
+                        <select name="endday">
+                          <option ng-repeat="d in currentSelectedMonthE" value="{[ d ]}">{[ d ]}</option>
+                        </select>
+                        <select name="endyear">
+                          <option ng-repeat="y in years" value="{[ y ]}">{[ y ]}</option>
+                        </select>
+                        <br>
+                        End Time
+                        <br>
+                        <select name="endhour">
+                          <option ng-repeat="h in hours" value="{[ h ]}">{[ h ]}</option>
+                        </select>
+                        <span> : </span>
+                        <select name="endminute">
+                          <option ng-repeat="m in minutes" value="{[ m ]}">{[ m ]}</option>
+                        </select>
+                        <select name="endtime">
+                          <option value="AM">AM</option>
+                          <option value="PM">PM</option>
+                        </select>
+                      </div>
                     </div>
                     <br>
 
                     <input type="hidden" name="origin" value="" />
+                    <input type="hidden" name="startfull" value="" />
+                    <input type="hidden" name="endfull" value="" />
 
                     <div class="ovf-a padd-1 text-center">
                       <div class="col-sm-12">
@@ -142,8 +170,9 @@
                 <div class="row">
                   <h3 class="text-center">Create A Group!</h3>
                   <hr class="hr-grey">
-                  <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/action/form/" method="POST">{% csrf_token %}
-                    <input type="hidden" name="action" value="create group" />
+                  <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="createGroup" />
 
                     <input class="input-t-s1 middlr" type="text" name="displayname" placeholder="Group Display Name..." ng-model="newGroupName" required/><br>
                     <input class="input-t-s1 middlr" type="text" name="uname" placeholder="Group Username..." ng-model="newGroupUserName" required/><br>
