@@ -172,17 +172,18 @@
                   <hr class="hr-grey">
                   <form class="middlr" id="create-group-form" enctype="multipart/form-data" action="/action/form/" method="POST">
                     {% csrf_token %}
-                    <input type="hidden" name="action" value="createGroup" />
+                    <input type="hidden" name="action" value="createGroup"/>
 
-                    <input class="input-t-s1 middlr" type="text" name="displayname" placeholder="Group Display Name..." ng-model="newGroupName" required/><br>
-                    <input class="input-t-s1 middlr" type="text" name="uname" placeholder="Group Username..." ng-model="newGroupUserName" required/><br>
-                    <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Group Description..." ng-model="newGroupDesc" required></textarea><br>
+                    <input class="input-t-s1 middlr" type="text" name="displayname" placeholder="Group Display Name..." ng-model="newGroupName"/><br>
+                    <input class="input-t-s1 middlr" type="text" name="uname" placeholder="Group Username..." ng-model="newGroupUserName"/><br>
+                    <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Group Description..." ng-model="newGroupDesc"></textarea><br>
                     <p class="text-center">Group Avatar</p>
                     <input type="file" name="imageFileAvi" class="middlr transition btn btn-default" accept="image/*" /><br><br>
                     <p class="text-center">Group Wallpaper</p>
                     <input type="file" name="imageFileWp" class="middlr transition btn btn-default" accept="image/*" /><br>
                     <input type="hidden" name="origin" value="" />
                     <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createGroup()" />
+                  </form>
                 </div>
               </div>
 
@@ -283,6 +284,7 @@
                     <input type="hidden" name="categories" value="" />
                     <input type="hidden" name="origin" value="" />
                     <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createProduct()" />
+                  </form>
                 </div>
               </div>
 
@@ -292,10 +294,10 @@
                   <hr class="hr-grey">
                   <form class="middlr" id="create-service-form" enctype="multipart/form-data" action="/action/form/" method="POST">
                     {% csrf_token %}
-                    <input type="hidden" name="action" value="createService" />
+                    <input type="hidden" name="action" value="createService"/>
 
-                    <input class="input-t-s1 middlr" type="text" name="servicename" placeholder="Service Name..." ng-model="newServiceName" required/><br>
-                    <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Service Description..." ng-model="newServiceDesc" required></textarea><br>
+                    <input class="input-t-s1 middlr" type="text" name="servicename" placeholder="Service Name..." ng-model="newServiceName"/><br>
+                    <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Service Description..." ng-model="newServiceDesc"></textarea><br>
                     <p class="text-center">Service Icon</p>
                     <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*" /><br><br>
                     <div class="row padd-1">
@@ -316,6 +318,7 @@
                     <input type="hidden" name="categories" value="" />
                     <input type="hidden" name="origin" value="" />
                     <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createService()" />
+                  </form>
                 </div>
               </div>
             </div>

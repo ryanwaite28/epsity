@@ -406,6 +406,9 @@ class Posts(models.Model):
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
 
+    wall_id = models.IntegerField(blank = False, default = 0)
+    wall_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+
     title = models.CharField(max_length = 500, default = '')
     contents = models.CharField(max_length = 500, default = '')
     link = models.CharField(max_length = 500, default = '')
@@ -425,8 +428,10 @@ class Posts(models.Model):
             'p_id': self.id,
 
             'ownerid': self.ownerid,
-            'owner': returnModelSerialized( self.owner_type , self.ownerid ),
             'owner_type': self.owner_type,
+            'owner': returnModelSerialized( self.owner_type , self.ownerid ),
+            'wall_id': self.wall_id,
+            'wall_type': self.wall_type,
             'title': self.title,
             'contents': self.contents,
             'attachment': self.attachment,

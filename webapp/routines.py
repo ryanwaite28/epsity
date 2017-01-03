@@ -37,6 +37,12 @@ from vaults import masterDICT
 # --- Helper Code --- #
 # --- ----- ----- --- #
 
+def getYou(request):
+    you = Accounts.objects.get(uname = request.session['username'])
+    return you
+
+
+
 def loadPost_A(post_id):
     if post_id == None or post_id == '':
         return None
@@ -217,27 +223,31 @@ def loadPost_B(post_id, you):
 
 # ---
 
-def loadPosts(user_id, you, msg):
-    if msg == None or msg == '':
+def loadPosts(id, you, msg):
+    if msg == 'home':
         posts = Posts.objects \
-        .filter( ownerid = user_id ) \
-        .order_by('-date_created')[:20]
-
-    elif msg == 'home':
-        posts = Posts.objects \
-        .filter( ownerid = you.id ) \
+        .filter( wall_id = you.id, wall_type = masterDICT['ownerTypes']['account'] ) \
         .order_by('-date_created')[:20]
 
     elif msg == 'main':
         following = Follows.objects.filter(userid=you.id)
         posts = Posts.objects \
+        .exclude(wall_type = masterDICT['ownerTypes']['group']) \
         .filter( Q( ownerid = you.id ) | Q(ownerid__in = [f.follow_id for f in following]) ) \
         .order_by('-date_created')[:20]
 
-    else:
+    elif msg == 'user':
         posts = Posts.objects \
-        .filter( ownerid = user_id ) \
+        .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['account'] ) \
         .order_by('-date_created')[:20]
+
+    elif msg == 'group':
+        posts = Posts.objects \
+        .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['group'] ) \
+        .order_by('-date_created')[:20]
+
+    else:
+        return None
 
 
     posts = [p.serialize for p in posts]
@@ -350,7 +360,7 @@ def errorPage(request, msg = None):
     if 'username' not in request.session:
         you = None
     else:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
     if msg == None or msg == '' or request.method == 'POST':
         # print '--- Error Page Redirecting...'
@@ -466,6 +476,7 @@ def loginAccount(request):
                             context_instance=RequestContext(request))
 
         request.session['username'] = you.uname
+        request.session['id'] = you.id
         request.session['email'] = you.email
 
         you.last_active = datetime.datetime.now()
@@ -529,7 +540,7 @@ def createAccount(request):
 
 def deleteAccount(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         you.delete()
 
         del request.session['username']
@@ -546,7 +557,7 @@ def deleteAccount(request):
 
 def updateAccountBio(request, content):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         you.bio_desc = cgi.escape(content)
         you.save( update_fields=['bio_desc'] )
 
@@ -560,7 +571,7 @@ def updateAccountBio(request, content):
 
 def updateAccountInterests(request, content):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         you.interests = cgi.escape(content)
         you.save( update_fields=['interests'] )
 
@@ -574,7 +585,7 @@ def updateAccountInterests(request, content):
 
 def updateAccountSeeking(request, content):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         you.seeking = cgi.escape(content)
         you.save( update_fields=['seeking'] )
 
@@ -589,7 +600,7 @@ def updateAccountSeeking(request, content):
 
 def loadSettingsLists(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         groups = Groups.objects.filter(ownerid = you.id)
         yourEvents = Events.objects.filter(ownerid = you.id)
@@ -614,7 +625,7 @@ def loadSettingsLists(request):
 
 def updateDisplayName(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         you.displayname = cgi.escape( request.POST['displayname'] )
         you.save( update_fields=['displayname'] )
 
@@ -631,7 +642,7 @@ def updateDisplayName(request):
 
 def editAccountStatus(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         you.status = request.POST['select']
         you.save( update_fields=['status'] )
 
@@ -650,7 +661,7 @@ def editAccountStatus(request):
 
 def updateAviLink(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         you.avi = cgi.escape( request.POST['avi'] )
         you.save( update_fields=['avi'] )
 
@@ -666,7 +677,7 @@ def updateAviLink(request):
 
 def updateWpLink(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         you.background = cgi.escape( request.POST['background'] )
         you.save( update_fields=['background'] )
 
@@ -682,7 +693,7 @@ def updateWpLink(request):
 
 def updateAviFile(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         file = request.FILES['imageFile']
 
         if file and file.name != '' and allowed_photo(file.name):
@@ -710,7 +721,7 @@ def updateAviFile(request):
 
 def updateWpFile(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         file = request.FILES['imageFile']
 
         if file and file.name != '' and allowed_photo(file.name):
@@ -739,7 +750,7 @@ def updateWpFile(request):
 
 def searchEngine(request):
     data = json.loads(request.body)
-    you = Accounts.objects.get(uname = request.session['username'])
+    you = getYou(request)
     # print data
 
     if data['query'] == None:
@@ -831,7 +842,7 @@ def searchEngine(request):
 
 def searchForMembers(request):
     data = json.loads(request.body)
-    you = Accounts.objects.get(uname = request.session['username'])
+    you = getYou(request)
     group = Groups.objects.filter(id = data['gid']).first()
 
     if group == None:
@@ -897,7 +908,7 @@ def searchForMembers(request):
 
 def searchUsers(request):
     data = json.loads(request.body)
-    you = Accounts.objects.get(uname = request.session['username'])
+    you = getYou(request)
 
     if data['query'] == None:
         return JsonResponse({'msg': 'Query Is Missing...'})
@@ -941,11 +952,12 @@ def checkGroupUserName(request, data):
 
 def createGroup(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
+        print '--- cg ---'
 
         checkGroup = Groups.objects \
         .filter(uname = request.POST['uname']).first()
-        
+
         if checkGroup != None:
             return render(request,
                         masterDICT['pages']['createview'],
@@ -999,8 +1011,7 @@ def createGroup(request):
 
             group.save()
 
-            # print group
-            # print group.serialize
+            print group.serialize
 
         # return render(request,
         #             masterDICT['pages']['createview'],
@@ -1020,7 +1031,7 @@ def createGroup(request):
 
 def updateGroup(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         group = Groups.objects.filter(id = request.POST['gid']).first()
         if group == None:
@@ -1088,7 +1099,7 @@ def updateGroup(request):
 
 def deleteGroup(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.filter(id = request.POST['gid']).first()
 
         if group != None:
@@ -1118,7 +1129,7 @@ def followUser(request, data):
         if data['user']['action'] != 'followUser':
             return JsonResponse({'msg': 'Error - Bad Action msg.'})
 
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         user = Accounts.objects.get(uname = data['user']['uname'])
 
         if user == None:
@@ -1172,7 +1183,7 @@ def unfollowUser(request, data):
         if data['user']['action'] != 'unfollowUser':
             return JsonResponse({'msg': 'Error - Bad Action msg.'})
 
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         user = Accounts.objects.get(uname = data['user']['uname'])
 
         if user == None:
@@ -1202,7 +1213,7 @@ def cancelPendingFollow(request, data):
         if data['user']['action'] != 'cancelPendingFollow':
             return JsonResponse({'msg': 'Error - Bad Action msg.'})
 
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         user = Accounts.objects.filter(uname = data['user']['uname']).first()
 
         if user == None:
@@ -1230,7 +1241,7 @@ def cancelPendingFollow(request, data):
 
 def loadNotesAll(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         pendingFollows = FollowRequests.objects.filter(recipient_id = you.id)
         pendingFollows = [pf.serialize for pf in pendingFollows]
@@ -1288,7 +1299,7 @@ def loadNotesAll(request, data):
 
 def acceptFollow(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         if you.id != data['pf']['recipient_rel']['userid']:
             return JsonResponse({'msg': 'Error - Conflict Occured.'})
 
@@ -1320,7 +1331,7 @@ def acceptFollow(request, data):
 
 def declineFollow(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         if you.id != data['pf']['recipient_rel']['userid']:
             return JsonResponse({'msg': 'Error - Conflict Occured.'})
 
@@ -1346,7 +1357,7 @@ def declineFollow(request, data):
 
 def sendGroupInvitation(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.filter(id =  data['group']['gid']).first()
 
         if group == None:
@@ -1386,7 +1397,7 @@ def sendGroupInvitation(request, data):
 
 def requestGroupInvite(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.filter(id =  data['group']['gid']).first()
 
         if group == None:
@@ -1423,7 +1434,7 @@ def requestGroupInvite(request, data):
 
 def acceptGroupInvite(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.get(id =  data['pi']['group_rel']['gid'])
         if group == None:
             return JsonResponse({'msg': 'Error - Group Cannot Be Loaded.'})
@@ -1455,7 +1466,7 @@ def acceptGroupInvite(request, data):
 
 def declineGroupInvite(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.get(id =  data['pi']['group_rel']['gid'])
         if group == None:
             return JsonResponse({'msg': 'Error - Group Cannot Be Loaded.'})
@@ -1479,7 +1490,7 @@ def declineGroupInvite(request, data):
 
 def acceptGroupRequest(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.filter(id =  data['pr']['group_rel']['gid']).first()
 
         if group == None:
@@ -1512,7 +1523,7 @@ def acceptGroupRequest(request, data):
 
 def declineGroupRequests(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.filter(id =  data['pr']['group_rel']['gid']).first()
 
         if group == None:
@@ -1537,7 +1548,7 @@ def declineGroupRequests(request, data):
 
 def cancelPendingGroupInvite(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.get(id =  data['group']['gid'])
 
         if group == None:
@@ -1564,7 +1575,7 @@ def cancelPendingGroupInvite(request, data):
 
 def cancelPendingGroupRequest(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.filter(id =  data['group']['gid']).first()
 
         if group == None:
@@ -1591,7 +1602,7 @@ def cancelPendingGroupRequest(request, data):
 
 def removeGroupMember(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.get(id =  data['group']['gid'])
         if group == None:
             return JsonResponse({'msg': 'Error - Group Cannot Be Loaded.'})
@@ -1614,7 +1625,7 @@ def removeGroupMember(request, data):
 
 def leaveGroup(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         group = Groups.objects.filter(id =  data['group']['gid']).first()
 
         if group == None:
@@ -1639,7 +1650,7 @@ def leaveGroup(request, data):
 
 def loadMessages(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         messages = Messages.objects \
         .filter( Q(userA_id = you.id) | Q(userB_id = you.id) )
@@ -1682,7 +1693,7 @@ def loadMessages(request):
 
 def loadMessageReplies(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         message = Messages.objects.filter( id = data['mid'] ).first()
         message = message.serialize
@@ -1723,7 +1734,7 @@ def loadMessageReplies(request, data):
 
 def loadConversations(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         memberOf_list = ConvoMembers.objects.filter( userid = you.id )
         memberOf_list = [m.serialize for m in memberOf_list]
@@ -1753,7 +1764,7 @@ def loadConversations(request, data):
 
 def getConversation(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         conversation = Conversations.objects \
         .filter( id = data['convo']['convo_id'] ).first()
@@ -1803,7 +1814,7 @@ def getConversation(request, data):
 
 def sendMessage(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         sender = Accounts.objects \
         .filter(id = request.POST['senderid']).first() # You
@@ -1915,57 +1926,32 @@ def sendMessage(request):
 
 
 
-def createUserPost(request):
+def createPost(request):
+    # print '--- Path: ', request.POST['origin']
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         # ----- #
 
-        newdoc = None # Default For Message Media
-        doctype = ''
-
         if request.FILES:
-            media = request.FILES['media']
-
-            if media and media.name != '':
-                if allowed_audio(media.name):
-                    newdoc = mediaAudioModel(docfile = request.FILES['media'])
-                    doctype = 'Audio'
-
-                elif allowed_video(media.name):
-                    newdoc = mediaVideoModel(docfile = request.FILES['media'])
-                    doctype = 'Video'
-
-                elif allowed_photo(media.name):
-                    newdoc = mediaPhotoModel(docfile = request.FILES['media'])
-                    doctype = 'Photo'
-
-                else:
-                    return genericPage(request = request,
-                                        msg = 'Error - Bad Media File Input.',
-                                        redirect=request.POST['origin'])
-
-                newdoc.save()
-
-            else:
-                return genericPage(request = request,
-                                    msg = 'Error - Bad Media File Input.',
-                                    redirect=request.POST['origin'])
+            media = processFileUpload(request)
+        else:
+            media = None
 
         # ----- #
 
         newPost = Posts(ownerid = you.id,
                         owner_type = masterDICT['ownerTypes']['account'],
+                        wall_id = request.session['wall_id'],
+                        wall_type = request.session['wall_type'],
                         title = cgi.escape(request.POST['title']),
                         contents = cgi.escape(request.POST['contents']),
                         link = request.POST['link'],
                         post_type = request.POST['post_type'])
 
-        if newdoc != None:
-            newPost.attachment = newdoc.docfile.url
-
-        if doctype != '':
-            newPost.attachment_type = doctype
+        if media != None:
+            newPost.attachment = media['newdoc'].docfile.url
+            newPost.attachment_type = media['doctype']
 
         newPost.save()
 
@@ -1982,10 +1968,6 @@ def createUserPost(request):
         post_html = str(post_html) \
         .replace("Content-Type: text/html; charset=utf-8" , "")
 
-        # return genericPage(request = request,
-        #                     msg = 'Post Created!',
-        #                     redirect=request.POST['origin'])
-
         return JsonResponse({'msg': 'post created',
                                 'post': post,
                                 'post_html': post_html})
@@ -1998,7 +1980,7 @@ def createUserPost(request):
 
 def addPostCommentUser(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         post = Posts.objects.filter(id =  data['info']['post_id']).first()
 
         if post == None:
@@ -2040,7 +2022,7 @@ def addPostCommentUser(request, data):
 
 def addCommentReplyUser(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         comment = Comments.objects \
         .filter(id =  data['info']['comment_id']).first()
 
@@ -2082,7 +2064,7 @@ def addCommentReplyUser(request, data):
 
 def likeContent(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         likeMeter = int(data['info']['likes'])
 
         newLike = Likes(ownerid = you.id,
@@ -2107,7 +2089,7 @@ def likeContent(request, data):
 
 def unlikeContent(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
         likeMeter = int(data['info']['likes'])
 
         like = Likes.objects \
@@ -2135,7 +2117,7 @@ def unlikeContent(request, data):
 
 def checkConvoName(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         CheckConvoName = Conversations.objects \
         .filter(name = data['name'], ownerid = you.id).first()
@@ -2158,7 +2140,7 @@ def checkConvoName(request, data):
 
 def createGroupConvo(request, data):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         newGroupConvo = Conversations(owner = you,
                                         ownerid = you.id,
@@ -2193,7 +2175,7 @@ def createGroupConvo(request, data):
 
 def sendGroupMessage(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         conversation = Conversations.objects \
         .filter( id = request.POST['convoid'] ).first()
@@ -2242,7 +2224,7 @@ def sendGroupMessage(request):
 
 def createEvent(request):
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = getYou(request)
 
         name = cgi.escape( request.POST['eventname'] )
         place = cgi.escape( request.POST['eventplace'] )
@@ -2297,6 +2279,26 @@ def createEvent(request):
         return genericPage(request = request,
                             msg = 'New Event Created!',
                             redirect = request.POST['origin'])
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def createProduct(request):
+    try:
+        you = getYou(request)
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def createService(request):
+    try:
+        you = getYou(request)
+
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'

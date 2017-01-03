@@ -24,7 +24,7 @@ from models import Posts, Comments, Replies, Likes, Events
 # from forms import PostForm
 
 import routines
-from routines import errorPage, genericPage
+from routines import errorPage, genericPage, getYou
 
 from vaults import masterDICT
 from vaults import webapp_dir, localPaths, serverPaths
@@ -99,20 +99,24 @@ def signup(request):
 # ---
 
 @csrf_protect
-def profileMain(request):
+def dashboard(request):
+
     if request.method == 'GET':
         if 'username' not in request.session:
             return redirect('/')
 
         try:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
             following = Follows.objects.filter(userid=you.id)
+
+            request.session['wall_id'] = you.id
+            request.session['wall_type'] = masterDICT['ownerTypes']['account']
 
             # --- #
 
             feed = routines\
-            .loadPosts(user_id = you.id, you = you,
-                        msg = masterDICT['fetchType']['posts']['main'])
+            .loadPosts(id = you.id, you = you,
+                        msg = masterDICT['fetchType']['posts']['main'].lower())
 
             # --- #
 
@@ -131,23 +135,40 @@ def profileMain(request):
             # --- #
 
             su = []
+            iu = []
+
+            seeking = you.seeking.split(';')
             interests = you.interests.split(';')
+
+            if seeking == ['']:
+                seeking = []
+
             if interests == ['']:
                 interests = []
-            for i in interests:
+
+            for s in seeking:
                 users = Accounts.objects \
-                .exclude(id = you.id) \
-                .filter(interests__contains=i)[:1]
+                .exclude(id = you.id).filter(seeking__contains=s)[:1]
                 for u in users:
                     su.append( u.serialize )
+
+            for i in interests:
+                users = Accounts.objects \
+                .exclude(id = you.id).filter(interests__contains=i)[:1]
+                for u in users:
+                    iu.append( u.serialize )
+
             su = su[:5]
+            iu = iu[:5]
 
+            # --- #
 
-            return render(request, masterDICT['pages']['profileMain'],
+            return render(request, masterDICT['pages']['dashboard'],
                             {'you': you,
                             'posts': feed,
                             'suggestedGroups': suggestedGroups,
-                            'similar': su
+                            'similarSeeking': su,
+                            'similarInterests': iu
                             },
                             context_instance = RequestContext(request))
 
@@ -167,15 +188,18 @@ def profileHome(request):
             return redirect('/')
 
         try:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
+
+            request.session['wall_id'] = you.id
+            request.session['wall_type'] = masterDICT['ownerTypes']['account']
 
             followers = Follows.objects.filter(follow_id=you.id)
             following = Follows.objects.filter(userid=you.id)
             groups = GroupMembers.objects.filter(userid=you.id)
 
             posts = routines\
-            .loadPosts(user_id = you.id, you = you,
-                        msg = masterDICT['fetchType']['posts']['home'])
+            .loadPosts(id = you.id, you = you,
+                        msg = masterDICT['fetchType']['posts']['home'].lower())
 
             return render(request, masterDICT['pages']['profileHome'],
                             {'you': you,
@@ -199,25 +223,28 @@ def userPage(request, query):
         # print query
         try:
             if 'username' in request.session:
-                you = Accounts.objects.get(uname = request.session['username'])
+                you = getYou(request)
             else:
                 you = None
 
             user = Accounts.objects \
-            .filter(uname__iexact = query).first()
+            .filter(uname__iexact = query.lower()).first()
 
-            followers = Follows.objects.filter(follow_id=user.id)
-            following = Follows.objects.filter(userid=user.id)
-            groups = GroupMembers.objects.filter(userid=user.id)
-
-            posts = routines \
-            .loadPosts(user_id = user.id, you = you, msg = '')
+            request.session['wall_id'] = user.id
+            request.session['wall_type'] = masterDICT['ownerTypes']['account']
 
             if user == None:
                 msg = 'User Account Not Found.'
                 return errorPage(request, msg)
 
             else:
+                followers = Follows.objects.filter(follow_id=user.id)
+                following = Follows.objects.filter(userid=user.id)
+                groups = GroupMembers.objects.filter(userid=user.id)
+
+                posts = routines \
+                .loadPosts(id = user.id, you = you, msg = 'user')
+
                 if 'username' in request.session:
                     if user.uname == request.session['username']:
                         return redirect('/home')
@@ -257,22 +284,42 @@ def groupPage(request, query):
         # print query
         try:
             if 'username' in request.session:
-                you = Accounts.objects.get(uname = request.session['username'])
+                you = getYou(request)
             else:
                 you = None
 
             group = Groups.objects \
             .filter(uname__iexact = query).first()
 
+            request.session['wall_id'] = group.id
+            request.session['wall_type'] = masterDICT['ownerTypes']['group']
+
             if group == None:
                 msg = 'Group Not Found.'
                 return errorPage(request, msg)
 
             else:
+                checkMembership = GroupMembers.objects \
+                .filter(group_id = group.id, userid = you.id).first()
+
+                if checkMembership != None or group.ownerid == you.id:
+                    membership = 'yes'
+                else:
+                    membership = 'no'
+
+                posts = routines.\
+                loadPosts(id = group.id,
+                            you = you,
+                            msg = masterDICT['ownerTypes']['group'].lower())
+
+
+
                 return render(request,
                                 masterDICT['pages']['GroupPage'],
                                 {'you': you,
-                                'group': group},
+                                'group': group,
+                                'posts': posts,
+                                'membership': membership},
                                 context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -287,7 +334,7 @@ def postView(request, query):
         # print query
         try:
             if 'username' in request.session:
-                you = Accounts.objects.get(uname = request.session['username'])
+                you = getYou(request)
                 post = routines.loadPost_B(query, you)
             else:
                 you = None
@@ -301,7 +348,8 @@ def postView(request, query):
                 return render(request,
                                 masterDICT['pages']['postView'],
                                 {'you': you,
-                                'post': post},
+                                'post': post,
+                                'posts': [post]},
                                 context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
@@ -317,7 +365,7 @@ def searchEngine(request):
             return redirect('/')
 
         try:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
             return render(request, masterDICT['pages']['searchEngine'],
                             {'you': you},
                             context_instance = RequestContext(request))
@@ -351,7 +399,7 @@ def messagesView(request):
             return redirect('/')
 
         try:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
 
             return render(request, masterDICT['pages']['messagesView'],
                             {'you': you,
@@ -376,7 +424,7 @@ def conversationsView(request):
             return redirect('/')
 
         try:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
             return render(request, masterDICT['pages']['conversationsView'],
                             {'you': you,
                             'message': ''},
@@ -398,7 +446,7 @@ def mySettings(request):
             return redirect('/')
 
         try:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
             return render(request, masterDICT['pages']['mySettings'],
                             {'you': you,
                             'message': ''},
@@ -419,7 +467,7 @@ def eventsView(request):
         if 'username' not in request.session:
             you = None
         else:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
 
 
 
@@ -445,7 +493,7 @@ def eventView(request, query):
         if 'username' not in request.session:
             you = None
         else:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
 
             event = Events.objects.filter(id = query).first()
             if event == None:
@@ -478,7 +526,7 @@ def createView(request):
             return redirect('/')
 
         try:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
             # post_form = PostForm()
             return render(request, masterDICT['pages']['createview'],
                             {'you': you,
@@ -504,7 +552,7 @@ def createView(request):
 def settingsActionFORM(request):
     ''' This View Is Intended To Be Used As A Form Handler '''
 
-    if request.method == 'GET':
+    if request.method != 'POST':
         return redirect('/mysettings')
 
     if request.method == 'POST':
@@ -551,7 +599,7 @@ def settingsActionFORM(request):
 def settingsActionAJAX(request):
     ''' This View Is Intended To Be Used As An AJAX Handler '''
 
-    if request.method == 'GET':
+    if request.method != 'POST':
         return redirect('/mysettings')
 
     if request.method == 'POST':
@@ -591,7 +639,7 @@ def settingsActionAJAX(request):
 @csrf_protect
 def checkPoint(request):
     ''' This View Function Is Intended To Be Called By AJAX Requests Only '''
-    if request.method == 'GET':
+    if request.method != 'POST':
         return redirect('/')
 
     if request.method == 'POST':
@@ -624,10 +672,13 @@ def checkPoint(request):
 @csrf_protect
 def userActionFORM(request):
     ''' This View Function Is Intended To Be Called By Form Data Requests '''
-    if request.method == 'GET':
-        return redirect('/')
+    # if request.method != 'POST':
+    #     return redirect('/')
 
     if request.method == 'POST':
+        print 'action MSG: ', request.POST['action']
+        print ' '
+
         if request.POST['action'] == '' or request.POST['action'] == None:
             msg = 'Unknown Action...'
             return errorPage(request, msg)
@@ -643,11 +694,17 @@ def userActionFORM(request):
         if request.POST['action'] == 'createGroup':
             return routines.createGroup(request)
 
-        if request.POST['action'] == 'create post':
-            return routines.createUserPost(request)
+        if request.POST['action'] == 'createPost':
+            return routines.createPost(request)
 
         if request.POST['action'] == 'createEvent':
             return routines.createEvent(request)
+
+        if request.POST['action'] == 'createProduct':
+            return routines.createProduct(request)
+
+        if request.POST['action'] == 'createService':
+            return routines.createService(request)
 
 
         else:
@@ -660,7 +717,7 @@ def userActionFORM(request):
 @csrf_protect
 def userActionAJAX(request):
     ''' This View Function Is Intended To Be Called By AJAX Requests '''
-    if request.method == 'GET':
+    if request.method != 'POST':
         return redirect('/')
 
     if request.method == 'POST':
@@ -780,7 +837,7 @@ def notificationsView(request):
             return redirect('/')
 
         try:
-            you = Accounts.objects.get(uname = request.session['username'])
+            you = getYou(request)
             return render(request, masterDICT['pages']['notificationsView'],
                             {'you': you, 'message': ''},
                             context_instance = RequestContext(request))

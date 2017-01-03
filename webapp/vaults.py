@@ -99,7 +99,7 @@ pages = {
     'messagesView': 'messages-1.html',
     'conversationsView': 'conversations-1.html',
     'searchEngine': 'search-1.html',
-    'profileMain': 'profile-main.html',
+    'dashboard': 'profile-main.html',
     'profileHome': 'profile-home.html',
     'UserPage': 'user-page-view.html',
     'GroupPage': 'group-page-view.html',

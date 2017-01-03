@@ -58,10 +58,37 @@
 
             <div id="prof-sidebar2" class="col-md-3">
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+                <p class="text-center"><strong>Similar Seeking</strong></p>
+                <hr class="hr-grey">
+                <ul class="ul-raw">
+                  {% for u in similarSeeking %}
+                  <li class="sample-li-s1 fill mk-rel" style="background-image: url('{{ u.background }}');">
+
+                      <div class="dim-4"></div>
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <img width="100px" class="middlr max=w2" src="{{ u.avi }}"/>
+                        </div>
+                        <div class="col-xs-12">
+                          <p class="text-center"><strong>
+                            <a title="See {{ u.uname }} Page" href="/users/{{ u.uname }}">{{ u.uname }}</a>
+                          </strong></p>
+
+                        </div>
+                      </div>
+
+                    <br>
+                  </li>
+                  {% endfor %}
+                </ul>
+                <p><a title="" href="">See more</a></p>
+              </div>
+
+              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <p class="text-center"><strong>Similar Interests</strong></p>
                 <hr class="hr-grey">
                 <ul class="ul-raw">
-                  {% for u in similar %}
+                  {% for u in similarInterests %}
                   <li class="sample-li-s1 fill mk-rel" style="background-image: url('{{ u.background }}');">
 
                       <div class="dim-4"></div>

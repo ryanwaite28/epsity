@@ -18,6 +18,7 @@
 
   {% if you != None %}
     <script src="/static/js/controllers/profile-home-ctrl.js"></script>
+    <script src="/static/js/controllers/new-posts-ctrl.js"></script>
   {% else %}
     <script src="/static/js/controllers/user-page-ctrl.js"></script>
   {% endif %}
@@ -147,7 +148,11 @@
 
           <div style="min-height: 100vh;" class="row no-padd">
             <div class="col-md-8 col-md-offset-2" id="prof-mainbar">
-              {% include 'posts-1.html' %}
+              {% if you != None %}
+                {% include 'posts-2.html' %}
+              {% else %}
+                {% include 'posts-1.html' %}
+              {% endif %}
             </div>
           </div>
 

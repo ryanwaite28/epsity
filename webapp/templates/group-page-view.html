@@ -17,17 +17,18 @@
   <script src="/static/js/welcome.js"></script>
 
   {% if you != None %}
-    <script src="/static/js/controllers/profile-home-ctrl.js"></script>
+    <script src="/static/js/controllers/group-page-ctrl.js"></script>
+    <script src="/static/js/controllers/new-posts-ctrl.js"></script>
   {% else %}
-    <script src="/static/js/controllers/user-search-ctrl.js"></script>
+    <!-- <script src="/static/js/controllers/user-search-ctrl.js"></script> -->
   {% endif %}
 </head>
 
 
     {% if you != None %}
-      <body ng-app="epsityApp" ng-controller="profileHomeCtrl" class="transition">
+      <body ng-app="epsityApp" ng-controller="groupPageCtrl" class="transition">
     {% else %}
-      <body ng-app="epsityApp" ng-controller="userSearchCtrl" class="transition">
+      <!-- <body ng-app="epsityApp" ng-controller="userSearchCtrl" class="transition"> -->
     {% endif %}
 
     {% if you != None %}
@@ -110,16 +111,12 @@
           <br>
 
           <div style="min-height: 100vh;" class="row no-padd">
-            <div class="col-md-3" id="prof-sidebar">
-
-            </div>
-            <div class="col-md-12 no-padd" id="prof-mainbar">
-              <div style="min-height: 50vh;" class="padd-1 mk-rel sdw-1 bg-white">
-                <p class="text-center">Post Feed</p>
-                <hr>
-
-                <hr>
-              </div>
+            <div class="col-md-8 col-md-offset-2" id="prof-mainbar">
+              {% if membership == 'yes' %}
+                {% include 'posts-3.html' %}
+              {% else %}
+                {% include 'posts-1.html' %}
+              {% endif %}
             </div>
           </div>
 

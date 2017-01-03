@@ -6,7 +6,7 @@
 
     <div id="new-post-div" class="mk-rel collapse">
       <hr>
-      <form class="middlr" id="new-user-post-form" enctype="multipart/form-data" action="/action/form/" method="POST">
+      <form class="middlr" id="new-group-post-form" enctype="multipart/form-data" action="/action/form/" method="POST">
         {% csrf_token %}
         <input type="hidden" name="action" value="createPost"/>
 
@@ -25,7 +25,7 @@
         <input style="display: none;" class="middlr btn btn-default transition" type="file" name="media"/><br>
         <input type="hidden" name="owner_type" value="Account"/>
         <input type="hidden" name="origin" value=""/>
-        <input class="btn btn-success transition middlr" type="button" value="Create Post" ng-click="createUserPost()"/>
+        <input class="btn btn-success transition middlr" type="button" value="Create Post" ng-click="createGroupPost()"/>
       </form>
     </div>
 

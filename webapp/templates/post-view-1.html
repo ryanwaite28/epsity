@@ -26,7 +26,7 @@
 </head>
 
   {% if you != None %}
-  <body ng-app="epsityApp" ng-controller="profileMainCtrl" class="transition">
+  <body ng-app="epsityApp" class="transition">
   {% else %}
   <body ng-app="epsityApp" class="transition">
   {% endif %}
@@ -49,137 +49,9 @@
 
             <!--  -->
 
-            <div class="col-md-6 col-md-offset-3">
-              <div class="mk-rel sdw-1 sbm-1 bg-white post-div">
-                <div class="row padd-1">
-                  <div class="col-sm-3">
-                    <img width="80px" class="middlr brd-bl" src="{{ post.owner.avi }}" /><br>
-                    <p class="text-center"><a title="See {{ post.owner.uname }} Page" href="/users/{{ post.owner.uname }}"><strong>{{ post.owner.uname }}</strong></a></p>
-                  </div>
-                  <div class="col-sm-9">
-                    <h4><strong>{{ post.title }}</strong></h4>
-                    <p>{{ post.contents }}</p>
-                    {% if post.link != '' %}<p><a title="Post Link" href="{{ post.link }}">Link</a></p>{% endif %}
-                    <br>
-                    {% if post.attachment_type == 'Audio' %}
-                    <div class="polaroid-3 brd-bl">
-                      <audio class="smb-1 max-w media-elm" controls>
-                        <source src="{{ post.attachment }}" type="">
-                      </audio>
-                    </div>
-                    {% elif post.attachment_type == 'Video' %}
-                    <div class="polaroid-3 brd-bl">
-                      <video class="smb-1 max-w media-elm" width="320" height="240" controls>
-                        <source src="{{ post.attachment }}" type="">
-                      </video>
-                    </div>
-                    {% elif post.attachment_type == 'Photo' %}
-                    <div class="polaroid-3 brd-bl">
-                      <img class="smb-1 max-w" src="{{ post.attachment }}" />
-                    </div>
-                    {% endif %}
-
-                    <p>&nbsp;</p>
-                    <p class="text-sm-1">
-                      <span class="text-grey"><em>{{ post.date_created }}</em></span> |
-                      <span><strong>Likes:</strong> <span id="post-likemeter-{{ post.p_id }}">{{ post.likes }}</span></span> |
-                      <span><strong>Comments:</strong> <span id="post-commentmeter-{{ post.p_id }}">{{ post.comments_len }}</span></span>
-                    </p>
-                    <p>&nbsp;</p>
-                    <p class="">
-                      <span ng-click="likeBtn()" class="text-center btn-xs transition btn-s1 {{ post.like_status.class }} like-btn" data-content-type="{{ post.content_type }}" data-content-id="{{ post.p_id }}" data-like-status="{{ post.like_status }}" data-like-status-json="{{ post.like_status_json }}" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-owner-id="{{ post.ownerid }}" data-owner-type="{{ post.owner_type }}" data-post-status="{{ post.status }}">
-                      <i class="text-center fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ post.like_status.text }}</span>
-                      </span>
-                      <span title="Show/Hide Comments" data-toggle="collapse" data-target="#cmdv-{{ post.p_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ post.content_type }}" data-content-id="{{ post.p_id }}" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-owner-id="{{ post.ownerid }}" data-owner-type="{{ post.owner_type }}" data-post-status="{{ post.status }}">
-                      <i class="fa fa-comments" aria-hidden="true"></i> Comments
-                      </span>
-                    </p>
-                  </div>
-
-                </div>
-
-                <div class="row">
-                  <div class="col-sm-12">
-                    <div class="collapse in  fb-bgc" id="cmdv-{{ post.p_id }}">
-                      <ul id="cmlst-{{ post.p_id }}" class="ul-raw">
-
-                        {% for c in post.comments %}
-                        <li class="comment-box-1">
-                          <div class="row">
-                            <div class="col-sm-2">
-                              <img class="brd-bl max-w2 icon-s1" src="{{ c.owner.avi }}" />
-                            </div>
-                            <div class="col-sm-10">
-                              <p><a title="See {{ c.owner.uname }} Page" href="/users/{{ c.owner.uname }}"><strong>{{ c.owner.uname }}</strong></a> {{ c.contents }}</p>
-                              <p class="text-sm-1">
-                                <span class="text-grey"><em>{{ c.date_created }}</em></span> |
-                                <span><strong>Likes:</strong> <span id="comment-likemeter-{{ c.comment_id }}">{{ c.likes }}</span></span> |
-                                <span><strong>Replies:</strong> <span id="comment-replymeter-{{ c.comment_id }}">{{ c.replies_len }}</span></span>
-                              </p>
-
-                              <p class="">
-                                <span ng-click="likeBtn()" class="transition btn-xs btn-s1 {{ c.like_status.class }} like-btn" data-comment-id="{{ c.comment_id }}" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-like-status="{{ c.like_status }}" data-like-status-json="{{ c.like_status_json }}" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}">
-                                  <i class="fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ c.like_status.text }}</span>
-                                </span>
-                                <span title="Show/Hide Replies" data-toggle="collapse" data-target="#rpdv-{{ c.comment_id }}" data-comment-id="{{ c.comment_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-like-status="{{ c.like_status }}" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}">
-                                  <i class="fa fa-comments" aria-hidden="true"></i> Replies
-                                </span>
-                              </p>
-
-                              <div class="collapse in" id="rpdv-{{ c.comment_id }}">
-                                <ul id="rplst-{{ c.comment_id }}" class="ul-raw">
-
-                                  {% for r in c.replies %}
-                                  <li class="reply-box-1">
-                                    <div class="row">
-                                      <div class="col-sm-2">
-                                        <img class="brd-bl max-w2 icon-s1" src="{{ r.owner.avi }}" />
-                                      </div>
-                                      <div class="col-sm-10">
-                                        <p><a title="See {{ r.owner.uname }} Page" href="/users/{{ r.owner.uname }}"><strong>{{ r.owner.uname }}</strong></a> {{ r.contents }}</p>
-                                        <p class="text-sm-1">
-                                          <span class="text-grey"><em>{{ r.date_created }}</em></span> |
-                                          <span><strong>Likes:</strong> <span id="reply-likemeter-{{ r.reply_id }}">{{ r.likes }}</span></span>
-                                        </p>
-
-                                        <span ng-click="likeBtn()" class="transition btn-xs btn-s1 {{ r.like_status.class }} like-btn" data-comment-id="{{ c.comment_id }}" data-content-type="{{ r.content_type }}" data-content-id="{{ r.reply_id }}" data-like-status="{{ r.like_status }}" data-like-status-json="{{ r.like_status_json }}" data-reply-id="{{ r.reply_id }}" data-owner-id="{{ r.ownerid }}" data-owner-type="{{ r.owner_type }}">
-                                          <i class="fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ r.like_status.text }}</span>
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <br>
-                                  </li>
-                                  {% endfor %}
-
-                                </ul>
-                                <br>
-                              </div>
-                              <input id="cmrly-{{ c.comment_id }}" class="add-reply-box block input-t-s1 transition dsp-n" data-elm-kind="add-reply-box" data-content-type="{{ c.content_type }}" data-content-id="{{ c.comment_id }}" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}" placeholder="Add Reply..." />
-                              <input title="Show/Hide Reply Input Field" class="add-reply-btn transition btn btn-xs btn-info" type="button" value="Reply" data-comment-id="{{ c.comment_id }}" data-owner-id="{{ c.ownerid }}" data-owner-type="{{ c.owner_type }}" />
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-12">
-
-                            </div>
-                          </div>
-                          <br>
-                        </li>
-                        {% endfor %}
-
-                      </ul>
-                    </div>
-                    <div class="padd-2">
-                      <textarea id="cmbox-{{ post.p_id }}" class="middlr add-comment-box middlr max-w input-t-s1 transition dsp-n" data-content-type="{{ post.content_type }}" data-content-id="{{ post.p_id }}" data-elm-kind="add-comment-box" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-owner-id="{{ post.ownerid }}" data-owner-type="{{ post.owner_type }}"
-                          data-post-status="{{ post.status }}" placeholder="Add Comment..."></textarea>
-
-                      <input title="Show/Hide Comment Input Field" ng-click="addCommentBtn()" class="middlr add-comment-btn transition btn btn-sm btn-info" type="button" value="Add Comment" data-post-id="{{ post.p_id }}" data-post-type="{{ post.post_type }}" data-content-type="{{ post.content_type }}" data-content-id="{{ post.p_id }}" data-owner-id="{{ post.ownerid }}" data-owner-type="{{ post.owner_type }}" data-post-status="{{ post.status }}"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="col-md-8 col-md-offset-2">
+              {% include 'posts-1.html' %}
+            
             </div>
           </div>
 

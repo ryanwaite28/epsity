@@ -12,8 +12,6 @@
 //
 // }
 
-'use strict';
-
 App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
 	window.scope = $scope;
@@ -255,7 +253,8 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
 		var ask = confirm('Are all fields corrects?');
 		if (ask == true) {
-			$('#create-group-form input[name="origin"]').val( '/mysettings/' );
+			$('#create-group-form input[name="origin"]').val( location.pathname );
+			$('#create-group-form input[name="action"]').val( 'createGroup' );
 			$('#create-group-form').submit();
 		}
 

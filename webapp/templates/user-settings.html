@@ -268,7 +268,7 @@
 
                       <div class="transition col-md-12">
                         <div ng-hide="groupEditor">
-                          <h3 class="transition text-center no-marg"><strong>Edit - {[ editGroup.uname ]}</strong></h3><br>
+                          <h3 class="transition text-center no-marg">Edit <strong>{[ editGroup.uname ]}</strong></h3><br>
                           <input title="Cancel Editor" class="transition  middlr btn btn-default" type="button" value="Cancel" ng-click="cancelGroupEditor()"/>
                           <hr>
                           <form class="transition middlr" id="edit-group-form" enctype="multipart/form-data" action="/user/settingsaction/form/" method="POST">{% csrf_token %}
@@ -314,7 +314,7 @@
                         </div>
 
                         <div ng-hide="groupAddMemberEditor">
-                          <h3 class="transition text-center no-marg"><strong>Add Member To - {[ editGroup.uname ]}</strong></h3><br>
+                          <h3 class="transition text-center no-marg">Add Member To <strong>{[ editGroup.uname ]}</strong></h3><br>
                           <input title="Cancel Editor" class="transition  middlr btn btn-default" type="button" value="Cancel" ng-click="cancelGroupAddMemberEditor()"/>
                           <hr>
                           <div class="col-md-4">
@@ -360,8 +360,8 @@
                       <div id="events-y-pane" class="transition tab-pane fade in active mk-rel">
                         <h4 class="text-center">Your Events: <strong>{[ yourEventsList.length ]}</strong></h4>
                         <hr>
-                        <div class="row sbm-1" ng-repeat="e in yourEventsList">
-                          <div class="col-sm-4">
+                        <div class="row sbm-1">
+                          <div ng-repeat="e in yourEventsList" class="col-sm-4">
                             <img width="150px" class="middlr sbm-1" src="{[ e.attachment ]}"/>
                             <p class="text-center">
                               <strong>Name: </strong>{[ e.name ]}<br>
