@@ -173,7 +173,7 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
     $scope.data = obj;
 
     alert('Account Info Loaded For: ' + obj.displayName +
-    '! Please Choose A User Name And Click Submit.');
+    '! Please Choose A User Name And Click Create.');
 
   }
 
@@ -209,7 +209,7 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
     $scope.data = obj;
 
     alert('Account Info Loaded For: ' + obj.displayName +
-    '! Please Choose A User Name And Click Submit.');
+    '! Please Choose A User Name And Click Create.');
 
   }
 

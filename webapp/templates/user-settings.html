@@ -46,6 +46,8 @@
                   <li role="presentation"><a data-toggle="tab" href="#apr-pane">Appearance</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#groups-pane">Groups</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#events-pane">Events</a></li>
+                  <li role="presentation"><a data-toggle="tab" href="#products-pane">Products</a></li>
+                  <li role="presentation"><a data-toggle="tab" href="#services-pane">Services</a></li>
                   <li role="presentation"><a data-toggle="tab" href="#del-pane">Delete</a></li>
                 </ul>
               </div>
@@ -66,7 +68,7 @@
                         <br>
                         <input ng-hide="updateBioBtn" title="Update Bio" class="transition middlr  btn btn-info" type="button" value="Update" ng-click="updateAccountBio()"/>
                         <br>
-                        <img width="125px" src="/static/img/ajax-loading-big.gif" ng-hide="updateBioImg"/>
+                        <img class="middlr" width="125px" src="/static/img/ajax-loading-big.gif" ng-hide="updateBioImg"/>
                         <p class="transition text-center">{[ updateBioMsg ]}</p>
                       </form>
                     </div>
@@ -375,6 +377,46 @@
                         <h4 class="text-center">Events Attending: <strong>{[ eventsAttendingList.length ]}</strong></h4>
                         <hr>
 
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="products-pane" class="transition tab-pane fade mk-rel">
+                    <a title="Go To Create Center" href="/create"><i class="top-right fa fa-plus-square p-emp-1" aria-hidden="true"></i></a>
+                    <h3 class="transition text-center"><strong>Products</strong></h3>
+                    <hr class="transition hr-grey">
+
+                    <div id="events-y-pane" class="transition tab-pane fade in active mk-rel">
+                      <h4 class="text-center">Your Products: <strong>{[ productsList.length ]}</strong></h4>
+                      <hr>
+                      <div class="row sbm-1">
+                        <div ng-repeat="p in productsList" class="col-sm-4">
+                          <div class="transition fill mk-rel sdw-1 sbm-1 padd-3 bg-display-1" style="background-image: url('{[ p.attachment ]}');"></div>
+                          <p class="text-center">
+                            <strong>Name: </strong>{[ p.name ]}<br>
+                            <strong>Price: </strong>${[ p.price ]}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="services-pane" class="transition tab-pane fade mk-rel">
+                    <a title="Go To Create Center" href="/create"><i class="top-right fa fa-plus-square p-emp-1" aria-hidden="true"></i></a>
+                    <h3 class="transition text-center"><strong>Services</strong></h3>
+                    <hr class="transition hr-grey">
+
+                    <div id="events-y-pane" class="transition tab-pane fade in active mk-rel">
+                      <h4 class="text-center">Your Services: <strong>{[ servicesList.length ]}</strong></h4>
+                      <hr>
+                      <div class="row sbm-1">
+                        <div ng-repeat="s in servicesList" class="col-sm-4">
+                          <div class="transition fill mk-rel sdw-1 sbm-1 padd-3 bg-display-1" style="background-image: url('{[ s.attachment ]}');"></div>
+                          <p class="text-center">
+                            <strong>Name: </strong>{[ s.name ]}<br>
+                            <strong>Price: </strong>${[ s.price ]}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>

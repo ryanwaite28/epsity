@@ -400,6 +400,7 @@ class FollowRequests(models.Model):
 class Posts(models.Model):
     OwnerType = vaults.OwnerType
     PostTypes = vaults.PostTypes
+    PostStatuses = vaults.PostStatuses
 
     # ---
 
@@ -417,7 +418,8 @@ class Posts(models.Model):
     attachment_type = models.CharField(max_length = 500, default = '')
 
     post_type = models.CharField(max_length = 20, choices = PostTypes, default = '')
-    status = models.CharField(max_length = 20, default = 'public') # either public, private, or deleted
+    status = models.CharField(max_length = 20, choices = PostStatuses, default = 'public')
+    # either public, private, personal, or deleted
 
     date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
@@ -888,8 +890,8 @@ class Products(models.Model):
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
 
-    price = models.IntegerField(blank = False, default = 0)
-    title = models.CharField(max_length = 500, default = '')
+    price = models.CharField(max_length = 500, blank = False, default = 0)
+    name = models.CharField(max_length = 500, default = '')
     desc = models.CharField(max_length = 1500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
     attachment_type = models.CharField(max_length = 500, default = '')
@@ -897,6 +899,7 @@ class Products(models.Model):
 
     categories = models.CharField(max_length = 500, default = '')
     status = models.CharField(max_length = 125, default = '')
+    # either: completed, not completed, or canceled
 
     unique_val = models.CharField(max_length = 125, default = randomUniqueValue )
 
@@ -911,7 +914,7 @@ class Products(models.Model):
             'owner': returnModelSerialized( self.owner_type , self.ownerid ),
             'owner_type': self.owner_type,
             'price': self.price,
-            'tilte': self.title,
+            'name': self.name,
             'desc': self.desc,
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,
@@ -934,8 +937,8 @@ class Services(models.Model):
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
 
-    price = models.IntegerField(blank = False, default = 0)
-    title = models.CharField(max_length = 500, default = '')
+    price = models.CharField(max_length = 500, blank = False, default = 0)
+    name = models.CharField(max_length = 500, default = '')
     desc = models.CharField(max_length = 1500, default = '')
     attachment = models.CharField(max_length = 500, default = '')
     attachment_type = models.CharField(max_length = 500, default = '')
@@ -943,6 +946,7 @@ class Services(models.Model):
 
     categories = models.CharField(max_length = 500, default = '')
     status = models.CharField(max_length = 125, default = '')
+    # either: not started, penging, in progress, completed, or calceled
 
     unique_val = models.CharField(max_length = 125, default = randomUniqueValue )
 
@@ -957,7 +961,7 @@ class Services(models.Model):
             'owner': returnModelSerialized( self.owner_type , self.ownerid ),
             'owner_type': self.owner_type,
             'price': self.price,
-            'tilte': self.title,
+            'name': self.name,
             'desc': self.desc,
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,

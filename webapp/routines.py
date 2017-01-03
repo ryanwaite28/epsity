@@ -27,6 +27,7 @@ from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
 from models import Posts, Comments, Replies, Likes, Events, EventAttendees
 from models import Conversations, ConvoMembers, ConvoMessages
+from models import Products, Services, Transactions, Feedback
 
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
 from vaults import allowed_audio, allowed_photo, allowed_video, allowed_media
@@ -472,7 +473,7 @@ def loginAccount(request):
         if you == None:
             return render(request,
                             masterDICT['pages']['login'],
-                            {'error': 'Incorrect Info.'},
+                            {'error': 'Account Not Found. Did You Sign Up With Google/Facebook First?'},
                             context_instance=RequestContext(request))
 
         request.session['username'] = you.uname
@@ -487,7 +488,7 @@ def loginAccount(request):
     except ObjectDoesNotExist:
         return render(request,
                         masterDICT['pages']['login'],
-                        {'error': 'Incorrect Info.'},
+                        {'error': 'Account Not Found. Did You Sign Up With Google/Facebook First?'},
                         context_instance=RequestContext(request))
 
 
@@ -605,6 +606,8 @@ def loadSettingsLists(request):
         groups = Groups.objects.filter(ownerid = you.id)
         yourEvents = Events.objects.filter(ownerid = you.id)
         attendingEvents = EventAttendees.objects.filter(attendee_id = you.id)
+        productsList = Products.objects.filter(ownerid = you.id)
+        servicesList = Services.objects.filter(ownerid = you.id)
 
         resp = {
             'msg': 'lists',
@@ -613,6 +616,8 @@ def loadSettingsLists(request):
             'groups': [g.serialize for g in groups],
             'yourEvents': [e.serializeBasic for e in yourEvents],
             'attendingEvents': [e.serialize for e in attendingEvents],
+            'productsList': [p.serialize for p in productsList],
+            'servicesList': [s.serialize for s in servicesList]
         }
 
         # print resp
@@ -953,7 +958,7 @@ def checkGroupUserName(request, data):
 def createGroup(request):
     try:
         you = getYou(request)
-        print '--- cg ---'
+        # print '--- cg ---'
 
         checkGroup = Groups.objects \
         .filter(uname = request.POST['uname']).first()
@@ -1011,16 +1016,17 @@ def createGroup(request):
 
             group.save()
 
-            print group.serialize
+            # print group.serialize
 
         # return render(request,
         #             masterDICT['pages']['createview'],
         #             {'you': you, 'message': "New Group Created!"},
         #             context_instance=RequestContext(request))
 
+        redirect_str = '/groups/' + newGroup.uname
         return genericPage(request = request,
                             msg = 'Group Created!',
-                            redirect=request.POST['origin'])
+                            redirect = redirect_str)
 
 
     except ObjectDoesNotExist:
@@ -1940,6 +1946,13 @@ def createPost(request):
 
         # ----- #
 
+        if 'post_status' in request.POST:
+            post_status = request.POST['post_status'].lower()
+        else:
+            post_status = 'public'
+
+        print 'post_status --- ', post_status
+
         newPost = Posts(ownerid = you.id,
                         owner_type = masterDICT['ownerTypes']['account'],
                         wall_id = request.session['wall_id'],
@@ -1947,7 +1960,8 @@ def createPost(request):
                         title = cgi.escape(request.POST['title']),
                         contents = cgi.escape(request.POST['contents']),
                         link = request.POST['link'],
-                        post_type = request.POST['post_type'])
+                        post_type = request.POST['post_type'],
+                        status = post_status)
 
         if media != None:
             newPost.attachment = media['newdoc'].docfile.url
@@ -2276,9 +2290,10 @@ def createEvent(request):
 
         newEvent.save()
 
+        redirect_str = '/events/' + str(newEvent.id)
         return genericPage(request = request,
-                            msg = 'New Event Created!',
-                            redirect = request.POST['origin'])
+                            msg = 'Event Created!',
+                            redirect = redirect_str)
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
@@ -2289,6 +2304,31 @@ def createProduct(request):
     try:
         you = getYou(request)
 
+        name = cgi.escape( request.POST['name'] )
+        desc = cgi.escape( request.POST['desc'] )
+        categories = cgi.escape( request.POST['categories'] )
+        link = request.POST['link']
+        price = str(request.POST['price'])
+
+        newProduct = Products(owner_type = masterDICT['ownerTypes']['account'],
+                                ownerid = you.id,
+                                price = price,
+                                name = name,
+                                desc = desc,
+                                link = link,
+                                categories = categories)
+
+        media = processFileUpload(request)
+        if media != None:
+            newProduct.attachment = media['newdoc'].docfile.url
+            newProduct.attachment_type = media['doctype']
+
+        newProduct.save()
+
+        return genericPage(request = request,
+                            msg = 'New Product Created!',
+                            redirect = request.POST['origin'])
+
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
@@ -2298,6 +2338,31 @@ def createProduct(request):
 def createService(request):
     try:
         you = getYou(request)
+
+        name = cgi.escape( request.POST['name'] )
+        desc = cgi.escape( request.POST['desc'] )
+        categories = cgi.escape( request.POST['categories'] )
+        link = request.POST['link']
+        price = str(request.POST['price'])
+
+        newService = Services(owner_type = masterDICT['ownerTypes']['account'],
+                                ownerid = you.id,
+                                price = price,
+                                name = name,
+                                desc = desc,
+                                link = link,
+                                categories = categories)
+
+        media = processFileUpload(request)
+        if media != None:
+            newService.attachment = media['newdoc'].docfile.url
+            newService.attachment_type = media['doctype']
+
+        newService.save()
+
+        return genericPage(request = request,
+                            msg = 'New Service Created!',
+                            redirect = request.POST['origin'])
 
 
     except ObjectDoesNotExist:

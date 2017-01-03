@@ -533,6 +533,16 @@ body {
   overflow: hidden;
 }
 
+.bg-display-1 {
+  width: 100%;
+  height: 175px;
+}
+
+.bg-display-2 {
+  width: 150px;
+  height: 150px;
+}
+
 /* --- */
 /* --- */
 /* --- */

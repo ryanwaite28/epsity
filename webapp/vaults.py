@@ -57,6 +57,13 @@ PostTypes = (
     ('Video', 'Video'),
 )
 
+PostStatuses = (
+    ('public', 'public'),
+    ('private', 'private'),
+    ('personal', 'personal'),
+    ('deleted', 'deleted'),
+)
+
 ContentType = (
     ('Post', 'Post'),
     ('Comment', 'Comment'),
@@ -221,6 +228,11 @@ postTypes = {
     'video': 'Video',
     'link': 'Link'
 }
+postStatuses = {
+    'public': 'public',
+    'private': 'private',
+    'personal': 'personal'
+}
 
 ownerTypes = {
     'account': 'Account',
@@ -294,6 +306,7 @@ masterDICT = {
     'followStates': followStates,
     'groupStates': groupStates,
     'postTypes': postTypes,
+    'postStatuses': postStatuses,
     'ownerTypes': ownerTypes,
     'mediaTypes': mediaTypes,
     'contentTypes': contentTypes,

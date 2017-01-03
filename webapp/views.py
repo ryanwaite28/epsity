@@ -502,7 +502,7 @@ def eventView(request, query):
 
             event = event.serialize
             event['categories'] = ', '.join( event['categories'].split(' ') )
-            print event['categories']
+            # print event['categories']
 
         try:
             return render(request,
@@ -676,9 +676,6 @@ def userActionFORM(request):
     #     return redirect('/')
 
     if request.method == 'POST':
-        print 'action MSG: ', request.POST['action']
-        print ' '
-
         if request.POST['action'] == '' or request.POST['action'] == None:
             msg = 'Unknown Action...'
             return errorPage(request, msg)

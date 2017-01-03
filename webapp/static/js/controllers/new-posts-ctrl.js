@@ -32,7 +32,6 @@ App.controller('newPostsCtrl', ['$scope', '$http', function($scope, $http) {
 
     var splitter = media.value.split('.');
     var extension = splitter[ splitter.length - 1 ].toLowerCase();
-    console.log(splitter, extension);
 
     var pFile = ['png', 'jpg', 'jpeg', 'gif'];
     var vFile = ['mp4', 'avi', 'mov', 'webm', 'oog'];

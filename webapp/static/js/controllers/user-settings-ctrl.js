@@ -12,6 +12,8 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
   $scope.groupsList = [];
   $scope.yourEventsList = [];
   $scope.eventsAttendingList = [];
+  $scope.productsList = [];
+  $scope.servicesList = [];
 
   //
 
@@ -47,7 +49,9 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
 
       $scope.groupsList = resp.data.groups;
       $scope.yourEventsList = resp.data.yourEvents;
-      $scope.eventsAttendingList = resp.data.attendingEvents;
+      $scope.eventsAttendingList =  resp.data.attendingEvents
+      $scope.productsList = resp.data.productsList;
+      $scope.servicesList = resp.data.servicesList;
     },
     function(resp){
       // Error Callback
@@ -142,7 +146,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
   $scope.addNewInterest = function() {
 
     if( $scope.interestsList.length >= 20 ) {
-      $scope.interestMsg = 'The Max Is 20 Items.';
+      $scope.interestMsg = 'The Max Is 20.';
       return;
     }
 
@@ -184,7 +188,7 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
   $scope.addNewSeeking = function() {
 
     if( $scope.seekingList.length > 20 ) {
-      $scope.seekingMsg = 'The Max Is 20 Items.';
+      $scope.seekingMsg = 'The Max Is 20.';
       return;
     }
 
@@ -450,6 +454,10 @@ App.controller('settingsCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.groupAddMemberEditor = true;
 
     $scope.editGroup = group;
+    if( $scope.editGroup.categories == [''] ) {
+      group.categories == [];
+      $scope.editGroup.categories == [];
+    }
 
     $('#edit-groupdisplayname').val($scope.editGroup.displayname);
     $('#edit-groupuname').val($scope.editGroup.uname);

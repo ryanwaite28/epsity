@@ -262,19 +262,21 @@
                     {% csrf_token %}
                     <input type="hidden" name="action" value="createProduct" />
 
-                    <input class="input-t-s1 middlr" type="text" name="productname" placeholder="Product Name..." ng-model="newProductName" required/><br>
+                    <input class="input-t-s1 middlr" type="text" name="name" placeholder="Product Name..." ng-model="newProductName" required/><br>
+                    <input class="input-t-s1 middlr" type="text" name="link" placeholder="Link..." ng-model="newProductLink" required/><br>
                     <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Product Description..." ng-model="newProductDesc" required></textarea><br>
+                    <input class="input-t-s1 middlr" type="text" name="price" placeholder="Price - Format: 0.00" ng-model="newProductPrice" required/><br>
                     <p class="text-center">Product Icon</p>
                     <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*" /><br><br>
                     <div class="row padd-1">
                       <div class="col-sm-4">
                         <p class="text-center"><strong>Add Product Category</strong></p>
-                        <input class="middlr input-t-s1" type="text" placeholder="Product Category" ng-model="productCategoryName"/><br>
-                        <p class="text-center"><a class="btn btn-sm btn-info transition">Add</a></p>
+                        <input class="middlr input-t-s1" type="text" placeholder="Product Category" ng-model="newProductCategory"/><br>
+                        <p class="text-center"><a class="btn btn-sm btn-info transition" ng-click="addProductCategory()">Add</a></p>
                       </div>
                       <div class="col-sm-8">
                         <ul class="transition ul-raw user-s-list" id="">
-                          <li class="transition " ng-repeat="c in productCategories">
+                          <li class="transition text-center" ng-repeat="c in productCategories">
                             <p>{[ c ]}</p>
                             <span class="transition btn btn-sm btn-danger " ng-click="deleteProductCategory(this.c)">Delete</span>
                           </li>
@@ -296,19 +298,21 @@
                     {% csrf_token %}
                     <input type="hidden" name="action" value="createService"/>
 
-                    <input class="input-t-s1 middlr" type="text" name="servicename" placeholder="Service Name..." ng-model="newServiceName"/><br>
+                    <input class="input-t-s1 middlr" type="text" name="name" placeholder="Service Name..." ng-model="newServiceName" required/><br>
+                    <input class="input-t-s1 middlr" type="text" name="link" placeholder="Link..." ng-model="newServiceLink" required/><br>
                     <textarea style="min-height: 150px;" class="input-t-s1 middlr" name="desc" type="text" placeholder="Service Description..." ng-model="newServiceDesc"></textarea><br>
+                    <input class="input-t-s1 middlr" type="text" name="price" placeholder="Price - Format: 0.00" ng-model="newServicePrice" required/><br>
                     <p class="text-center">Service Icon</p>
                     <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*" /><br><br>
                     <div class="row padd-1">
                       <div class="col-sm-4">
                         <p class="text-center"><strong>Add Service Category</strong></p>
-                        <input class="middlr input-t-s1" type="text" placeholder="Service Category" ng-model="serviceCategoryName"/><br>
-                        <p class="text-center"><a class="btn btn-sm btn-info transition">Add</a></p>
+                        <input class="middlr input-t-s1" type="text" placeholder="Service Category" ng-model="newServiceCategory"/><br>
+                        <p class="text-center"><a class="btn btn-sm btn-info transition" ng-click="addServiceCategory()">Add</a></p>
                       </div>
                       <div class="col-sm-8">
                         <ul class="transition ul-raw user-s-list" id="">
-                          <li class="transition " ng-repeat="c in serviceCategories">
+                          <li class="transition text-center" ng-repeat="c in serviceCategories">
                             <p>{[ c ]}</p>
                             <span class="transition btn btn-sm btn-danger " ng-click="deleteServiceCategory(this.c)">Delete</span>
                           </li>

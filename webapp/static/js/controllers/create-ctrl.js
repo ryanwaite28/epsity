@@ -15,6 +15,8 @@
 App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
 	window.scope = $scope;
+	var wordsOnlyRegex = /^[a-zA-Z0-9]{3,50}/;
+	var priceREG = /^[0-9]{1,}.[0-9]{2}$/;
 
 	window.initMap = function() {
 
@@ -385,9 +387,35 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
 	$scope.productCategories = [];
 	$scope.addProductCategory = function() {
+		if( $scope.productCategories.length >= 10 ) {
+      $scope.pText = 'The Max Is 10.';
+      return;
+    }
+
+    var category = $scope.newProductCategory.toLowerCase();
+
+    if( category == undefined || category == '' ) {
+      $scope.interestMsg = 'Please Input An Interest Word';
+      return;
+    }
+    else if( !wordsOnlyRegex.test(category) ) {
+      $scope.interestMsg = 'Interest Words Must Be 3-25 Characters, Letters Only.';
+      return;
+    }
+    else if( $scope.productCategories.indexOf(category) != -1 ) {
+      $scope.interestMsg = 'You Already Have This Interest Word.';
+      return;
+    }
+
+    $scope.productCategories.push( category );
+    $scope.productCategories.sort();
+    $scope.newProductCategory = '';
 
 	}
-	$scope.deleteProductCategory = function() {
+	$scope.deleteProductCategory = function(obj) {
+
+		var index = $scope.productCategories.indexOf( obj );
+		$scope.productCategories.splice( index, 1 );
 
 	}
 
@@ -395,10 +423,117 @@ App.controller('createCtrl', ['$scope', '$http', function($scope, $http) {
 
 	$scope.serviceCategories = [];
 	$scope.addServiceCategory = function() {
+		if( $scope.serviceCategories.length >= 10 ) {
+      $scope.sText = 'The Max Is 10.';
+      return;
+    }
+
+    var category = $scope.newServiceCategory.toLowerCase();
+
+    if( category == undefined || category == '' ) {
+      $scope.interestMsg = 'Please Input An Interest Word';
+      return;
+    }
+    else if( !wordsOnlyRegex.test(category) ) {
+      $scope.interestMsg = 'Interest Words Must Be 3-25 Characters, Letters Only.';
+      return;
+    }
+    else if( $scope.serviceCategories.indexOf(category) != -1 ) {
+      $scope.interestMsg = 'You Already Have This Interest Word.';
+      return;
+    }
+
+    $scope.serviceCategories.push( category );
+    $scope.serviceCategories.sort();
+    $scope.newServiceCategory = '';
 
 	}
-	$scope.deleteServiceCategory = function() {
+	$scope.deleteServiceCategory = function(obj) {
+
+		var index = $scope.serviceCategories.indexOf( obj );
+		$scope.serviceCategories.splice( index, 1 );
 
 	}
 
-}])
+	$scope.createProduct = function() {
+		var productName = trimTrailingSpaces( $('#create-product-form input[name="name"]').val() );
+		var productDesc = trimTrailingSpaces( $('#create-product-form textarea').val() );
+		var productPrice = trimTrailingSpaces( $('#create-product-form input[name="price"]').val() );
+
+		if( !wordsOnlyRegex.test(productName) ) {
+			alert('Product Name Must Be 3-50 Characters; \n \
+			Letters & Numbers Only.');
+			return;
+		}
+		if( !priceREG.test(productPrice) ) {
+			alert('Price Must Be In This Format: 0.00; \n \
+			The Number Before The Period Can Be Any Amount Of Digits \
+			But The Number After The Period Can Only Be 2 Digits.');
+			return;
+		}
+
+		while(productPrice.charAt(0) === '0'){
+    	productPrice = productPrice.substr(1);
+		}
+
+		var ask = confirm('Are All Fields Correct?');
+		if( ask == true ) {
+			var l = '';
+	    for( var key in $scope.productCategories ) {
+	      l += $scope.productCategories[key] + ';';
+	    }
+	    l = l.slice(0, -1);
+
+			$('#create-product-form input[name="categories"]').val( l );
+			$('#create-product-form input[name="origin"]').val( location.pathname );
+			$('#create-product-form').submit();
+		}
+	}
+
+	$scope.createService = function() {
+		var serviceName = trimTrailingSpaces( $('#create-service-form input[name="name"]').val() );
+		var serviceDesc = trimTrailingSpaces( $('#create-service-form textarea').val() );
+		var servicePrice = trimTrailingSpaces( $('#create-service-form input[name="price"]').val() );
+
+		if( !wordsOnlyRegex.test(serviceName) ) {
+			alert('Service Name Must Be 3-50 Characters; \n \
+			Letters & Numbers Only.');
+			return;
+		}
+		if( !priceREG.test(servicePrice) ) {
+			alert('Price Must Be In This Format: 0.00; \n \
+			The Number Before The Period Can Be Any Amount Of Digits \
+			But The Number After The Period Can Only Be 2 Digits.');
+			return;
+		}
+
+		while(servicePrice.charAt(0) === '0'){
+    	servicePrice = servicePrice.substr(1);
+		}
+
+		var ask = confirm('Are All Fields Correct?');
+		if( ask == true ) {
+			var l = '';
+	    for( var key in $scope.serviceCategories ) {
+	      l += $scope.serviceCategories[key] + ';';
+	    }
+	    l = l.slice(0, -1);
+
+			$('#create-service-form input[name="categories"]').val( l );
+			$('#create-service-form input[name="origin"]').val( location.pathname );
+			$('#create-service-form').submit();
+		}
+	}
+
+}]);
+
+/*
+
+var l = '';
+for( var key in $scope.interestsList ) {
+	l += $scope.interestsList[key] + ';';
+}
+l = l.slice(0, -1);
+console.log(l);
+
+*/
