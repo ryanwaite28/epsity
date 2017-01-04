@@ -94,6 +94,7 @@ StarType = (
 # Dictionary of all pages/views for easy and dynamic rendering.
 pages = {
     'welcome': 'welcome.html',
+    'discoverView': 'discover-1.html',
     'error': 'error.html',
     'generic': 'generic-1.html',
     'login': 'login.html',

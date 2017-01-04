@@ -99,6 +99,26 @@ def signup(request):
 # ---
 
 @csrf_protect
+def discoverView(request):
+    if request.method == 'GET':
+        if 'username' in request.session:
+            you = getYou(request)
+        else:
+            you = None
+
+        return render(request,
+                        masterDICT['pages']['discoverView'],
+                        {'error': "",
+                        'you': you
+                        },
+                        context_instance = RequestContext(request))
+
+    if request.method == 'POST':
+        return None
+
+# ---
+
+@csrf_protect
 def dashboard(request):
 
     if request.method == 'GET':
@@ -225,7 +245,10 @@ def userPage(request, query):
             if 'username' in request.session:
                 you = getYou(request)
             else:
-                you = None
+                redirect_str = '/login/'
+                return genericPage(request = request,
+                                    msg = 'Please Login In To View User Pages.',
+                                    redirect = redirect_str)
 
             user = Accounts.objects \
             .filter(uname__iexact = query.lower()).first()
@@ -286,7 +309,10 @@ def groupPage(request, query):
             if 'username' in request.session:
                 you = getYou(request)
             else:
-                you = None
+                redirect_str = '/login/'
+                return genericPage(request = request,
+                                    msg = 'Please Login In To View Group Pages.',
+                                    redirect = redirect_str)
 
             group = Groups.objects \
             .filter(uname__iexact = query).first()
@@ -299,23 +325,23 @@ def groupPage(request, query):
                 return errorPage(request, msg)
 
             else:
-                checkMembership = GroupMembers.objects \
-                .filter(group_id = group.id, userid = you.id).first()
+                if you != None:
+                    checkMembership = GroupMembers.objects \
+                    .filter(group_id = group.id, userid = you.id).first()
 
-                if checkMembership != None or group.ownerid == you.id:
-                    membership = 'yes'
-                else:
-                    membership = 'no'
+                    if checkMembership != None or group.ownerid == you.id:
+                        membership = 'yes'
+                    else:
+                        membership = 'no'
 
-                posts = routines.\
-                loadPosts(id = group.id,
-                            you = you,
-                            msg = masterDICT['ownerTypes']['group'].lower())
+            posts = routines.\
+            loadPosts(id = group.id,
+                        you = you,
+                        msg = masterDICT['ownerTypes']['group'].lower())
 
 
-
-                return render(request,
-                                masterDICT['pages']['GroupPage'],
+            return render(request,
+                            masterDICT['pages']['GroupPage'],
                                 {'you': you,
                                 'group': group,
                                 'posts': posts,
@@ -361,13 +387,17 @@ def postView(request, query):
 @csrf_protect
 def searchEngine(request):
     if request.method == 'GET':
-        if 'username' not in request.session:
-            return redirect('/')
-
         try:
-            you = getYou(request)
-            return render(request, masterDICT['pages']['searchEngine'],
-                            {'you': you},
+            if 'username' in request.session:
+                you = getYou(request)
+            else:
+                you = None
+
+
+            return render(request,
+                            masterDICT['pages']['searchEngine'],
+                            {'you': you
+                            },
                             context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:

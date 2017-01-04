@@ -39,9 +39,17 @@ from vaults import masterDICT
 # --- ----- ----- --- #
 
 def getYou(request):
-    you = Accounts.objects.get(uname = request.session['username'])
-    return you
+    if 'username' not in request.session:
+        return None
 
+    try:
+        you = Accounts.objects.get(uname = request.session['username'])
+        return you
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
 
 
 def loadPost_A(post_id):
@@ -225,30 +233,36 @@ def loadPost_B(post_id, you):
 # ---
 
 def loadPosts(id, you, msg):
-    if msg == 'home':
-        posts = Posts.objects \
-        .filter( wall_id = you.id, wall_type = masterDICT['ownerTypes']['account'] ) \
-        .order_by('-date_created')[:20]
-
-    elif msg == 'main':
-        following = Follows.objects.filter(userid=you.id)
-        posts = Posts.objects \
-        .exclude(wall_type = masterDICT['ownerTypes']['group']) \
-        .filter( Q( ownerid = you.id ) | Q(ownerid__in = [f.follow_id for f in following]) ) \
-        .order_by('-date_created')[:20]
-
-    elif msg == 'user':
-        posts = Posts.objects \
-        .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['account'] ) \
-        .order_by('-date_created')[:20]
-
-    elif msg == 'group':
+    if you == None:
         posts = Posts.objects \
         .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['group'] ) \
         .order_by('-date_created')[:20]
 
     else:
-        return None
+        if msg == 'home':
+            posts = Posts.objects \
+            .filter( wall_id = you.id, wall_type = masterDICT['ownerTypes']['account'] ) \
+            .order_by('-date_created')[:20]
+
+        elif msg == 'main':
+            following = Follows.objects.filter(userid=you.id)
+            posts = Posts.objects \
+            .exclude(wall_type = masterDICT['ownerTypes']['group']) \
+            .filter( Q( ownerid = you.id ) | Q(ownerid__in = [f.follow_id for f in following]) ) \
+            .order_by('-date_created')[:20]
+
+        elif msg == 'user':
+            posts = Posts.objects \
+            .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['account'] ) \
+            .order_by('-date_created')[:20]
+
+        elif msg == 'group':
+            posts = Posts.objects \
+            .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['group'] ) \
+            .order_by('-date_created')[:20]
+
+        else:
+            return None
 
 
     posts = [p.serialize for p in posts]
@@ -764,14 +778,33 @@ def searchEngine(request):
     if data['query'] == '':
         return JsonResponse({'msg': 'Query Is Empty/Unidentifiable...'})
 
-    users = Accounts.objects.exclude(id = you.id) \
-    .filter(uname__contains = data['query'])[:25]
-    groups = Groups.objects \
-    .exclude(ownerid = you.id) \
-    .filter(uname__contains = data['query'])[:25]
+    if you != None:
+        users = Accounts.objects.exclude(id = you.id) \
+        .filter(uname__contains = data['query'])[:25]
+
+        groups = Groups.objects \
+        .exclude(ownerid = you.id) \
+        .filter(uname__contains = data['query'])[:25]
+
+    else:
+        users = Accounts.objects \
+        .filter(uname__contains = data['query'])[:25]
+
+        groups = Groups.objects \
+        .filter(uname__contains = data['query'])[:25]
+
 
     users = [u.serialize for u in users]
     groups = [g.serialize for g in groups]
+
+    if you == None:
+        resp = {
+            'msg': 'search query',
+            'users': users,
+            'groups': groups
+        }
+
+        return JsonResponse(resp)
 
     for u in users:
         checkFollow = Follows.objects \

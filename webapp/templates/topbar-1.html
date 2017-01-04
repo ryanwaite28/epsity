@@ -105,6 +105,10 @@
 
     });
 
+    $(document).on('mouseleave', '#tb-links > li > .li-dropdown-s1', function(){
+      $(this).removeClass('show-it');
+    });
+
   });
 
   App.controller('topbarSearchCtrl', ['$scope', '$http', function($scope, $http) {
