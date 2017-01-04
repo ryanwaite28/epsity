@@ -2,7 +2,32 @@
 
 App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
 
+  window.scope = $scope;
+
   $(document).ready(function(){
+
+    $http({
+      method: 'POST',
+      url: '/checkpoint/',
+      headers: {
+        'Content-Type': 'application/json',
+        'responseType': 'json',
+        "Accept" : "application/json",
+        'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      data: {
+        action: 'checkLoginState',
+        csrfmiddlewaretoken: Cookies.get('csrftoken'),
+      }
+    }).then(function(resp){
+      // Success Callback
+      console.log(resp);
+      $scope.you = resp.data.you;
+    },
+    function(resp){
+      // Error Callback
+      console.log(resp);
+    });
 
     $(document).on('click', '.add-comment-btn', function(){
       var id = "#cmbox-" + $(this).data('post-id');
@@ -29,6 +54,7 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
     });
 
     $(document).on('click', '.like-btn', function(){
+      if( $scope.checkLoginState() == false ) { return location.href = '/login'; }
 
       var likeStatus = $(this).data('like-status-json');
       var contentType = $(this).data('content-type');
@@ -55,6 +81,7 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       if( e.keyCode != 13 ) {
         return;
       }
+      if( $scope.checkLoginState() == false ) { return location.href = '/login'; }
 
       var input = $(this);
       var comment = trimTrailingSpaces( input.val() );
@@ -92,6 +119,7 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
       if( e.keyCode != 13 ) {
         return;
       }
+      if( $scope.checkLoginState() == false ) { return location.href = '/login'; }
 
       var input = $(this);
       var reply = trimTrailingSpaces( input.val() );
@@ -203,6 +231,13 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
   //   });
   // }
 
+  $scope.checkLoginState = function() {
+    console.log('admit one');
+    if( $scope.you == undefined || $scope.you == null ) {
+      return false;
+    }
+  }
+
   $scope.addPostCommentUser = function(inputELM, dataObj) {
     if( inputELM == undefined || dataObj == undefined ) {
       console.log('Missing Inputs...');
@@ -247,6 +282,7 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
   }
 
   $scope.addCommentReplyUser = function(inputELM, dataObj) {
+
     if( inputELM == undefined || dataObj == undefined ) {
       console.log('Missing Inputs...');
       return;

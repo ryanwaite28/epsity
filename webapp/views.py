@@ -135,8 +135,8 @@ def dashboard(request):
             # --- #
 
             feed = routines\
-            .loadPosts(id = you.id, you = you,
-                        msg = masterDICT['fetchType']['posts']['main'].lower())
+            .loadPostsA(id = you.id, you = you,
+                        msg = masterDICT['fetchType']['posts']['main'])
 
             # --- #
 
@@ -218,8 +218,8 @@ def profileHome(request):
             groups = GroupMembers.objects.filter(userid=you.id)
 
             posts = routines\
-            .loadPosts(id = you.id, you = you,
-                        msg = masterDICT['fetchType']['posts']['home'].lower())
+            .loadPostsA(id = you.id, you = you,
+                        msg = masterDICT['fetchType']['posts']['home'])
 
             return render(request, masterDICT['pages']['profileHome'],
                             {'you': you,
@@ -245,13 +245,10 @@ def userPage(request, query):
             if 'username' in request.session:
                 you = getYou(request)
             else:
-                redirect_str = '/login/'
-                return genericPage(request = request,
-                                    msg = 'Please Login In To View User Pages.',
-                                    redirect = redirect_str)
+                you = None
 
             user = Accounts.objects \
-            .filter(uname__iexact = query.lower()).first()
+            .filter( uname__iexact = query.lower() ).first()
 
             request.session['wall_id'] = user.id
             request.session['wall_type'] = masterDICT['ownerTypes']['account']
@@ -260,30 +257,23 @@ def userPage(request, query):
                 msg = 'User Account Not Found.'
                 return errorPage(request, msg)
 
-            else:
-                followers = Follows.objects.filter(follow_id=user.id)
-                following = Follows.objects.filter(userid=user.id)
-                groups = GroupMembers.objects.filter(userid=user.id)
 
+            followers = Follows.objects.filter(follow_id=user.id)
+            following = Follows.objects.filter(userid=user.id)
+            groups = GroupMembers.objects.filter(userid=user.id)
+
+            if you != None:
                 posts = routines \
-                .loadPosts(id = user.id, you = you, msg = 'user')
+                .loadPostsA(id = user.id, you = you, msg = masterDICT['fetchType']['posts']['user'])
 
-                if 'username' in request.session:
-                    if user.uname == request.session['username']:
-                        return redirect('/home')
+            else:
+                posts = routines \
+                .loadPostsB(wall_id = user.id, wall_type = masterDICT['ownerTypes']['account'])
 
-                    else:
-                        return render(request,
-                                        masterDICT['pages']['UserPage'],
-                                        {'you': you,
-                                        'user': user,
-                                        'info': user.get_info,
-                                        'followers': len(followers),
-                                        'following': len(following),
-                                        'groups': len(groups),
-                                        'posts': posts
-                                        },
-                                        context_instance = RequestContext(request))
+            if 'username' in request.session:
+                if user.uname == request.session['username']:
+                    return redirect('/home')
+
                 else:
                     return render(request,
                                     masterDICT['pages']['UserPage'],
@@ -292,8 +282,22 @@ def userPage(request, query):
                                     'info': user.get_info,
                                     'followers': len(followers),
                                     'following': len(following),
-                                    'groups': len(groups)},
+                                    'groups': len(groups),
+                                    'posts': posts
+                                    },
                                     context_instance = RequestContext(request))
+            else:
+                return render(request,
+                                masterDICT['pages']['UserPage'],
+                                {'you': you,
+                                'user': user,
+                                'info': user.get_info,
+                                'followers': len(followers),
+                                'following': len(following),
+                                'groups': len(groups),
+                                'posts': posts
+                                },
+                                context_instance = RequestContext(request))
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -309,10 +313,7 @@ def groupPage(request, query):
             if 'username' in request.session:
                 you = getYou(request)
             else:
-                redirect_str = '/login/'
-                return genericPage(request = request,
-                                    msg = 'Please Login In To View Group Pages.',
-                                    redirect = redirect_str)
+                you = None
 
             group = Groups.objects \
             .filter(uname__iexact = query).first()
@@ -324,21 +325,25 @@ def groupPage(request, query):
                 msg = 'Group Not Found.'
                 return errorPage(request, msg)
 
+
+            if you != None:
+                checkMembership = GroupMembers.objects \
+                .filter(group_id = group.id, userid = you.id).first()
+
+                if checkMembership != None or group.ownerid == you.id:
+                    membership = 'yes'
+                else:
+                    membership = 'no'
+
+            if you != None:
+                posts = routines \
+                .loadPostsA(id = group.id, you = you, msg = masterDICT['fetchType']['posts']['group'])
+
             else:
-                if you != None:
-                    checkMembership = GroupMembers.objects \
-                    .filter(group_id = group.id, userid = you.id).first()
+                membership = 'no'
 
-                    if checkMembership != None or group.ownerid == you.id:
-                        membership = 'yes'
-                    else:
-                        membership = 'no'
-
-            posts = routines.\
-            loadPosts(id = group.id,
-                        you = you,
-                        msg = masterDICT['ownerTypes']['group'].lower())
-
+                posts = routines \
+                .loadPostsB(wall_id = group.id, wall_type = masterDICT['ownerTypes']['group'])
 
             return render(request,
                             masterDICT['pages']['GroupPage'],
@@ -692,6 +697,9 @@ def checkPoint(request):
 
             if data['action'] == 'checkConvoName':
                 return routines.checkConvoName(request, data)
+
+            if data['action'] == 'checkLoginState':
+                return routines.checkLoginState(request, data)
 
         except KeyError:
             return JsonResponse({'msg': 'Failed To Load JSON Data...'})

@@ -287,7 +287,10 @@ statuses = {
 fetchType = {
     'posts': {
         'main': 'main',
-        'home': 'home'
+        'home': 'home',
+        'user': 'user',
+        'group': 'group',
+        'account': 'account'
     }
 }
 

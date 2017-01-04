@@ -88,6 +88,14 @@ $(document).ready(function(){
 		}, 1000);
 	}
 
+
+
+	// window.checkLoginState = function(){
+	// 	if(window.you == undefined || (window.you == null) {
+	//     location.href = '/login';
+	//   }
+	// }
+
 });
 
 //

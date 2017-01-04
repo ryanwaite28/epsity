@@ -19,19 +19,17 @@
   {% if you != None %}
     <script src="/static/js/controllers/profile-home-ctrl.js"></script>
     <script src="/static/js/controllers/new-posts-ctrl.js"></script>
+    <script src="/static/js/controllers/messages-ctrl.js"></script>
   {% else %}
-    <script src="/static/js/controllers/user-page-ctrl.js"></script>
+    <!-- <script src="/static/js/controllers/user-page-ctrl.js"></script> -->
   {% endif %}
 
-  <script src="/static/js/controllers/messages-ctrl.js"></script>
+  <!--  -->
 </head>
 
 
-    {% if you != None %}
-      <body ng-app="epsityApp" ng-controller="profileHomeCtrl" class="transition">
-    {% else %}
-      <body ng-app="epsityApp" ng-controller="userPageCtrl" class="transition">
-    {% endif %}
+    <body ng-app="epsityApp" ng-controller="userPageCtrl" class="transition">
+
 
     {% if you != None %}
       {% include 'topbar-1.html' %}
@@ -61,7 +59,7 @@
                     <li id="prof-bio-ctrl" class="switch-div-ctrl"><strong>Bio</strong></li>
                     <li id="prof-info-ctrl" class="switch-div-ctrl"><strong>Info</strong></li>
                     <br>
-                    <li id="prof-sendmsg-ctrl" class="switch-div-ctrl"><strong>Send Message</strong></li>
+                    {% if you != None %}<li id="prof-sendmsg-ctrl" class="switch-div-ctrl"><strong>Send Message</strong></li>{% endif %}
                   </ul>
                 </div>
               </div>
@@ -117,6 +115,7 @@
               </div>
             </div>
 
+            {% if you != None %}
             <div class="col-sm-4 switch-div" id="prof-sendmsg-div" ng-controller="messagesCtrl">
               <div class="dim-3"></div>
               <div class="padd-1 mk-rel">
@@ -141,6 +140,7 @@
 
               </div>
             </div>
+            {% endif %}
           </div>
 
           <!-- Contents -->

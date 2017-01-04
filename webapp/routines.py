@@ -43,7 +43,7 @@ def getYou(request):
         return None
 
     try:
-        you = Accounts.objects.get(uname = request.session['username'])
+        you = Accounts.objects.filter(uname = request.session['username']).first()
         return you
 
 
@@ -51,6 +51,16 @@ def getYou(request):
         msg = 'User Account Not Found.'
         return errorPage(request, msg)
 
+
+def checkLoginState(request, data):
+    if 'username' not in request.session:
+        return JsonResponse({'msg':'false', 'state': False, 'you': None})
+
+
+    you = Accounts.objects.get(uname = request.session['username'])
+    return JsonResponse({'msg':'true', 'state': True, 'you': you.serialize})
+
+# ---
 
 def loadPost_A(post_id):
     if post_id == None or post_id == '':
@@ -232,37 +242,31 @@ def loadPost_B(post_id, you):
 
 # ---
 
-def loadPosts(id, you, msg):
-    if you == None:
+def loadPostsA(id, you, msg):
+    if msg == 'home':
+        posts = Posts.objects \
+        .filter( wall_id = you.id, wall_type = masterDICT['ownerTypes']['account'] ) \
+        .order_by('-date_created')[:20]
+
+    elif msg == 'main':
+        following = Follows.objects.filter(userid=you.id)
+        posts = Posts.objects \
+        .exclude(wall_type = masterDICT['ownerTypes']['group']) \
+        .filter( Q( ownerid = you.id ) | Q(ownerid__in = [f.follow_id for f in following]) ) \
+        .order_by('-date_created')[:20]
+
+    elif msg == 'user':
+        posts = Posts.objects \
+        .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['account'] ) \
+        .order_by('-date_created')[:20]
+
+    elif msg == 'group':
         posts = Posts.objects \
         .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['group'] ) \
         .order_by('-date_created')[:20]
 
     else:
-        if msg == 'home':
-            posts = Posts.objects \
-            .filter( wall_id = you.id, wall_type = masterDICT['ownerTypes']['account'] ) \
-            .order_by('-date_created')[:20]
-
-        elif msg == 'main':
-            following = Follows.objects.filter(userid=you.id)
-            posts = Posts.objects \
-            .exclude(wall_type = masterDICT['ownerTypes']['group']) \
-            .filter( Q( ownerid = you.id ) | Q(ownerid__in = [f.follow_id for f in following]) ) \
-            .order_by('-date_created')[:20]
-
-        elif msg == 'user':
-            posts = Posts.objects \
-            .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['account'] ) \
-            .order_by('-date_created')[:20]
-
-        elif msg == 'group':
-            posts = Posts.objects \
-            .filter( wall_id = id, wall_type = masterDICT['ownerTypes']['group'] ) \
-            .order_by('-date_created')[:20]
-
-        else:
-            return None
+        return None
 
 
     posts = [p.serialize for p in posts]
@@ -352,6 +356,74 @@ def loadPosts(id, you, msg):
 
                 r['likes'] = likes
 
+
+            c['replies'] = replies
+
+        p['comments'] = comments
+
+
+    return posts
+
+# ---
+
+def loadPostsB(wall_id, wall_type):
+    posts = Posts.objects \
+    .filter( wall_id = wall_id, wall_type = wall_type ) \
+    .order_by('-date_created')[:20]
+
+    posts = [p.serialize for p in posts]
+
+    for p in posts:
+        p['content_type'] = masterDICT['contentTypes']['post']
+        p['like_status'] = masterDICT['statuses']['like']['not_liked']
+        p['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+    # ---
+
+        likes = len( Likes.objects.filter \
+        (item_type=masterDICT['contentTypes']['post'], item_id=p['p_id']) )
+        p['likes'] = likes
+
+        comments_len = len( Comments.objects.filter(post_id=p['p_id']) )
+        p['comments_len'] = comments_len
+
+        comments = Comments.objects \
+        .filter(post_id=p['p_id']).order_by('date_created')[:10]
+
+        comments = [c.serialize for c in comments]
+        for c in comments:
+            c['content_type'] = masterDICT['contentTypes']['comment']
+            c['like_status'] = masterDICT['statuses']['like']['not_liked']
+            c['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+
+            likes = len( Likes.objects \
+            .filter(item_type=masterDICT['contentTypes']['comment'],
+                    item_id=c['comment_id']) )
+
+            c['likes'] = likes
+
+            replies_len = len( Replies.objects \
+            .filter(comment_id=c['comment_id']) )
+            c['replies_len'] = replies_len
+
+            replies = Replies.objects \
+            .filter(comment_id=c['comment_id']) \
+            .order_by('date_created')[:5]
+
+            replies = [r.serialize for r in replies]
+            for r in replies:
+                r['content_type'] = masterDICT['contentTypes']['reply']
+                r['like_status'] = masterDICT['statuses']['like']['not_liked']
+                r['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+
+
+                likes = len( Likes.objects \
+                .filter(item_type=masterDICT['contentTypes']['reply'],
+                        item_id=r['reply_id']) )
+
+                r['likes'] = likes
 
             c['replies'] = replies
 
@@ -1969,6 +2041,10 @@ def createPost(request):
     # print '--- Path: ', request.POST['origin']
     try:
         you = getYou(request)
+        if you == None:
+            return genericPage(request = request,
+                                msg = 'Please Log In To Use The Site.',
+                                redirect = '/login/')
 
         # ----- #
 
@@ -2028,6 +2104,11 @@ def createPost(request):
 def addPostCommentUser(request, data):
     try:
         you = getYou(request)
+        if you == None:
+            return genericPage(request = request,
+                                msg = 'Please Log In To Use The Site.',
+                                redirect = '/login/')
+
         post = Posts.objects.filter(id =  data['info']['post_id']).first()
 
         if post == None:
@@ -2070,6 +2151,11 @@ def addPostCommentUser(request, data):
 def addCommentReplyUser(request, data):
     try:
         you = getYou(request)
+        if you == None:
+            return genericPage(request = request,
+                                msg = 'Please Log In To Use The Site.',
+                                redirect = '/login/')
+
         comment = Comments.objects \
         .filter(id =  data['info']['comment_id']).first()
 
@@ -2112,6 +2198,11 @@ def addCommentReplyUser(request, data):
 def likeContent(request, data):
     try:
         you = getYou(request)
+        if you == None:
+            return genericPage(request = request,
+                                msg = 'Please Log In To Use The Site.',
+                                redirect = '/login/')
+
         likeMeter = int(data['info']['likes'])
 
         newLike = Likes(ownerid = you.id,
