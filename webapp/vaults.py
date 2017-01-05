@@ -95,6 +95,9 @@ StarType = (
 pages = {
     'welcome': 'welcome.html',
     'discoverView': 'discover-1.html',
+    'newestView': 'newest-1.html',
+    'trendingView': 'trending-1.html',
+    'featuredView': 'featured-1.html',
     'error': 'error.html',
     'generic': 'generic-1.html',
     'login': 'login.html',

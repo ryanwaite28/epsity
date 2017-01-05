@@ -4,6 +4,17 @@ body {
   background-color: #f2f2f2;
 }
 
+.ul-s1 {
+
+}
+.ul-s1 li {
+  display: block;
+  padding: 10px 5px;
+}
+.ul-s1 li:hover {
+  background: lightgrey;
+}
+
 #arrow-1 {
   line-height: 40px;
   vertical-align: middle;
@@ -543,6 +554,11 @@ body {
   height: 150px;
 }
 
+#fixed-box-1 {
+  position: fixed;
+  width: 215px;
+}
+
 /* --- */
 /* --- */
 /* --- */
@@ -551,6 +567,10 @@ body {
 
   #prof-sidebar2 {
     float: none;
+  }
+  #fixed-box-1 {
+    position: relative;
+    width: auto;
   }
 
 }

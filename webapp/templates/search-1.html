@@ -16,7 +16,7 @@
   <!-- <script src="/static/js/controllers/follow-ctrl.js"></script> -->
 
   <script src="/static/js/controllers/search-ctrl.js"></script>
-  
+
   {% if you != None %}
   <script src="/static/js/profile.js"></script>
   <script src="/static/js/controllers/profile-main-ctrl.js"></script>
@@ -51,7 +51,7 @@
                 <p class="text-center">{{ you.displayname }}</p>
               </div>
               {% endif %}
-              <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
+              <div id="fixed-box-1" class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <h3 class="text-center">Search</h3>
                 <br>
                 <input style="width: 375px; max-width: 90%;" type="text" class="middlr input-t-s1" placeholder="Search..." ng-model="searchQuery"/><br>

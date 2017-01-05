@@ -17,9 +17,15 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_protect
 
 from WebTools import randomVal, processImage
-from models import Accounts, Groups, GroupMembers, Follows, FollowRequests
-from models import GroupRequests, GroupInvitations
-from models import Posts, Comments, Replies, Likes, Events
+
+import models
+from models import Accounts, AviModel, WpModel, Groups, GroupMembers
+from models import Follows, FollowRequests
+from models import GroupRequests, GroupInvitations, Messages, MessageReply
+from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
+from models import Posts, Comments, Replies, Likes, Events, EventAttendees
+from models import Conversations, ConvoMembers, ConvoMessages
+from models import Products, Services, Transactions, Feedback
 
 # from forms import PostForm
 
@@ -60,18 +66,7 @@ def login(request):
 
 @csrf_protect
 def logout(request):
-    if request.method == 'POST':
-        try:
-            del request.session['username']
-            del request.session['email']
-            request.session.flush()
-
-            return redirect('/')
-
-        except KeyError:
-            pass
-
-    if request.method == 'GET':
+    if request.method == 'GET' or request.method == 'POST':
         try:
             del request.session['username']
             del request.session['email']
@@ -110,6 +105,114 @@ def discoverView(request):
                         masterDICT['pages']['discoverView'],
                         {'error': "",
                         'you': you
+                        },
+                        context_instance = RequestContext(request))
+
+    if request.method == 'POST':
+        return None
+
+# ---
+
+@csrf_protect
+def newestView(request):
+    if request.method == 'GET':
+        if 'username' in request.session:
+            you = getYou(request)
+        else:
+            you = None
+
+        posts = [z.serialize for z in Posts.objects.all().order_by('-date_created')[:10]]
+        users = [z.serialize for z in Accounts.objects.all().order_by('-date_created')[:10]]
+        groups = [z.serialize for z in Groups.objects.all().order_by('-date_created')[:10]]
+        events = [z.serialize for z in Events.objects.all().order_by('-date_created')[:10]]
+        products = [z.serialize for z in Products.objects.all().order_by('-date_created')[:10]]
+        services = [z.serialize for z in Services.objects.all().order_by('-date_created')[:10]]
+
+        # print posts, users, groups, events, products, services
+        # print ' '
+
+        return render(request,
+                        masterDICT['pages']['newestView'],
+                        {'error': "",
+                        'you': you,
+                        'posts': posts,
+                        'users': users,
+                        'groups': groups,
+                        'events': events,
+                        'products': products,
+                        'services': services,
+                        },
+                        context_instance = RequestContext(request))
+
+    if request.method == 'POST':
+        return None
+
+# ---
+
+@csrf_protect
+def featuredView(request):
+    if request.method == 'GET':
+        if 'username' in request.session:
+            you = getYou(request)
+        else:
+            you = None
+
+        posts = [z.serialize for z in Posts.objects.all().order_by('-date_created')[:10]]
+        users = [z.serialize for z in Accounts.objects.all().order_by('-date_created')[:10]]
+        groups = [z.serialize for z in Groups.objects.all().order_by('-date_created')[:10]]
+        events = [z.serialize for z in Events.objects.all().order_by('-date_created')[:10]]
+        products = [z.serialize for z in Products.objects.all().order_by('-date_created')[:10]]
+        services = [z.serialize for z in Services.objects.all().order_by('-date_created')[:10]]
+
+        # print posts, users, groups, events, products, services
+        # print ' '
+
+        return render(request,
+                        masterDICT['pages']['featuredView'],
+                        {'error': "",
+                        'you': you,
+                        'posts': posts,
+                        'users': users,
+                        'groups': groups,
+                        'events': events,
+                        'products': products,
+                        'services': services,
+                        },
+                        context_instance = RequestContext(request))
+
+    if request.method == 'POST':
+        return None
+
+# ---
+
+@csrf_protect
+def trendingView(request):
+    if request.method == 'GET':
+        if 'username' in request.session:
+            you = getYou(request)
+        else:
+            you = None
+
+        posts = [z.serialize for z in Posts.objects.all().order_by('-date_created')[:10]]
+        users = [z.serialize for z in Accounts.objects.all().order_by('-date_created')[:10]]
+        groups = [z.serialize for z in Groups.objects.all().order_by('-date_created')[:10]]
+        events = [z.serialize for z in Events.objects.all().order_by('-date_created')[:10]]
+        products = [z.serialize for z in Products.objects.all().order_by('-date_created')[:10]]
+        services = [z.serialize for z in Services.objects.all().order_by('-date_created')[:10]]
+
+        # print posts, users, groups, events, products, services
+        # print ' '
+
+        return render(request,
+                        masterDICT['pages']['trendingView'],
+                        {'error': "",
+                        'you': you,
+                        'posts': posts,
+                        'users': users,
+                        'groups': groups,
+                        'events': events,
+                        'products': products,
+                        'services': services,
                         },
                         context_instance = RequestContext(request))
 
@@ -530,26 +633,20 @@ def eventView(request, query):
         else:
             you = getYou(request)
 
-            event = Events.objects.filter(id = query).first()
-            if event == None:
-                msg = 'Event Not Found.'
-                return errorPage(request, msg)
-
-            event = event.serialize
-            event['categories'] = ', '.join( event['categories'].split(' ') )
-            # print event['categories']
-
-        try:
-            return render(request,
-                            masterDICT['pages']['eventview'],
-                            {'you': you,
-                            'event': event,
-                            'message': ''},
-                            context_instance = RequestContext(request))
-
-        except ObjectDoesNotExist:
-            msg = 'User Account Not Found.'
+        event = Events.objects.filter(id = query).first()
+        if event == None:
+            msg = 'Event Not Found.'
             return errorPage(request, msg)
+
+        event = event.serialize
+        event['categories'] = ', '.join( event['categories'].split(' ') )
+
+        return render(request,
+                        masterDICT['pages']['eventview'],
+                        {'you': you,
+                        'event': event,
+                        'message': ''},
+                        context_instance = RequestContext(request))
 
 # ---
 

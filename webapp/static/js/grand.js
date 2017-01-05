@@ -88,13 +88,13 @@ $(document).ready(function(){
 		}, 1000);
 	}
 
+	var widthOne = $('#fixed-box-1').parent().width();
+	$('#fixed-box-1').css('width', widthOne);
 
-
-	// window.checkLoginState = function(){
-	// 	if(window.you == undefined || (window.you == null) {
-	//     location.href = '/login';
-	//   }
-	// }
+	$(window).resize(function(){
+		var widthOne = $('#fixed-box-1').parent().width();
+		$('#fixed-box-1').css('width', widthOne);
+	});
 
 });
 
