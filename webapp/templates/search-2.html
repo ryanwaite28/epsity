@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Epsity | Search</title>
+  <title>Epsity | Search Results</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% load staticfiles %}
@@ -14,8 +14,10 @@
   <link rel="icon" size="20x20" href="/static/img/logo-2.png"/>
   <script src="/static/js/grand.js"></script>
   <!-- <script src="/static/js/controllers/follow-ctrl.js"></script> -->
-
-  <script src="/static/js/controllers/search-ctrl.js"></script>
+  <script>
+    window.data = {% autoescape off %}{{ dataJSON }}{% endautoescape %};
+  </script>
+  <script src="/static/js/controllers/search-results-ctrl.js"></script>
 
   {% if you != None %}
   <script src="/static/js/profile.js"></script>
@@ -53,9 +55,6 @@
               {% endif %}
               <div id="fixed-box-1" class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
                 <h3 class="text-center">Search</h3>
-                <br>
-                <input style="width: 375px; max-width: 90%;" type="text" class="middlr input-t-s1" placeholder="Search..." ng-model="searchQuery"/><br>
-                <input type="button" class="middlr transition btn btn-info" value="Submit" ng-click="submitSearch()"/>
                 <hr class="hr-grey">
                 <ul class="transition text-center ul-raw ul-s1">
                   <li role="presentation"><a href="#users-pane">Users</a></li>
@@ -63,6 +62,7 @@
                   <li role="presentation"><a  href="#events-pane">Events</a></li>
                   <li role="presentation"><a  href="#products-pane">Products</a></li>
                   <li role="presentation"><a href="#services-pane">Services</a></li>
+                  <li role="presentation"><a href="#posts-pane">Posts</a></li>
                 </ul>
               </div>
             </div>
@@ -168,6 +168,34 @@
                     </div>
                   </li>
                 </ul>
+              </div>
+
+              <br>
+
+              <div id="posts-pane" class="padd-1 mk-rel sdw-1 sbm-1 bg-white" style="overflow: hidden;">
+                <p class="text-center p-emp-1"><strong>Posts</strong></p>
+                <hr class="hr-grey">
+
+                <div class="row sbm-1" ng-repeat="p in srPosts">
+                  <div class="col-md-12">
+                    <div class="bg-grey-2 padd-2 ovf-h brd-bl">
+                      <div class="col-md-2">
+                        <img width="100px" class="middlr" src="{[ p.owner.avi ]}"/>
+                        <p class="text-center"><a title="See {[ p.owner.uname ]} Page" href="/users/{[ p.owner.uname ]}"><strong>{[ p.owner.uname ]}</strong></a></p>
+                      </div>
+                      <div class="col-md-9">
+                        <h4><strong>{[ p.title ]}</strong></h4>
+                        <p>{[ p.contents ]}</p>
+                        <br>
+                        <p class="text-sm-1"><span id="post-link"><strong><a title="See Whole Post" href="/posts/{[ p.p_id ]}">See Whole Post</a></strong></span></p>
+                        <p><a title="Post Link" href="{[ p.link ]}">{[ p.link != '' ? p.link : '' ]}</a></p>
+                        <br>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
 

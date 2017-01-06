@@ -3,47 +3,14 @@
 App.controller('searchCtrl', ['$scope', '$http', function($scope, $http) {
 
   window.scope = $scope;
+  console.log(window.data);
 
-  //
-
-  $scope.submitSearch = function() {
-    if( $scope.searchQuery == '' ) {
-      return;
-    }
-    else if( !alphaNumeric.test($scope.searchQuery) ) {
-      alert('Alphanumeric Query Only (Letters & Numbers).');
-      return;
-    }
-
-    var req = {
-      method: 'POST',
-      url: '/search/',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken')
-      },
-      data: {
-        action: 'search query',
-        query: $scope.searchQuery,
-        csrfmiddlewaretoken: Cookies.get('csrftoken'),
-      }
-    }
-    $http(req).then(function(resp){
-      // Success Callback
-      console.log(resp);
-
-      $scope.srUsers = resp.data.users;
-      $scope.srGroups = resp.data.groups;
-      $scope.srEvents = resp.data.events;
-      $scope.srProducts = resp.data.products;
-      $scope.srServices = resp.data.services;
-    },
-    function(resp){
-      // Error Callback
-      console.log(resp);
-    });
-
-  }
+  $scope.srUsers = window.data.users;
+  $scope.srGroups = window.data.groups;
+  $scope.srEvents = window.data.events;
+  $scope.srProducts = window.data.products;
+  $scope.srServices = window.data.services;
+  $scope.srPosts = window.data.posts;
 
   //
 

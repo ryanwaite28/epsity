@@ -24,7 +24,7 @@ from models import Follows, FollowRequests
 from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
 from models import Posts, Comments, Replies, Likes, Events, EventAttendees
-from models import Conversations, ConvoMembers, ConvoMessages
+from models import Conversations, ConvoMembers, ConvoMessages, ShareContent
 from models import Products, Services, Transactions, Feedback
 
 # from forms import PostForm
@@ -213,6 +213,64 @@ def trendingView(request):
                         'events': events,
                         'products': products,
                         'services': services,
+                        },
+                        context_instance = RequestContext(request))
+
+    if request.method == 'POST':
+        return None
+
+# ---
+
+@csrf_protect
+def productView(request, query):
+    if request.method == 'GET':
+        if 'username' in request.session:
+            you = getYou(request)
+        else:
+            you = None
+
+        product = Products.objects.filter(id = query).first()
+        if product == None:
+            msg = 'Product Not Found.'
+            return errorPage(request, msg)
+
+        product = product.serialize
+        product['categories'] = '; '.join( product['categories'].split(';') )
+
+        return render(request,
+                        masterDICT['pages']['productView'],
+                        {'error': "",
+                        'you': you,
+                        'product': product
+                        },
+                        context_instance = RequestContext(request))
+
+    if request.method == 'POST':
+        return None
+
+# ---
+
+@csrf_protect
+def serviceView(request, query):
+    if request.method == 'GET':
+        if 'username' in request.session:
+            you = getYou(request)
+        else:
+            you = None
+
+        service = Services.objects.filter(id = query).first()
+        if service == None:
+            msg = 'Service Not Found.'
+            return errorPage(request, msg)
+
+        service = service.serialize
+        service['categories'] = '; '.join( service['categories'].split(';') )
+
+        return render(request,
+                        masterDICT['pages']['serviceView'],
+                        {'error': "",
+                        'you': you,
+                        'service': service
                         },
                         context_instance = RequestContext(request))
 
@@ -517,13 +575,52 @@ def searchEngine(request):
         data = json.loads(request.body)
 
         if data['action'] == 'search query':
-            return routines.searchEngine(request)
+            return routines.searchEngine(request, data)
 
         if data['action'] == 'searchUsers':
-            return routines.searchUsers(request)
+            return routines.searchUsers(request, data)
 
         if data['action'] == 'search for members':
-            return routines.searchForMembers(request)
+            return routines.searchForMembers(request, data)
+
+# ---
+
+@csrf_protect
+def searchResults(request, query):
+    if request.method == 'GET':
+        try:
+            if 'username' in request.session:
+                you = getYou(request)
+            else:
+                you = None
+
+            info = routines.searchEngine(request, {'query': query})
+            data = json.loads(str(info).replace("Content-Type: application/json", ""))
+            posts = Posts.objects.filter(title__contains = query)[:10]
+            posts = [p.serialize for p in posts]
+            data['posts'] = posts
+            dataJSON = json.dumps(data)
+
+            return render(request,
+                            masterDICT['pages']['searchView'],
+                            {'you': you,
+                            'dataJSON': dataJSON,
+                            'users': data['users'],
+                            'groups': data['groups'],
+                            'events': data['events'],
+                            'products': data['products'],
+                            'services': data['services'],
+                            'posts': data['posts'],
+                            },
+                            context_instance = RequestContext(request))
+
+        except ObjectDoesNotExist:
+            msg = 'User Account Not Found.'
+            return errorPage(request, msg)
+
+
+    if request.method == 'POST':
+        return None
 
 # ---
 

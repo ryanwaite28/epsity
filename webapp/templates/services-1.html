@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Epsity | Event - {{ event.name }}</title>
+  <title>Epsity | Service - {{ service.name }}</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% load staticfiles %}
@@ -51,28 +51,24 @@
 
             <div class="col-md-6 col-md-offset-3">
               <div class="padd-1 mk-rel sdw-1 sbm-1 bg-white">
-                <h2 class="text-center">{{ event.name }}</h2>
-                <img class="middlr sbm-1 polaroid-3 max-w" src="{{ event.attachment }}"/>
+                <h2 class="text-center">{{ service.name }}</h2>
+                <img class="middlr sbm-1 polaroid-3 max-w" src="{{ service.attachment }}"/>
                 <hr class="hr-grey">
                 <p>
-                  <strong>Name: </strong>{{ event.name }}<br>
-                  <strong>Description: </strong>{{ event.desc }}<br>
+                  <strong>Service Owner: </strong><a title="See Profile" href="/users/{{ service.owner.uname }}">{{ service.owner.uname }}</a><br>
                 </p>
                 <hr>
                 <p>
-                  <strong>Place: </strong>{{ event.place }}<br>
-                  <strong>Location: </strong>{{ event.location }}<br>
-                </p>
-                <p>
-                  <strong>Start: </strong>{{ event.start_full }}<br>
-                  <strong>End: </strong>{{ event.end_full }}<br>
+                  <strong>Name: </strong>{{ service.name }}<br>
+                  <strong>Description: </strong>{{ service.desc }}<br>
                 </p>
                 <hr>
                 <p>
-                  <strong>Categories: </strong>{{ event.categories }}
-                </p><br>
+                  <strong>Price: </strong>${{ service.price }}
+                </p>
+                <hr>
                 <p>
-                  <strong>Attendees: </strong>{{ event.attendees|length }}
+                  <strong>Categories: </strong>{{ service.categories }}
                 </p>
               </div>
             </div>

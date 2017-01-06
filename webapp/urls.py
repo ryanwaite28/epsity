@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^featured/$', views.featuredView, name='featuredview'),
     url(r'^trending/$', views.trendingView, name='trendingview'),
     url(r'^search/$', views.searchEngine, name='search'),
+    url(r'^search/results/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.searchResults, name='searchresults'),
 
     url(r'^error/$', views.errorPage, name='error_page'),
     url(r'^login/$', views.login, name='login'),
@@ -36,6 +37,8 @@ urlpatterns = [
 
     url(r'^events/$', views.eventsView, name='eventsview'),
     url(r'^events/(?P<query>[0-9]+)/$', views.eventView, name='eventview'),
+    url(r'^products/(?P<query>[0-9]+)/$', views.productView, name='productview'),
+    url(r'^services/(?P<query>[0-9]+)/$', views.serviceView, name='serviceview'),
     url(r'^users/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.userPage, name='userpage'),
     #url(r'^users/(?P<query>[a-zA-Z0-9\-\_]+)/groupmember/$', views.userGroupMember, name='usergroupmember'),
     url(r'^groups/(?P<query>[a-zA-Z0-9\-\_]+)/$', views.groupPage, name='grouppage'),

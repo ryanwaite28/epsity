@@ -79,8 +79,12 @@ AttachmentTypes = (
 )
 
 ItemType = (
+    ('Account', 'Account'),
+    ('Group', 'Group'),
     ('Product', 'Product'),
     ('Service', 'Service'),
+    ('Event', 'Event'),
+    ('Post', 'Post'),
 )
 
 StarType = (
@@ -107,9 +111,12 @@ pages = {
     'mySettings': 'user-settings.html',
     'eventsview': 'events-1.html',
     'eventview': 'events-2.html',
+    'productView': 'products-1.html',
+    'serviceView': 'services-1.html',
     'messagesView': 'messages-1.html',
     'conversationsView': 'conversations-1.html',
     'searchEngine': 'search-1.html',
+    'searchView': 'search-2.html',
     'dashboard': 'profile-main.html',
     'profileHome': 'profile-home.html',
     'UserPage': 'user-page-view.html',
@@ -305,6 +312,15 @@ starType = {
     'Five': 'Five'
 }
 
+itemTypes = {
+    'account': 'Account',
+    'group': 'Group',
+    'product': 'Product',
+    'service': 'Service',
+    'event': 'Event',
+    'post': 'Post'
+}
+
 # Master Dictionary
 masterDICT = {
     'pages': pages,
@@ -319,7 +335,8 @@ masterDICT = {
     'contentTypes': contentTypes,
     'statuses': statuses,
     'fetchType': fetchType,
-    'starType': starType
+    'starType': starType,
+    'itemTypes': itemTypes
 }
 
 # --- #

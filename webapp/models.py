@@ -7,6 +7,7 @@
 from __future__ import unicode_literals
 
 import datetime
+from datetime import datetime, timedelta
 
 import random, string, os, paramiko
 from django import forms
@@ -173,6 +174,57 @@ class Accounts(models.Model):
 # --- #
 
 
+class Featured(models.Model):
+    '''
+    For Features
+    ------------
+
+    There Can Only Be A Max Of:
+    - 10 Features Per Day
+    - 10 Features Per Week
+    - 10 Features Per Month
+
+    '''
+
+    OwnerType = vaults.OwnerType
+    ItemType = vaults.ItemType
+
+    # ---
+
+    ownerid = models.IntegerField(blank = False, default = 0)
+    owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
+
+    item_id = models.IntegerField(blank = False, default = 0)
+    item_type = models.CharField(choices = ItemType, blank = False, default = '', max_length = 50)
+
+    duration = models.IntegerField(blank = False, default = 0)
+    # Number Of Days
+
+    date_started = models.DateTimeField( default = timezone.now )
+    date_end = models.DateTimeField( )
+
+    last_active = models.DateTimeField(auto_now=True)
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'gid': self.id,
+            'displayname': self.displayname,
+            'uname': self.uname,
+            'desc': self.desc,
+            'avi': self.avi,
+            'background': self.background,
+            'categories': self.categories.split(';'),
+            'owner': self.owner_rel.serialize
+        }
+
+    class Meta:
+        db_table = "featured"
+
+# ---
+
+
 class Groups(models.Model):
 
     owner_rel = models.ForeignKey(Accounts, default = 0, related_name = "group_owner")
@@ -229,8 +281,8 @@ class GroupInvitations(models.Model):
             'group_rel': self.group_rel.serialize,
             'userid': self.userid,
             'user_rel': self.user_rel.serialize,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
             #'linkName': self.bio_link_name,
         }
 
@@ -260,8 +312,8 @@ class GroupRequests(models.Model):
             'group_rel': self.group_rel.serialize,
             'userid': self.userid,
             'user_rel': self.user_rel.serialize,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
             #'linkName': self.bio_link_name,
         }
 
@@ -292,8 +344,8 @@ class GroupMembers(models.Model):
             'group_rel': self.group_rel.serialize,
             'userid': self.userid,
             'user_rel': self.user_rel.serialize,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
             #'linkName': self.bio_link_name,
         }
 
@@ -324,7 +376,7 @@ class GroupFavorites(models.Model):
             'user': self.user_rel.serialize,
             'groupid': self.group_id,
             'group_rel': self.group_rel.serialize,
-            'date_created': self.date_created
+            'date_created': str(self.date_created)
         }
 
     class Meta:
@@ -354,7 +406,7 @@ class Follows(models.Model):
             'user': self.user_rel.serialize,
             'followid': self.follow_id,
             'follow': self.follow_rel.serialize,
-            'date_created': self.date_created
+            'date_created': str(self.date_created)
             #'linkName': self.bio_link_name,
         }
 
@@ -386,7 +438,7 @@ class FollowRequests(models.Model):
             'recipientid': self.recipient_id,
             'recipient_rel': self.recipient_rel.serialize,
             'msg': self.msg,
-            'date_created': self.date_created
+            'date_created': str(self.date_created)
             #'linkName': self.bio_link_name,
         }
 
@@ -396,6 +448,27 @@ class FollowRequests(models.Model):
 # ------- #
 # ------- #
 
+class ShareContent(models.Model):
+    OwnerType = vaults.OwnerType
+    ItemType = vaults.ItemType
+
+    # --- #
+
+    item_id = models.IntegerField(blank = False, default = 0)
+    item_type = models.CharField(choices = ItemType, blank = False, default = '', max_length = 50)
+
+    from_id = models.IntegerField(blank = False, default = 0)
+    from_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False)
+
+    ownerid = models.IntegerField(blank = False, default = 0, related_name = "share_owner")
+    owner_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False)
+
+
+    class Meta:
+        db_table = "sharecontent"
+
+# --- #
+# --- #
 
 class Posts(models.Model):
     OwnerType = vaults.OwnerType
@@ -441,9 +514,21 @@ class Posts(models.Model):
             'link': self.link,
             'post_type': self.post_type,
             'status': self.status,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
+
+    @property
+    def likes_len(self):
+        return len(Likes.objects.filter(item_id = self.id, item_type = 'Post'))
+
+    @property
+    def comments_len(self):
+        return len(Comments.objects.filter(post_id = self.id))
+
+    @property
+    def comments(self):
+        return [c.serialize for c in Comments.objects.filter(post_id = self.id)]
 
     class Meta:
         db_table = "posts"
@@ -481,9 +566,21 @@ class Comments(models.Model):
             'contents': self.contents,
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
+
+    @property
+    def likes_len(self):
+        return len(Likes.objects.filter(item_id = self.id, item_type = 'Comment'))
+
+    @property
+    def replies_len(self):
+        return len(Replies.objects.filter(comment_id = self.id))
+
+    @property
+    def replies(self):
+        return [r.serialize for r in Replies.objects.filter(comment_id = self.id)]
 
     class Meta:
         db_table = "comments"
@@ -521,9 +618,13 @@ class Replies(models.Model):
             'contents': self.contents,
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
+
+    @property
+    def likes_len(self):
+        return len(Likes.objects.filter(item_id = self.id, item_type = 'Reply'))
 
     class Meta:
         db_table = "replies"
@@ -555,8 +656,8 @@ class Likes(models.Model):
             'owner_type': self.owner_type,
             'item_type': self.item_type.serialize,
             'item_id': self.item_id,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
 
     class Meta:
@@ -620,8 +721,8 @@ class Events(models.Model):
             'end_full': self.end_full,
             'status': self.status,
             'attendees': [a.serialize for a in EventAttendees.objects.filter(event_id = self.id)],
-            'date_created': self.date_created,
-            'last_active': self.last_active,
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active),
         }
 
     @property
@@ -642,7 +743,7 @@ class Events(models.Model):
             'end_full': self.end_full,
             'status': self.status,
             'attendees': len(EventAttendees.objects.filter(event_id = self.id)),
-            'date_created': self.date_created,
+            'date_created': str(self.date_created),
         }
 
     class Meta:
@@ -675,8 +776,8 @@ class EventAttendees(models.Model):
             'attendee': returnModelSerialized( self.attendee_type, self.attendee_id ),
             'attendee_id': self.attendee_id,
             'attendee_type': self.attendee_type,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
 
     class Meta:
@@ -703,8 +804,8 @@ class Conversations(models.Model):
             'owner': self.owner.serialize,
             'ownerid': self.ownerid,
             'name': self.name,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
 
     class Meta:
@@ -767,7 +868,7 @@ class ConvoMessages(models.Model):
             'contents': self.contents,
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,
-            'date_created': self.date_created,
+            'date_created': str(self.date_created),
         }
 
     class Meta:
@@ -801,7 +902,7 @@ class Notifications(models.Model):
             'recipient_rel': self.recipient_rel.serialize,
             'text': self.text,
             'link': self.link,
-            'date_created': self.date_created
+            'date_created': str(self.date_created)
         }
 
     class Meta:
@@ -830,8 +931,8 @@ class Messages(models.Model):
             'userA_rel': self.userA_rel.serialize,
             'userB_id': self.userB_id,
             'userB_rel': self.userB_rel.serialize,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
             #'linkName': self.bio_link_name,
         }
 
@@ -869,8 +970,8 @@ class MessageReply(models.Model):
             'contents': self.contents,
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
 
     class Meta:
@@ -921,8 +1022,8 @@ class Products(models.Model):
             'link': self.link,
             'categories': self.categories,
             'status': self.status,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
 
     class Meta:
@@ -968,8 +1069,8 @@ class Services(models.Model):
             'link': self.link,
             'categories': self.categories,
             'status': self.status,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
 
 
@@ -1014,8 +1115,8 @@ class Transactions(models.Model):
             'seller_rel': self.seller_rel.serialize,
             'note': self.note,
             'status': self.status,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
 
     class Meta:
@@ -1057,8 +1158,8 @@ class Feedback(models.Model):
             'customer_rel': self.customer_rel.serialize,
             'stars': self.stars,
             'msg': self.status,
-            'date_created': self.date_created,
-            'last_active': self.last_active
+            'date_created': str(self.date_created),
+            'last_active': str(self.last_active)
         }
 
 

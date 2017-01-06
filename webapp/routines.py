@@ -26,7 +26,7 @@ from models import Follows, FollowRequests
 from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
 from models import Posts, Comments, Replies, Likes, Events, EventAttendees
-from models import Conversations, ConvoMembers, ConvoMessages
+from models import Conversations, ConvoMembers, ConvoMessages, ShareContent
 from models import Products, Services, Transactions, Feedback
 
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
@@ -839,8 +839,7 @@ def updateWpFile(request):
         return errorPage(request, msg)
 
 
-def searchEngine(request):
-    data = json.loads(request.body)
+def searchEngine(request, data):
     you = getYou(request)
     # print data
 
@@ -852,28 +851,55 @@ def searchEngine(request):
 
     if you != None:
         users = Accounts.objects.exclude(id = you.id) \
-        .filter(uname__contains = data['query'])[:25]
+        .filter(uname__contains = data['query'])[:10]
 
         groups = Groups.objects \
         .exclude(ownerid = you.id) \
-        .filter(uname__contains = data['query'])[:25]
+        .filter(uname__contains = data['query'])[:10]
+
+        products = Products.objects \
+        .exclude(ownerid = you.id) \
+        .filter(name__contains = data['query'])[:10]
+
+        services = Services.objects \
+        .exclude(ownerid = you.id) \
+        .filter(name__contains = data['query'])[:10]
+
+        events = Events.objects \
+        .exclude(ownerid = you.id) \
+        .filter(name__contains = data['query'])[:10]
 
     else:
         users = Accounts.objects \
-        .filter(uname__contains = data['query'])[:25]
+        .filter(uname__contains = data['query'])[:10]
 
         groups = Groups.objects \
-        .filter(uname__contains = data['query'])[:25]
+        .filter(uname__contains = data['query'])[:10]
+
+        products = Products.objects \
+        .filter(name__contains = data['query'])[:10]
+
+        services = Services.objects \
+        .filter(name__contains = data['query'])[:10]
+
+        events = Events.objects \
+        .filter(name__contains = data['query'])[:10]
 
 
     users = [u.serialize for u in users]
     groups = [g.serialize for g in groups]
+    events = [e.serialize for e in events]
+    products = [p.serialize for p in products]
+    services = [s.serialize for s in services]
 
     if you == None:
         resp = {
             'msg': 'search query',
             'users': users,
-            'groups': groups
+            'groups': groups,
+            'events': events,
+            'products': products,
+            'services': services
         }
 
         return JsonResponse(resp)
@@ -943,15 +969,17 @@ def searchEngine(request):
     resp = {
         'msg': 'search query',
         'users': users,
-        'groups': groups
+        'groups': groups,
+        'events': events,
+        'products': products,
+        'services': services
     }
 
     return JsonResponse(resp)
 
 # ---
 
-def searchForMembers(request):
-    data = json.loads(request.body)
+def searchForMembers(request, data):
     you = getYou(request)
     group = Groups.objects.filter(id = data['gid']).first()
 
@@ -1016,8 +1044,7 @@ def searchForMembers(request):
 
 # ---
 
-def searchUsers(request):
-    data = json.loads(request.body)
+def searchUsers(request, data):
     you = getYou(request)
 
     if data['query'] == None:
@@ -2488,6 +2515,24 @@ def createService(request):
                             msg = 'New Service Created!',
                             redirect = request.POST['origin'])
 
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def buyProduct(request):
+    try:
+        you = getYou(request)
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def buyService(request):
+    try:
+        you = getYou(request)
 
     except ObjectDoesNotExist:
         msg = 'User Account Not Found.'
