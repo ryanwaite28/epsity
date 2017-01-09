@@ -60,10 +60,10 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
     var ref = new Firebase("https://the-travelr.firebaseio.com/");
     ref.authWithOAuthPopup("google", function(error, authData) {
       if (error) {
-    		console.log("Login Failed!", error);
+    		// console.log("Login Failed!", error);
     	}
     	else {
-    		console.log("Authenticated successfully with payload:", authData);
+    		// console.log("Authenticated successfully with payload:", authData);
         $('#s-msg').text('Google Info Loaded!');
         if( str == 'login' ) {
           $scope.gLogin(authData);
@@ -73,7 +73,7 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
           $scope.gSignUp(authData);
         }
         else {
-          console.log('str is undefined...');
+          // console.log('str is undefined...');
           return;
         }
   		}
@@ -86,10 +86,10 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
 		var ref = new Firebase("https://the-travelr.firebaseio.com/");
 		ref.authWithOAuthPopup("facebook", function(error, authData) {
   			if (error) {
-    			console.log("Login Failed!", error);
+    			// console.log("Login Failed!", error);
   			}
   			else {
-    			console.log("Authenticated successfully with payload:", authData);
+    			// console.log("Authenticated successfully with payload:", authData);
           $('#s-msg').text('Facebook Info Loaded!');
           if( str == 'login' ) {
             $scope.fbLogin(authData);
@@ -99,7 +99,7 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
             $scope.fbSignUp(authData);
           }
           else {
-            console.log('str is undefined...');
+            // console.log('str is undefined...');
             return;
           }
   			}
@@ -110,7 +110,7 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
   //
 
   $scope.login = function(str) {
-    console.log(str);
+    // console.log(str);
 
     if( str == 'facebook' ) {
       $scope.facebookInfo('login');
@@ -125,7 +125,7 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
   }
 
   $scope.signup = function(str) {
-    console.log(str);
+    // console.log(str);
 
     if( str == 'facebook' ) {
       $scope.facebookInfo('signup');
@@ -252,7 +252,7 @@ App.controller('welcomeCtrl', ['$scope', function($scope) {
       },
       statusCode: {
         500: function(data) {
-          console.log(data);
+          // console.log(data);
         }
       }
     });*/

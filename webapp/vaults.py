@@ -372,7 +372,7 @@ masterDICT = {
     'starType': starType,
     'itemTypes': itemTypes,
     'featuredStatus': featuredStatus,
-    'featuredType': featuredType
+    'featuredType': featuredType,
     'activeTypes': activeTypes
 }
 

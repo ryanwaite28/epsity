@@ -67,17 +67,15 @@ def login(request):
 
 @csrf_protect
 def logout(request):
-    if request.method == 'GET' or request.method == 'POST':
-        try:
-            del request.session['username']
-            del request.session['email']
-            request.session.flush()
+    try:
+        request.session.flush()
 
-            return redirect('/')
+        return redirect('/')
 
-        except KeyError:
-            pass
+    except ValueError, KeyError:
+        request.session.flush()
 
+        return redirect('/')
 # ---
 
 @csrf_protect
@@ -301,6 +299,12 @@ def dashboard(request):
                         msg = masterDICT['fetchType']['posts']['main'])
 
             # --- #
+
+            shareContents = ShareContent.objects \
+            .filter(ownerid = you.id) \
+            .order_by('-date_created')
+
+            print '--- shareContents --- ', shareContents
 
             suggestedGroups = []
             seeking = you.seeking.split(';')
@@ -596,7 +600,9 @@ def searchResults(request, query):
                 you = None
 
             info = routines.searchEngine(request, {'query': query})
+
             data = json.loads(str(info).replace("Content-Type: application/json", ""))
+
             posts = Posts.objects.filter(title__contains = query)[:10]
             posts = [p.serialize for p in posts]
             data['posts'] = posts
@@ -1044,6 +1050,9 @@ def userActionAJAX(request):
 
             if data['action'] == 'unlike':
                 return routines.unlikeContent(request, data)
+
+            if data['action'] == 'shareContent':
+                return routines.shareContent(request, data)
 
             # ---
 

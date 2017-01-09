@@ -77,9 +77,16 @@
                     <input class="input-t-s1 spacr-2" type="text" name="eventlocation" placeholder="Event Location..." ng-model="newEventLocation" disabled required/><br>
                     <input class="input-t-s1 spacr-2" type="text" name="eventlink" placeholder="Add a Link..." ng-model="newEventLink"/><br>
                     <textarea style="min-height: 150px;" class="input-t-s1 spacr-2" name="eventdescription" type="text" placeholder="Event Description..." ng-model="newEventDesc" required></textarea><br>
-                    <br>
+                    <hr>
+                    <div class="sbm-1 col-sm-12">
+                      <p class="text-center">
+                        <strong>Today:</strong><br>
+                        {[ todaySplitted[0] ]}, {[ todaySplitted[1] ]} {[ todaySplitted[2] ]}, {[ todaySplitted[3] ]}
+                      </p>
+                      <br>
+                    </div>
                     <div class="ovf-a padd-1 text-center">
-                      <div class="sbm-1 col-sm-6">
+                      <div class="sbm-1 padd-1 col-sm-6">
                         Start Date
                         <br>
                         <select name="startmonth">
@@ -91,7 +98,7 @@
                         <select name="startyear">
                           <option ng-repeat="y in years" value="{[ y ]}">{[ y ]}</option>
                         </select>
-                        <br>
+                        <br><br>
                         Start Time
                         <br>
                         <select name="starthour">
@@ -107,7 +114,7 @@
                         </select>
                       </div>
 
-                      <div class="sbm-1 col-sm-6">
+                      <div class="sbm-1 padd-1 col-sm-6">
                         End Date
                         <br>
                         <select name="endmonth">
@@ -119,7 +126,7 @@
                         <select name="endyear">
                           <option ng-repeat="y in years" value="{[ y ]}">{[ y ]}</option>
                         </select>
-                        <br>
+                        <br><br>
                         End Time
                         <br>
                         <select name="endhour">
@@ -135,7 +142,7 @@
                         </select>
                       </div>
                     </div>
-                    <br>
+                    <hr>
 
                     <input type="hidden" name="origin" value="" />
                     <input type="hidden" name="startfull" value="" />
@@ -159,7 +166,7 @@
 
                     <p class="text-center">Event Icon</p>
                     <input type="file" name="media" class="middlr transition btn btn-default" accept="image/*"/><br>
-                    <br>
+                    <hr>
 
                     <input class="middlr btn btn-info transition" type="button" value="Create" ng-click="createEvent()" />
                   </form>

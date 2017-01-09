@@ -588,8 +588,9 @@ def loginAccount(request):
                             context_instance=RequestContext(request))
 
         request.session['username'] = you.uname
-        request.session['id'] = you.id
+        request.session['usertype'] = masterDICT['ownerTypes']['account']
         request.session['email'] = you.email
+        request.session['id'] = you.id
 
         you.last_active = datetime.datetime.now()
         you.save( update_fields=['last_active'] )
@@ -640,8 +641,11 @@ def createAccount(request):
 
         newUser.save()
 
-        request.session['username'] = uname
-        request.session['email'] = email
+        request.session['username'] = newUser.uname
+        request.session['usertype'] = masterDICT['ownerTypes']['account']
+        request.session['email'] = newUser.email
+        request.session['id'] = newUser.id
+
 
         return redirect('/home/')
 
@@ -880,20 +884,16 @@ def searchEngine(request, data):
         users = Accounts.objects.exclude(id = you.id) \
         .filter(uname__contains = data['query'])[:10]
 
-        groups = Groups.objects \
-        .exclude(ownerid = you.id) \
+        groups = Groups.objects.exclude(ownerid = you.id) \
         .filter(uname__contains = data['query'])[:10]
 
-        products = Products.objects \
-        .exclude(ownerid = you.id) \
+        products = Products.objects.exclude(ownerid = you.id) \
         .filter(name__contains = data['query'])[:10]
 
-        services = Services.objects \
-        .exclude(ownerid = you.id) \
+        services = Services.objects.exclude(ownerid = you.id) \
         .filter(name__contains = data['query'])[:10]
 
-        events = Events.objects \
-        .exclude(ownerid = you.id) \
+        events = Events.objects.exclude(ownerid = you.id) \
         .filter(name__contains = data['query'])[:10]
 
     else:
@@ -2301,6 +2301,38 @@ def unlikeContent(request, data):
         ({'msg': 'content unliked',
             'likeMeter': likeMeter,
             'likeStatus': masterDICT['statuses']['like']['not_liked']})
+
+
+    except ObjectDoesNotExist:
+        msg = 'User Account Not Found.'
+        return errorPage(request, msg)
+
+
+def shareContent(request, data):
+    try:
+        you = getYou(request)
+
+        contentID = data['info']['contentID']
+        contentType = data['info']['contentType']
+        fromID = data['info']['fromID']
+        fromType = masterDICT['ownerTypes']['account'] #data['info']['fromType']
+
+        fromUser = Accounts.objects.filter(id = fromID).first()
+        if fromUser == None:
+            return JsonResponse \
+            ({'msg': 'Error Occurred'})
+
+        newShare = ShareContent(item_id = int(contentID),
+                                item_type = contentType,
+                                from_id = int(fromID),
+                                from_rel = fromUser,
+                                ownerid = you.id,
+                                owner_rel = you)
+
+        newShare.save()
+
+        return JsonResponse \
+        ({'msg': 'content shared', 'content': newShare.serialize})
 
 
     except ObjectDoesNotExist:

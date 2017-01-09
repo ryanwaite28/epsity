@@ -38,10 +38,10 @@ def randomUniqueValue():
 
 def returnModelSerialized(type, id):
     if id == None:
-        return 'error --- Missing id'
+        return None
 
     elif type == '' or type == None:
-        return 'error --- invalid type'
+        return None
 
 
 
@@ -68,7 +68,7 @@ def returnModelSerialized(type, id):
 
 
     else:
-        return 'error --- unknown type'
+        return None
 
 
 # --- ------ --- #
@@ -470,6 +470,20 @@ class ShareContent(models.Model):
     ownerid = models.IntegerField(blank = False, default = 0) # related_name = "share_owner"
     owner_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False, related_name = "share_owner")
 
+    date_created = models.DateTimeField( default = timezone.now )
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'id': self.id,
+            'item_id': self.item_id,
+            'item_type': self.item_type,
+            'from_id': self.from_id,
+            'from_rel': self.from_rel.serialize,
+            'ownerid': self.ownerid,
+            'owner_rel': self.owner_rel.serialize,
+        }
 
     class Meta:
         db_table = "sharecontent"

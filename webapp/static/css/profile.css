@@ -480,6 +480,15 @@ body {
   color: #d9534f;
 }
 
+.share-btn {
+  border: 1px solid #009900;
+  color: #009900;
+}
+.share-btn:hover {
+  background: black;
+  color: #009900;
+}
+
 .text-sm-1 {
   font-size: 11px;
 }
