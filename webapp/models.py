@@ -31,7 +31,7 @@ from django.contrib.contenttypes.models import ContentType
 
 def randomUniqueValue():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
+                    for x in xrange(33))
 
     return state
 
@@ -112,7 +112,7 @@ class Accounts(models.Model):
     uname = models.CharField(max_length = 20, default = '')
     displayname = models.CharField(max_length = 30, default = '')
     email = models.CharField(max_length = 50, default = '')
-    pswrd = models.CharField(max_length = 50, default = '')
+    pswrd_hash = models.CharField(max_length = 250, blank = False, default = '')
     provider = models.CharField(max_length = 20, default = '')
     provider_id = models.CharField(max_length = 100, default = '')
     avi = models.CharField(max_length = 500, default = '/static/img/anon2.png')
@@ -132,7 +132,12 @@ class Accounts(models.Model):
 
     bio_desc = models.CharField(max_length = 150, default = '')
     bio_link = models.CharField(max_length = 150, default = '')
-    #bio_link_name = models.CharField(max_length = 100, default = '')
+    bio_link_name = models.CharField(max_length = 100, default = '')
+
+    paypal_email = models.CharField(max_length = 1725, default = '')
+    # should be verified
+
+    unique_val = models.CharField(max_length = 125, default = randomUniqueValue )
 
     date_created = models.DateTimeField( default = timezone.now )
     last_active = models.DateTimeField(auto_now=True)
@@ -146,6 +151,7 @@ class Accounts(models.Model):
             'displayname': self.displayname,
             'avi': self.avi,
             'status': self.status,
+            'unique_val': self.unique_val,
             'background': self.background,
         }
 
@@ -188,8 +194,12 @@ class Featured(models.Model):
 
     OwnerType = vaults.OwnerType
     ItemType = vaults.ItemType
+    FeaturedStatus = vaults.FeaturedStatus
+    FeaturedType = vaults.FeaturedType
 
     # ---
+
+    unique_val = models.CharField(max_length = 125, default = randomUniqueValue )
 
     ownerid = models.IntegerField(blank = False, default = 0)
     owner_type = models.CharField(choices = OwnerType, blank = False, default = '', max_length = 50)
@@ -203,20 +213,17 @@ class Featured(models.Model):
     date_started = models.DateTimeField( default = timezone.now )
     date_end = models.DateTimeField( )
 
+    status = models.CharField(choices = FeaturedStatus, blank = False, default = '', max_length = 50)
+    type = models.CharField(choices = FeaturedType, blank = False, default = '', max_length = 50)
+    # Either Live Expired
+
     last_active = models.DateTimeField(auto_now=True)
 
     @property
     def serialize(self):
          # Returns Data Object In Proper Format
         return {
-            'gid': self.id,
-            'displayname': self.displayname,
-            'uname': self.uname,
-            'desc': self.desc,
-            'avi': self.avi,
-            'background': self.background,
-            'categories': self.categories.split(';'),
-            'owner': self.owner_rel.serialize
+
         }
 
     class Meta:
@@ -460,8 +467,8 @@ class ShareContent(models.Model):
     from_id = models.IntegerField(blank = False, default = 0)
     from_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False)
 
-    ownerid = models.IntegerField(blank = False, default = 0, related_name = "share_owner")
-    owner_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False)
+    ownerid = models.IntegerField(blank = False, default = 0) # related_name = "share_owner"
+    owner_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False, related_name = "share_owner")
 
 
     class Meta:
@@ -514,8 +521,8 @@ class Posts(models.Model):
             'link': self.link,
             'post_type': self.post_type,
             'status': self.status,
-            'date_created': str(self.date_created),
-            'last_active': str(self.last_active)
+            'date_created': self.date_created,
+            'last_active': self.last_active
         }
 
     @property
@@ -998,6 +1005,8 @@ class Products(models.Model):
     attachment_type = models.CharField(max_length = 500, default = '')
     link = models.CharField(max_length = 500, default = '')
 
+    sold = models.IntegerField(blank = False, default = 0)
+    quantity = models.IntegerField(blank = False, default = 0)
     categories = models.CharField(max_length = 500, default = '')
     status = models.CharField(max_length = 125, default = '')
     # either: completed, not completed, or canceled
@@ -1020,6 +1029,8 @@ class Products(models.Model):
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,
             'link': self.link,
+            'sold': self.sold,
+            'quantity': self.quantity,
             'categories': self.categories,
             'status': self.status,
             'date_created': str(self.date_created),
@@ -1032,6 +1043,7 @@ class Products(models.Model):
 
 class Services(models.Model):
     OwnerType = vaults.OwnerType
+    ActiveTypes = vaults.ActiveTypes
 
     # ---
 
@@ -1045,8 +1057,10 @@ class Services(models.Model):
     attachment_type = models.CharField(max_length = 500, default = '')
     link = models.CharField(max_length = 500, default = '')
 
+    sold = models.IntegerField(blank = False, default = 0)
     categories = models.CharField(max_length = 500, default = '')
     status = models.CharField(max_length = 125, default = '')
+    active = models.CharField(choices = ActiveTypes, blank = False, default = '', max_length = 50)
     # either: not started, penging, in progress, completed, or calceled
 
     unique_val = models.CharField(max_length = 125, default = randomUniqueValue )
@@ -1067,6 +1081,7 @@ class Services(models.Model):
             'attachment': self.attachment,
             'attachment_type': self.attachment_type,
             'link': self.link,
+            'sold': self.sold,
             'categories': self.categories,
             'status': self.status,
             'date_created': str(self.date_created),

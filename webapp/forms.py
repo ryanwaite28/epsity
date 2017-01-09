@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 
+import bcrypt
 import os, sys, cgi, random, string, hashlib, json
 import webapp
 

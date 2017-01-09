@@ -2,7 +2,8 @@
 # --- Imports --- #
 # --- --- --- --- #
 
-import os, sys, cgi, random, string, hashlib, json
+import bcrypt
+import os, sys, cgi, random, string, hashlib, json, requests
 import datetime
 import webapp
 
@@ -33,10 +34,18 @@ from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
 from vaults import allowed_audio, allowed_photo, allowed_video, allowed_media
 from vaults import masterDICT
 
+import paypalrestsdk
+
 
 # --- ----- ----- --- #
 # --- Helper Code --- #
 # --- ----- ----- --- #
+
+paypalrestsdk.configure({
+    "mode": "sandbox", # sandbox or live
+    "client_id": "",
+    "client_secret": ""
+})
 
 def getYou(request):
     if 'username' not in request.session:
@@ -544,22 +553,38 @@ def uploadPhoto(request):
     else:
         return None
 
-# --- -------- --- #
-# --- Routines --- #
-# --- -------- --- #
+
+
+
+
+
+# --- -------- --- -------- --- -------- --- #
+# --- -------- --- Routines --- -------- --- #
+# --- -------- --- -------- --- -------- --- #
+
+
+
 
 
 def loginAccount(request):
     try:
         email = request.POST['email']
         provider_id = request.POST['providerid']
-        pswrd = hashlib.sha256( request.POST['uid'] ).hexdigest()
 
-        you = Accounts.objects.filter( email=email ).first()
+        pswrd = str( request.POST['uid'] ).encode('utf8')
+
+        you = Accounts.objects.filter( email = email ).first()
         if you == None:
             return render(request,
                             masterDICT['pages']['login'],
                             {'error': 'Account Not Found. Did You Sign Up With Google/Facebook First?'},
+                            context_instance=RequestContext(request))
+
+        checkPswrd = bcrypt.hashpw( pswrd , you.pswrd_hash.encode('utf8') )
+        if checkPswrd != you.pswrd_hash:
+            return render(request,
+                            masterDICT['pages']['login'],
+                            {'error': 'Invalid Password.'},
                             context_instance=RequestContext(request))
 
         request.session['username'] = you.uname
@@ -587,7 +612,9 @@ def createAccount(request):
         provider = request.POST['provider']
         provider_id = request.POST['providerid']
         img = request.POST['image']
-        pswrd = hashlib.sha256( request.POST['uid'] ).hexdigest()
+
+        pswrd = str( request.POST['uid'] ).encode('utf8')
+        HASH = bcrypt.hashpw( pswrd , bcrypt.gensalt() ).encode('utf8')
 
         checkEmail = Accounts.objects.filter(email=email).first()
         if checkEmail != None:
@@ -609,7 +636,7 @@ def createAccount(request):
                             provider=provider,
                             provider_id=provider_id,
                             email=email,
-                            pswrd=pswrd)
+                            pswrd_hash=HASH)
 
         newUser.save()
 

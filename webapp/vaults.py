@@ -2,7 +2,8 @@
 # --- Helper Code --- #
 # --- --- --- --- --- #
 
-import os, sys, cgi, random, string, hashlib, json
+import bcrypt
+import os, sys, cgi, random, string, hashlib, json, requests
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.template import RequestContext
@@ -16,6 +17,7 @@ from WebTools import randomVal, processImage
 # --- #
 
 webapp_dir = os.path.dirname(os.path.abspath(__file__))
+hashSalt = 'C9RUbql6IDHIYoJ'
 
 ALLOWED_PHOTOS = set(['png', 'jpg', 'jpeg', 'gif'])
 ALLOWED_VIDEOS = set(['mp4', 'avi', 'mov', 'webm', 'oog'])
@@ -93,6 +95,22 @@ StarType = (
     ('Three', 'Three'),
     ('Four', 'Four'),
     ('Five', 'Five'),
+)
+
+FeaturedStatus = (
+    ('Live', 'Live'),
+    ('Expired', 'Expired'),
+)
+
+FeaturedType = (
+    ('Day', 'Day'),
+    ('Week', 'Week'),
+    ('Month', 'Month'),
+)
+
+ActiveTypes = (
+    ('Available', 'Available'),
+    ('Unavailable', 'Unavailable')
 )
 
 # Dictionary of all pages/views for easy and dynamic rendering.
@@ -321,6 +339,22 @@ itemTypes = {
     'post': 'Post'
 }
 
+featuredStatus = {
+    'live': 'Live',
+    'expired': 'Expired',
+}
+
+featuredType = {
+    'day': 'Day',
+    'week': 'Week',
+    'month': 'Month',
+}
+
+activeTypes = {
+    'availavle': 'Available',
+    'unavailable': 'Unavailable',
+}
+
 # Master Dictionary
 masterDICT = {
     'pages': pages,
@@ -336,7 +370,10 @@ masterDICT = {
     'statuses': statuses,
     'fetchType': fetchType,
     'starType': starType,
-    'itemTypes': itemTypes
+    'itemTypes': itemTypes,
+    'featuredStatus': featuredStatus,
+    'featuredType': featuredType
+    'activeTypes': activeTypes
 }
 
 # --- #
