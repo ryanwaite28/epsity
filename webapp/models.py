@@ -1027,7 +1027,7 @@ class Products(models.Model):
 
     unique_val = models.CharField(max_length = 125, default = randomUniqueValue )
 
-    date_created = models.DateTimeField( default = timezone.now )
+    date_created = models.DateTimeField( default = timezone.now ) 
     last_active = models.DateTimeField(auto_now=True)
 
     @property
