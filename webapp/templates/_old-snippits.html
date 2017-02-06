@@ -55,3 +55,64 @@
 </p>
 
 -->
+
+
+<!--
+
+  share post template
+
+  <div class="col-sm-12">
+    <div class="row padd-1">
+      <div class="col-sm-3">
+        <img width="80px" class="middlr brd-bl" src="{{ p.post_rel.owner.avi }}" /><br>
+        <p class="text-center"><a title="See {{ p.post_rel.owner.uname }} Page" href="/users/{{ p.post_rel.owner.uname }}"><strong>{{ p.post_rel.owner.uname }}</strong></a></p>
+      </div>
+      <div class="col-sm-9">
+        <h4><strong>{{ p.post_rel.title }}</strong></h4>
+        <p>{{ p.post_rel.contents }}</p>
+        {% if p.post_rel.link != '' %}<p><a title="Post Link" href="{{ p.post_rel.link }}">Link</a></p>{% endif %}
+        <br>
+        {% if p.post_rel.attachment_type == 'Audio' %}
+        <div class="polaroid-3 brd-bl">
+          <audio class="smb-1 max-w media-elm" controls>
+            <source src="{{ p.post_rel.attachment }}" type="">
+          </audio>
+        </div>
+        {% elif p.post_rel.attachment_type == 'Video' %}
+        <div class="polaroid-3 brd-bl">
+          <video class="smb-1 max-w media-elm" width="320" height="240" controls>
+            <source src="{{ p.post_rel.attachment }}" type="">
+          </video>
+        </div>
+        {% elif p.post_rel.attachment_type == 'Photo' %}
+        <div class="polaroid-3 brd-bl">
+          <img class="smb-1 max-w" src="{{ p.post_rel.attachment }}" />
+        </div>
+        {% endif %}
+
+        <p>&nbsp;</p>
+        <p class="text-sm-1">
+          <span class="text-grey"><em>{{ p.post_rel.date_created }}</em></span> |
+          <span><strong>Likes:</strong> <span id="post-likemeter-{{ p.post_rel.p_id }}">0</span></span> |
+          <span><strong>Comments:</strong> <span id="post-commentmeter-{{ p.post_rel.p_id }}">0</span></span> |
+          <span><strong><a title="See Whole Post" href="/posts/{{ p.post_rel.p_id }}">See Whole Post</a></strong></span>
+        </p>
+        <p>&nbsp;</p>
+
+        <p class="">
+          <span ng-click="likeBtn()" class="text-center btn-xs transition btn-s1 {{ p.post_rel.like_status.class }} like-btn" data-content-type="{{ p.post_rel.content_type }}" data-content-id="{{ p.post_rel.p_id }}" data-like-status="{{ p.post_rel.like_status }}" data-like-status-json="{{ p.post_rel.like_status_json }}" data-post-id="{{ p.post_rel.p_id }}" data-post-type="{{ p.post_rel.post_type }}" data-owner-id="{{ p.post_rel.ownerid }}" data-owner-type="{{ p.post_rel.owner_type }}" data-post-status="{{ p.post_rel.status }}">
+          <i class="text-center fa fa-heart" aria-hidden="true"></i> <span class="like-text">{{ p.post_rel.like_status.text }}</span>
+          </span>
+          <span title="Show/Hide Comments" data-toggle="collapse" data-target="#cmdv-{{ p.post_rel.p_id }}" class="transition btn-xs btn-s1 comment-btn-1" data-content-type="{{ p.post_rel.content_type }}" data-content-id="{{ p.post_rel.p_id }}" data-post-id="{{ p.post_rel.p_id }}" data-post-type="{{ p.post_rel.post_type }}" data-owner-id="{{ p.post_rel.ownerid }}" data-owner-type="{{ p.post_rel.owner_type }}" data-post-status="{{ p.post_rel.status }}">
+          <i class="fa fa-comments" aria-hidden="true"></i> Comments
+          </span>
+          <span class="point-cursor btn-xs transition btn-s1 share-btn" data-from-type="{{ p.post_rel.owner_type }}" data-from-id="{{ p.post_rel.owner.userid }}" data-content-type="{{ p.post_rel.content_type }}" data-content-id="{{ p.post_rel.p_id }}">
+            <i class="fa fa-retweet" aria-hidden="true" data-content-type="{{ p.post_rel.content_type }}" data-content-id="{{ p.post_rel.p_id }}"></i> Share
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+ -->

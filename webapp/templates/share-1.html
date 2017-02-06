@@ -1,13 +1,13 @@
 <div id="post-div-{{ post.p_id }}" class="mk-rel sdw-1 sbm-1 bg-white post-div" data-wall-id="{{ post.wall_id }}" data-wall-type="{{ post.wall_type }}">
   <div class="row padd-1">
-    <div class="col-sm-12">
-      <img width="45px" class="brd-bl img-left" src="{{ post.owner.avi }}" /><br>
-      <p class=""><a title="See {{ post.owner.uname }} Page" href="/users/{{ post.owner.uname }}"><strong>{{ post.owner.uname }}</strong></a>
-      <br>
-      <span class="text-grey"><em>{{ post.date_created }}</em></span>
-      </p>
+    <div class="col-sm-3">
+      <img width="80px" class="middlr brd-bl" src="{{ post.owner.avi }}" /><br>
+      <p class="text-center"><a title="See {{ post.owner.uname }} Page" href="/users/{{ post.owner.uname }}"><strong>{{ post.owner.uname }}</strong></a></p>
+      {% if post.shared %}
+        <p>Shared</p>
+      {% endif %}
     </div>
-    <div class="col-sm-12">
+    <div class="col-sm-9">
       <h4><strong>{{ post.title }}</strong></h4>
       <p>{{ post.contents }}</p>
       {% if post.link != '' %}<p><a title="Post Link" href="{{ post.link }}">Link</a></p>{% endif %}
@@ -32,7 +32,7 @@
 
       <p>&nbsp;</p>
       <p class="text-sm-1">
-
+        <span class="text-grey"><em>{{ post.date_created }}</em></span> |
         <span><strong>Likes:</strong> <span id="post-likemeter-{{ post.p_id }}">0</span></span> |
         <span><strong>Comments:</strong> <span id="post-commentmeter-{{ post.p_id }}">0</span></span> |
         <span><strong><a title="See Whole Post" href="/posts/{{ post.p_id }}">See Whole Post</a></strong></span>
@@ -50,6 +50,7 @@
         </span>
       </p>
     </div>
+
   </div>
 
   <div class="row">

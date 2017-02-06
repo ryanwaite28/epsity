@@ -455,40 +455,7 @@ class FollowRequests(models.Model):
 # ------- #
 # ------- #
 
-class ShareContent(models.Model):
-    OwnerType = vaults.OwnerType
-    ItemType = vaults.ItemType
 
-    # --- #
-
-    item_id = models.IntegerField(blank = False, default = 0)
-    item_type = models.CharField(choices = ItemType, blank = False, default = '', max_length = 50)
-
-    from_id = models.IntegerField(blank = False, default = 0)
-    from_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False)
-
-    ownerid = models.IntegerField(blank = False, default = 0) # related_name = "share_owner"
-    owner_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False, related_name = "share_owner")
-
-    date_created = models.DateTimeField( default = timezone.now )
-
-    @property
-    def serialize(self):
-         # Returns Data Object In Proper Format
-        return {
-            'id': self.id,
-            'item_id': self.item_id,
-            'item_type': self.item_type,
-            'from_id': self.from_id,
-            'from_rel': self.from_rel.serialize,
-            'ownerid': self.ownerid,
-            'owner_rel': self.owner_rel.serialize,
-        }
-
-    class Meta:
-        db_table = "sharecontent"
-
-# --- #
 # --- #
 
 class Posts(models.Model):
@@ -685,6 +652,46 @@ class Likes(models.Model):
         db_table = "likes"
 
 # ---
+
+class SharePost(models.Model):
+    OwnerType = vaults.OwnerType
+    ItemType = vaults.ItemType
+
+    # --- #
+
+    item_type = models.CharField(choices = ItemType, blank = False, default = '', max_length = 50)
+
+    post_id = models.IntegerField(blank = False, default = 0)
+    post_rel = models.ForeignKey(Posts, default = 0, on_delete = models.CASCADE, blank = False)
+
+    from_id = models.IntegerField(blank = False, default = 0)
+    from_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False)
+
+    ownerid = models.IntegerField(blank = False, default = 0) # related_name = "share_owner"
+    owner_rel = models.ForeignKey(Accounts, default = 0, on_delete = models.CASCADE, blank = False, related_name = "share_owner")
+
+    date_created = models.DateTimeField( default = timezone.now )
+
+    @property
+    def serialize(self):
+         # Returns Data Object In Proper Format
+        return {
+            'sp_id': self.id,
+            'item_type': self.item_type,
+            'post_id': self.post_id,
+            'post': self.post_rel,
+            'post_rel': self.post_rel.serialize,
+            'from_id': self.from_id,
+            'from_rel': self.from_rel.serialize,
+            'ownerid': self.ownerid,
+            'owner_rel': self.owner_rel.serialize,
+            'date_created': self.date_created
+        }
+
+    class Meta:
+        db_table = "sharepost"
+
+# --- #
 
 class Events(models.Model):
     OwnerType = vaults.OwnerType

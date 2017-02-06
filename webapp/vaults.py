@@ -72,6 +72,7 @@ ContentType = (
     ('Reply', 'Reply'),
     ('Group', 'Group'),
     ('Event', 'Event'),
+    ('SharePost', 'SharePost'),
 )
 
 AttachmentTypes = (
@@ -87,6 +88,7 @@ ItemType = (
     ('Service', 'Service'),
     ('Event', 'Event'),
     ('Post', 'Post'),
+    ('SharePost', 'SharePost'),
 )
 
 StarType = (
@@ -279,6 +281,7 @@ contentTypes = {
     'comment': 'Comment',
     'reply': 'Reply',
     'event': 'Event',
+    'sharepost': 'SharePost',
 }
 
 statuses = {
@@ -336,7 +339,8 @@ itemTypes = {
     'product': 'Product',
     'service': 'Service',
     'event': 'Event',
-    'post': 'Post'
+    'post': 'Post',
+    'sharepost': 'SharePost',
 }
 
 featuredStatus = {

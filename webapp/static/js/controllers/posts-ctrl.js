@@ -96,7 +96,7 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
         og_elm: $(this)
       }
 
-      $scope.shareAction(obj);
+      $scope.sharePost(obj);
 
     });
 
@@ -309,7 +309,7 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
     });
   }
 
-  $scope.shareAction = function(dataObj) {
+  $scope.sharePost = function(dataObj) {
 
     $http({
       method: 'POST',
@@ -321,7 +321,7 @@ App.controller('postsCtrl', ['$scope', '$http', function($scope, $http) {
         'X-CSRFToken': Cookies.get('csrftoken')
       },
       data: {
-        action: 'shareContent',
+        action: 'sharePost',
         info: dataObj,
         csrfmiddlewaretoken: Cookies.get('csrftoken'),
       }

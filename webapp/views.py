@@ -25,7 +25,7 @@ from models import Follows, FollowRequests
 from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
 from models import Posts, Comments, Replies, Likes, Events, EventAttendees
-from models import Conversations, ConvoMembers, ConvoMessages, ShareContent
+from models import Conversations, ConvoMembers, ConvoMessages, SharePost
 from models import Products, Services, Transactions, Feedback
 
 # from forms import PostForm
@@ -287,24 +287,34 @@ def dashboard(request):
 
         try:
             you = getYou(request)
-            following = Follows.objects.filter(userid=you.id)
+            following = Follows.objects.filter(userid=you.id) 
 
             request.session['wall_id'] = you.id
             request.session['wall_type'] = masterDICT['ownerTypes']['account']
 
             # --- #
 
-            feed = routines\
+            posts = routines\
             .loadPostsA(id = you.id, you = you,
                         msg = masterDICT['fetchType']['posts']['main'])
 
+
+            SharePosts = SharePost.objects \
+            .filter( Q( ownerid = you.id ) | Q(ownerid__in = [f.follow_id for f in following]) ) \
+            .order_by('-date_created')[:20]
+
+            SharePosts = [s.serialize for s in SharePosts]
+            for s in SharePosts:
+                s['shared'] = True
+                s['post_rel'] = routines.loadPost_A( s['post_id'] )
+
+            feed = posts + SharePosts
+            feed = sorted(feed, key=lambda k: k['date_created'], reverse=True)
+
+
+            # print '----- ', feed
+
             # --- #
-
-            shareContents = ShareContent.objects \
-            .filter(ownerid = you.id) \
-            .order_by('-date_created')
-
-            print '--- shareContents --- ', shareContents
 
             suggestedGroups = []
             seeking = you.seeking.split(';')
@@ -1051,8 +1061,8 @@ def userActionAJAX(request):
             if data['action'] == 'unlike':
                 return routines.unlikeContent(request, data)
 
-            if data['action'] == 'shareContent':
-                return routines.shareContent(request, data)
+            if data['action'] == 'sharePost':
+                return routines.sharePost(request, data)
 
             # ---
 

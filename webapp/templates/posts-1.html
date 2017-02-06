@@ -7,14 +7,80 @@
   {% endif %}
   <div id="allposts-div">
   {% for p in posts %}
+
+  {% if p.shared %}
+
+  <div id="sharepost-div-{{ p.sp_id }}" class="mk-rel sdw-1 sbm-1 bg-white post-div">
+    <div class="row padd-1">
+      <div class="col-sm-12">
+        <img width="45px" class="brd-bl img-left" src="{{ p.owner_rel.avi }}" />
+        <p class="">
+          <a title="See {{ p.owner_rel.uname }} Page" href="/users/{{ p.owner_rel.uname }}">
+            <strong>{{ p.owner_rel.uname }}</strong>
+          </a>
+          Shared
+          {% if p.post_rel.owner_type == 'Group' %}
+          <a title="Group Page" href="/groups/{{ p.post_rel.owner.uname }}">{{ p.post_rel.owner.uname }}</a>'s
+          {% else %}
+          <a title="User Page" href="/users/{{ p.post_rel.owner.uname }}">{{ p.post_rel.owner.uname }}</a>'s
+          {% endif %}
+          <a title="See Whole Post" href="/posts/{{ p.post_rel.p_id }}">Post</a><br>
+          <span class="text-grey"><em>{{ p.date_created }}</em></span>
+        </p>
+      </div>
+
+      <div class="col-sm-12">
+        <hr>
+        <div class="row padd-1">
+          <div class="col-sm-12">
+            <img width="45px" class="brd-bl img-left" src="{{ p.post_rel.owner.avi }}" />
+            <p class="">
+              <a title="See {{ p.post_rel.owner.uname }} Page" href="/users/{{ p.post_rel.owner.uname }}"><strong>{{ p.post_rel.owner.uname }}</strong></a><br>
+              <span class="text-grey"><em>{{ p.post_rel.date_created }}</em></span>
+            </p>
+          </div>
+          <div class="col-sm-12">
+            <h4><strong>{{ p.post_rel.title }}</strong></h4>
+            <p>{{ p.post_rel.contents }}</p>
+            {% if p.post_rel.link != '' %}<p><a title="Post Link" href="{{ p.post_rel.link }}">Link</a></p>{% endif %}
+            <br>
+            {% if p.post_rel.attachment_type == 'Audio' %}
+            <div class="polaroid-3 brd-bl">
+              <audio class="smb-1 max-w media-elm" controls>
+                <source src="{{ p.post_rel.attachment }}" type="">
+              </audio>
+            </div>
+            {% elif p.post_rel.attachment_type == 'Video' %}
+            <div class="polaroid-3 brd-bl">
+              <video class="smb-1 max-w media-elm" width="320" height="240" controls>
+                <source src="{{ p.post_rel.attachment }}" type="">
+              </video>
+            </div>
+            {% elif p.post_rel.attachment_type == 'Photo' %}
+            <div class="polaroid-3 brd-bl">
+              <img class="smb-1 max-w" src="{{ p.post_rel.attachment }}" />
+            </div>
+            {% endif %}
+
+            <p>&nbsp;</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+
   <div id="post-div-{{ p.p_id }}" class="mk-rel sdw-1 sbm-1 bg-white post-div" data-wall-id="{{ p.wall_id }}" data-wall-type="{{ p.wall_type }}">
     <div class="row padd-1">
-      <div class="col-sm-3">
-        <img width="80px" class="middlr brd-bl" src="{{ p.owner.avi }}" /><br>
-        <p class="text-center"><a title="See {{ p.owner.uname }} Page" href="/users/{{ p.owner.uname }}"><strong>{{ p.owner.uname }}</strong></a></p><br>
+      <div class="col-sm-12">
+        <img width="45px" class="brd-bl img-left" src="{{ p.owner.avi }}" />
+        <p class=""><a title="See {{ p.owner.uname }} Page" href="/users/{{ p.owner.uname }}"><strong>{{ p.owner.uname }}</strong></a><br>
+        <span class="text-grey"><em>{{ p.date_created }}</em></span>
+        </p>
 
       </div>
-      <div class="col-sm-9">
+      <div class="col-sm-10">
         <h4><strong>{{ p.title }}</strong></h4>
         <p>{{ p.contents }}</p>
         {% if p.link != '' %}<p><a title="Post Link" href="{{ p.link }}">Link</a></p>{% endif %}
@@ -39,7 +105,7 @@
 
         <p>&nbsp;</p>
         <p class="text-sm-1">
-          <span class="text-grey"><em>{{ p.date_created }}</em></span> |
+
           <span><strong>Likes:</strong> <span id="post-likemeter-{{ p.p_id }}">{{ p.likes }}</span></span> |
           <span><strong>Comments:</strong> <span id="post-commentmeter-{{ p.p_id }}">{{ p.comments_len }}</span></span> |
           <span id="post-link"><strong><a title="See Whole Post" href="/posts/{{ p.p_id }}">See Whole Post</a></strong></span>
@@ -144,6 +210,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
   {% endfor %}
   </div>
 </div>
@@ -166,7 +233,7 @@
         <h4 class="modal-title">Modal Header</h4>
       </div> -->
       <div id="postMsgModal-body" class="modal-body">
-        
+
       </div>
       <!-- <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

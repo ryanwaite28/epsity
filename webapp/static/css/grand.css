@@ -1,5 +1,9 @@
 /* --- Grand Styles --- */
 
+hr {
+  margin: 10px 0px;
+}
+
 .row {
   position: relative;
 }

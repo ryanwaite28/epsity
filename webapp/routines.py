@@ -27,7 +27,7 @@ from models import Follows, FollowRequests
 from models import GroupRequests, GroupInvitations, Messages, MessageReply
 from models import mediaPhotoModel, mediaVideoModel, mediaAudioModel
 from models import Posts, Comments, Replies, Likes, Events, EventAttendees
-from models import Conversations, ConvoMembers, ConvoMessages, ShareContent
+from models import Conversations, ConvoMembers, ConvoMessages, SharePost
 from models import Products, Services, Transactions, Feedback
 
 from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS, ALLOWED_MEDIA
@@ -40,12 +40,6 @@ import paypalrestsdk
 # --- ----- ----- --- #
 # --- Helper Code --- #
 # --- ----- ----- --- #
-
-paypalrestsdk.configure({
-    "mode": "sandbox", # sandbox or live
-    "client_id": "",
-    "client_secret": ""
-})
 
 def getYou(request):
     if 'username' not in request.session:
@@ -440,6 +434,170 @@ def loadPostsB(wall_id, wall_type):
 
 
     return posts
+
+# ---
+
+def convertSharesToPosts_A(you, posts):
+    posts = [p.serialize for p in posts]
+    for p in posts:
+        p['content_type'] = masterDICT['contentTypes']['post']
+        checkLike = Likes.objects \
+        .filter(item_type=masterDICT['contentTypes']['post'],
+                item_id=p['p_id'],
+                owner_type=masterDICT['ownerTypes']['account'],
+                ownerid=you.id).first()
+
+        if checkLike != None:
+            p['like_status'] = masterDICT['statuses']['like']['liked']
+            p['like_status_json'] = json.dumps(masterDICT['statuses']['like']['liked'])
+
+        else:
+            p['like_status'] = masterDICT['statuses']['like']['not_liked']
+            p['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+        # ---
+
+        likes = len( Likes.objects.filter \
+        (item_type=masterDICT['contentTypes']['post'], item_id=p['p_id']) )
+        p['likes'] = likes
+
+        comments_len = len( Comments.objects.filter(post_id=p['p_id']) )
+        p['comments_len'] = comments_len
+
+        comments = Comments.objects \
+        .filter(post_id=p['p_id']).order_by('date_created')[:10]
+
+        comments = [c.serialize for c in comments]
+        for c in comments:
+            c['content_type'] = masterDICT['contentTypes']['comment']
+            checkLike = Likes.objects \
+            .filter(item_type=masterDICT['contentTypes']['comment'],
+                    item_id=c['comment_id'],
+                    owner_type=masterDICT['ownerTypes']['account'],
+                    ownerid=you.id).first()
+
+            if checkLike != None:
+                c['like_status'] = masterDICT['statuses']['like']['liked']
+                c['like_status_json'] = json.dumps(masterDICT['statuses']['like']['liked'])
+
+            else:
+                c['like_status'] = masterDICT['statuses']['like']['not_liked']
+                c['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+            # ---
+
+            likes = len( Likes.objects \
+            .filter(item_type=masterDICT['contentTypes']['comment'],
+                    item_id=c['comment_id']) )
+
+            c['likes'] = likes
+
+            replies_len = len( Replies.objects \
+            .filter(comment_id=c['comment_id']) )
+            c['replies_len'] = replies_len
+
+            replies = Replies.objects \
+            .filter(comment_id=c['comment_id']) \
+            .order_by('date_created')[:5]
+
+            replies = [r.serialize for r in replies]
+            for r in replies:
+                r['content_type'] = masterDICT['contentTypes']['reply']
+                checkLike = Likes.objects \
+                .filter(item_type=masterDICT['contentTypes']['reply'],
+                        item_id=r['reply_id'],
+                        owner_type=masterDICT['ownerTypes']['account'],
+                        ownerid=you.id).first()
+
+                if checkLike != None:
+                    r['like_status'] = masterDICT['statuses']['like']['liked']
+                    r['like_status_json'] = json.dumps(masterDICT['statuses']['like']['liked'])
+
+                else:
+                    r['like_status'] = masterDICT['statuses']['like']['not_liked']
+                    r['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+                # ---
+
+                likes = len( Likes.objects \
+                .filter(item_type=masterDICT['contentTypes']['reply'],
+                        item_id=r['reply_id']) )
+
+                r['likes'] = likes
+
+
+            c['replies'] = replies
+
+        p['comments'] = comments
+
+
+    return posts
+
+
+# ---
+
+def convertSharesToPosts_B(posts):
+    posts = [p.serialize for p in posts]
+
+    for p in posts:
+        p['content_type'] = masterDICT['contentTypes']['post']
+        p['like_status'] = masterDICT['statuses']['like']['not_liked']
+        p['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+    # ---
+
+        likes = len( Likes.objects.filter \
+        (item_type=masterDICT['contentTypes']['post'], item_id=p['p_id']) )
+        p['likes'] = likes
+
+        comments_len = len( Comments.objects.filter(post_id=p['p_id']) )
+        p['comments_len'] = comments_len
+
+        comments = Comments.objects \
+        .filter(post_id=p['p_id']).order_by('date_created')[:10]
+
+        comments = [c.serialize for c in comments]
+        for c in comments:
+            c['content_type'] = masterDICT['contentTypes']['comment']
+            c['like_status'] = masterDICT['statuses']['like']['not_liked']
+            c['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+
+            likes = len( Likes.objects \
+            .filter(item_type=masterDICT['contentTypes']['comment'],
+                    item_id=c['comment_id']) )
+
+            c['likes'] = likes
+
+            replies_len = len( Replies.objects \
+            .filter(comment_id=c['comment_id']) )
+            c['replies_len'] = replies_len
+
+            replies = Replies.objects \
+            .filter(comment_id=c['comment_id']) \
+            .order_by('date_created')[:5]
+
+            replies = [r.serialize for r in replies]
+            for r in replies:
+                r['content_type'] = masterDICT['contentTypes']['reply']
+                r['like_status'] = masterDICT['statuses']['like']['not_liked']
+                r['like_status_json'] = json.dumps(masterDICT['statuses']['like']['not_liked'])
+
+
+
+                likes = len( Likes.objects \
+                .filter(item_type=masterDICT['contentTypes']['reply'],
+                        item_id=r['reply_id']) )
+
+                r['likes'] = likes
+
+            c['replies'] = replies
+
+        p['comments'] = comments
+
+
+    return posts
+
 
 # ---
 
@@ -2308,22 +2466,40 @@ def unlikeContent(request, data):
         return errorPage(request, msg)
 
 
-def shareContent(request, data):
+def sharePost(request, data):
     try:
         you = getYou(request)
 
         contentID = data['info']['contentID']
         contentType = data['info']['contentType']
-        fromID = data['info']['fromID']
-        fromType = masterDICT['ownerTypes']['account'] #data['info']['fromType']
 
-        fromUser = Accounts.objects.filter(id = fromID).first()
-        if fromUser == None:
+        if contentType == masterDICT['itemTypes']['sharepost']:
+            fromID = data['info']['fromID']
+            fromType = data['info']['fromType']
+            fromUser = Accounts.objects.filter(id = fromID).first()
+            if fromUser == None:
+                return JsonResponse \
+                ({'msg': 'Error Occurred: from user not found'})
+
+            post = SharePost.objects.filter(id = contentID).first().post_rel
+
+        elif contentType == masterDICT['itemTypes']['post']:
+            fromID = you.id
+            fromType = data['info']['fromType']
+            fromUser = you
+            post = Posts.objects.filter(id = contentID).first()
+
+        else:
             return JsonResponse \
-            ({'msg': 'Error Occurred'})
+            ({'msg': 'Error Occurred: content type invalid/unknown'})
 
-        newShare = ShareContent(item_id = int(contentID),
-                                item_type = contentType,
+        if post == None:
+            return JsonResponse \
+            ({'msg': 'Error Occurred: post not found'})
+
+        newShare = SharePost(item_type = masterDICT['itemTypes']['sharepost'],
+                                post_id = int(post.id),
+                                post_rel = post,
                                 from_id = int(fromID),
                                 from_rel = fromUser,
                                 ownerid = you.id,
