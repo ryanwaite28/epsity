@@ -41,6 +41,8 @@ from vaults import ALLOWED_AUDIO, ALLOWED_PHOTOS, ALLOWED_VIDEOS
 # --- Views --- #
 # --- ----- --- #
 
+# context_instance = RequestContext(request)
+
 def welcome(request):
     if request.method == 'GET':
         if 'username' in request.session:
@@ -58,7 +60,7 @@ def login(request):
             return redirect('/home/')
 
         return render(request, masterDICT['pages']['login'], {'error': ''},
-                        context_instance = RequestContext(request))
+                        )
 
     if request.method == 'POST':
         return routines.loginAccount(request)
@@ -85,7 +87,7 @@ def signup(request):
             return redirect('/home/')
 
         return render(request, masterDICT['pages']['signup'], {'error': ""},
-                        context_instance = RequestContext(request))
+                        )
 
     if request.method == 'POST':
         return routines.createAccount(request)
@@ -105,7 +107,7 @@ def discoverView(request):
                         {'error': "",
                         'you': you
                         },
-                        context_instance = RequestContext(request))
+                        )
 
     if request.method == 'POST':
         return None
@@ -141,7 +143,7 @@ def newestView(request):
                         'products': products,
                         'services': services,
                         },
-                        context_instance = RequestContext(request))
+                        )
 
     if request.method == 'POST':
         return None
@@ -177,7 +179,7 @@ def featuredView(request):
                         'products': products,
                         'services': services,
                         },
-                        context_instance = RequestContext(request))
+                        )
 
     if request.method == 'POST':
         return None
@@ -213,7 +215,7 @@ def trendingView(request):
                         'products': products,
                         'services': services,
                         },
-                        context_instance = RequestContext(request))
+                        )
 
     if request.method == 'POST':
         return None
@@ -242,7 +244,7 @@ def productView(request, query):
                         'you': you,
                         'product': product
                         },
-                        context_instance = RequestContext(request))
+                        )
 
     if request.method == 'POST':
         return None
@@ -271,7 +273,7 @@ def serviceView(request, query):
                         'you': you,
                         'service': service
                         },
-                        context_instance = RequestContext(request))
+                        )
 
     if request.method == 'POST':
         return None
@@ -287,7 +289,7 @@ def dashboard(request):
 
         try:
             you = getYou(request)
-            following = Follows.objects.filter(userid=you.id) 
+            following = Follows.objects.filter(userid=you.id)
 
             request.session['wall_id'] = you.id
             request.session['wall_type'] = masterDICT['ownerTypes']['account']
@@ -366,7 +368,7 @@ def dashboard(request):
                             'similarSeeking': su,
                             'similarInterests': iu
                             },
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -405,7 +407,7 @@ def profileHome(request):
                             'groups': len(groups),
                             'posts': posts
                             },
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -461,7 +463,7 @@ def userPage(request, query):
                                     'groups': len(groups),
                                     'posts': posts
                                     },
-                                    context_instance = RequestContext(request))
+                                    )
             else:
                 return render(request,
                                 masterDICT['pages']['UserPage'],
@@ -473,7 +475,7 @@ def userPage(request, query):
                                 'groups': len(groups),
                                 'posts': posts
                                 },
-                                context_instance = RequestContext(request))
+                                )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -527,7 +529,7 @@ def groupPage(request, query):
                                 'group': group,
                                 'posts': posts,
                                 'membership': membership},
-                                context_instance = RequestContext(request))
+                                )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -557,7 +559,7 @@ def postView(request, query):
                                 {'you': you,
                                 'post': post,
                                 'posts': [post]},
-                                context_instance = RequestContext(request))
+                                )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -579,7 +581,7 @@ def searchEngine(request):
                             masterDICT['pages']['searchEngine'],
                             {'you': you
                             },
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -629,7 +631,7 @@ def searchResults(request, query):
                             'services': data['services'],
                             'posts': data['posts'],
                             },
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -658,7 +660,7 @@ def messagesView(request):
                             'message': '',
                             # 'messages': messages,
                             },
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -680,7 +682,7 @@ def conversationsView(request):
             return render(request, masterDICT['pages']['conversationsView'],
                             {'you': you,
                             'message': ''},
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -702,7 +704,7 @@ def mySettings(request):
             return render(request, masterDICT['pages']['mySettings'],
                             {'you': you,
                             'message': ''},
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -728,7 +730,7 @@ def eventsView(request):
                             masterDICT['pages']['eventsview'],
                             {'you': you,
                             'message': ''},
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -760,7 +762,7 @@ def eventView(request, query):
                         {'you': you,
                         'event': event,
                         'message': ''},
-                        context_instance = RequestContext(request))
+                        )
 
 # ---
 
@@ -779,7 +781,7 @@ def createView(request):
                             'message': '',
                             # 'post_form': post_form
                             },
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -805,7 +807,7 @@ def settingsActionFORM(request):
         if request.POST['action'] == None or request.POST['action'] == '':
             return render(request, masterDICT['pages']['mySettings'],
                             {'you': you, 'message': 'Action Message Missing...'},
-                            context_instance = RequestContext(request))
+                            )
 
         if request.POST['action'] == 'delete account':
             return routines.deleteAccount(request)
@@ -1089,7 +1091,7 @@ def notificationsView(request):
             you = getYou(request)
             return render(request, masterDICT['pages']['notificationsView'],
                             {'you': you, 'message': ''},
-                            context_instance = RequestContext(request))
+                            )
 
         except ObjectDoesNotExist:
             msg = 'User Account Not Found.'
@@ -1110,7 +1112,7 @@ def testing(request):
 
         return render(request, masterDICT['pages']['testing'],
                         {'you': you, 'message': ''},
-                        context_instance = RequestContext(request))
+                        )
 
     if request.method == 'POST':
         print [r for r in request.POST]
